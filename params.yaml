@@ -1,0 +1,20 @@
+# Person 3 (modelling) parameters. Person 4 may merge into the shared params.yaml.
+modeling:
+  seed: 42
+  split_dir: complete_coverage      # complete_coverage | splits
+  min_actual_for_mape_w: 1000.0     # safe MAPE ignores points with actual < 1 kW
+  mlflow_experiment: solarselect-phase1
+  ridge:   {alpha: [0.1, 1.0, 10.0, 100.0]}
+  random_forest:
+    n_estimators: [200]
+    max_depth: [6, 12, null]
+    min_samples_leaf: [1, 5]
+  xgboost:
+    n_estimators: [200, 400]
+    max_depth: [3, 5]
+    learning_rate: [0.03, 0.1]
+    subsample: [0.8]
+  lightgbm:
+    n_estimators: [200, 400]
+    num_leaves: [8, 31]
+    learning_rate: [0.03, 0.1]

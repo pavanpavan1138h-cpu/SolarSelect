@@ -5,4 +5,9 @@ matplotlib
 scikit-learn
 seaborn
 jupyter
-dvc
+dvcpyyaml
+tabulate
+xgboost
+lightgbm
+mlflow
+pytest
