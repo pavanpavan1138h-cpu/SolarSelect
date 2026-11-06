@@ -1,0 +1,47 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE and operating system files
+.vscode/
+.DS_Store
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Model artifacts
+*.pkl
+*.joblib
+*.pt
+*.pth
+*.h5
+*.onnx
+
+# Experiment tracking output
+mlruns/
+
+# Build and distribution output
+build/
+dist/
+*.egg-info/
+
+# Raw and generated CSV files
+*.csv
+
+/mlflow.db*
+/EDA/mlruns/
