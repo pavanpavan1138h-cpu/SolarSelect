@@ -1,0 +1,51 @@
+{
+  "dataset_name": "Kaggle Plants 1 & 2 Short-Horizon Benchmark",
+  "primary_target": "AC_POWER",
+  "target_unit": "kW (Instantaneous Inverter Power)",
+  "resolution": "15-minute",
+  "plant_1": {
+    "inverters": 22,
+    "rows": 68774,
+    "unmatched_rows": 4
+  },
+  "plant_2": {
+    "inverters": 22,
+    "rows": 67698,
+    "unmatched_rows": 0,
+    "inverter_dropouts": "27.7% timestamps with <22 inverters"
+  },
+  "split_boundaries": {
+    "train": {
+      "start": "2020-05-15",
+      "end": "2020-06-07 23:45",
+      "days": 24,
+      "count": 94276
+    },
+    "validation": {
+      "start": "2020-06-08",
+      "end": "2020-06-12 23:45",
+      "days": 5,
+      "count": 21120
+    },
+    "test": {
+      "start": "2020-06-13",
+      "end": "2020-06-17 23:45",
+      "days": 5,
+      "count": 21076
+    }
+  },
+  "excluded_features": [
+    {
+      "feature": "DAILY_YIELD",
+      "reason": "Target leakage counter"
+    },
+    {
+      "feature": "TOTAL_YIELD",
+      "reason": "Target leakage counter"
+    },
+    {
+      "feature": "DC_POWER",
+      "reason": "Observed ~10x DC/AC numerical discrepancy in Plant 1 (unresolved scaling anomaly vs documented unit specification); also intermediate electrical state prior to inverter conversion"
+    }
+  ]
+}

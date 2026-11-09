@@ -1,47 +1,127 @@
-# Python cache files
+# ==============================================================================
+# SolarSelect MLOps Project — .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Python Cache & Compiled Files
+# ------------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
 
-# Virtual environments
+# ------------------------------------------------------------------------------
+# 2. Virtual Environments
+# ------------------------------------------------------------------------------
 .venv/
 venv/
 env/
+ENV/
+env.bak/
+venv.bak/
 
-# Environment variables and secrets
+# ------------------------------------------------------------------------------
+# 3. Environment Variables & Secrets
+# ------------------------------------------------------------------------------
 .env
 .env.*
 !.env.example
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# IDE and operating system files
-.vscode/
+# ------------------------------------------------------------------------------
+# 4. Operating System & IDE Files
+# ------------------------------------------------------------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Logs and temporary files
-*.log
-tmp/
-temp/
+# ------------------------------------------------------------------------------
+# 5. Jupyter Notebook Checkpoints & Temporary Files
+# ------------------------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
 
-# Model artifacts
+# ------------------------------------------------------------------------------
+# 6. MLflow & Experiment Tracking
+# ------------------------------------------------------------------------------
+mlruns/
+**/mlruns/
+mlflow.db*
+**/mlflow.db*
+.trash/
+
+# ------------------------------------------------------------------------------
+# 7. Model Artifacts & Weights (Tracked via DVC / Model Registry)
+# ------------------------------------------------------------------------------
 *.pkl
 *.joblib
 *.pt
 *.pth
 *.h5
+*.hdf5
 *.onnx
+*.bin
+*.weights
 
-# Experiment tracking output
-mlruns/
+# ------------------------------------------------------------------------------
+# 8. Logs & Temporary Output
+# ------------------------------------------------------------------------------
+*.log
+logs/
+tmp/
+temp/
+# Preserve the root project log file
+!log.txt
 
-# Build and distribution output
+# ------------------------------------------------------------------------------
+# 9. Build & Distribution Output
+# ------------------------------------------------------------------------------
 build/
 dist/
 *.egg-info/
 
-# Raw and generated CSV files
+# ------------------------------------------------------------------------------
+# 10. Data Files & Archives (Raw & Large Datasets Connected to DVC)
+# ------------------------------------------------------------------------------
+# Tabular, columnar, and array data
 *.csv
+*.tsv
+*.parquet
+*.feather
+*.arrow
+*.nc
+*.mat
+*.npy
+*.npz
 
-/mlflow.db*
-/EDA/mlruns/
+# Raw dataset documentation & report files in data/
+data/raw/**/*.pdf
+data/raw/**/*.PDF
+
+# Compressed archive formats
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Unused/auxiliary raw data directories
+data/NASA/
+
+# ------------------------------------------------------------------------------
+# 11. DVC Configuration & Pointer Files (Must Always Be Tracked by Git)
+# ------------------------------------------------------------------------------
+!*.dvc
+!.dvcignore
+.dvc/cache/
+.dvc/tmp/
+

@@ -1,0 +1,118 @@
+{
+  "dataset_name": "UNISOLAR Campus 1 Consistent Cohort",
+  "primary_target": "target_daily_yield",
+  "target_unit": "kWh/kWp/day",
+  "cohort_sites": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40
+  ],
+  "cohort_site_count": 24,
+  "temporal_window": "2021-05-01 to 2022-04-30 (12 months / 1 complete annual cycle)",
+  "expected_annual_calendar_days": 365,
+  "expected_annual_site_days": 8760,
+  "observed_telemetry_calendar_dates": 355,
+  "observed_telemetry_site_days": 8520,
+  "absent_telemetry_calendar_dates": [
+    "2021-07-10",
+    "2021-08-11",
+    "2021-11-27",
+    "2022-04-24",
+    "2022-04-25",
+    "2022-04-26",
+    "2022-04-27",
+    "2022-04-28",
+    "2022-04-29",
+    "2022-04-30"
+  ],
+  "absent_telemetry_calendar_days_count": 10,
+  "absent_telemetry_site_days": 240,
+  "valid_site_day_criteria": {
+    "expected_intervals": 96,
+    "core_window": "09:00 to 15:45 (28 intervals)",
+    "min_core_valid_intervals": 26,
+    "capacity_requirement": "documented kWp > 0"
+  },
+  "total_evaluated_site_days": 8760,
+  "total_valid_site_days": 7039,
+  "total_excluded_site_days": 1721,
+  "valid_site_day_percentage_of_annual": 80.35388127853881,
+  "valid_site_day_percentage_of_observed": 82.61737089201878,
+  "column_accounting": {
+    "total_columns": 41,
+    "identifiers_and_splits": 3,
+    "target_and_derivatives": 3,
+    "primary_predictive_features": 29,
+    "site_diagnostic_flags": 6,
+    "total_model_input_features": 35
+  },
+  "split_boundaries": {
+    "train": {
+      "start": "2021-05-01",
+      "end": "2021-12-31",
+      "months": 8,
+      "count": 4770
+    },
+    "validation": {
+      "start": "2022-01-01",
+      "end": "2022-02-28",
+      "months": 2,
+      "count": 1037
+    },
+    "test": {
+      "start": "2022-03-01",
+      "end": "2022-04-30",
+      "months": 2,
+      "count": 1232
+    }
+  },
+  "training_imputation_values": {
+    "lag1_temp_mean": 12.1665972221875,
+    "lag1_temp_max": 16.72666667,
+    "lag1_temp_min": 8.1,
+    "lag1_temp_range": 8.899999999999999,
+    "lag1_rh_mean": 78.11388888885416,
+    "lag1_daily_yield": 2.349695585996956,
+    "lag2_daily_yield": 2.3154947916666666,
+    "lag7_daily_yield": 2.2682380837033413,
+    "rolling_mean_7d_yield": 2.5852299046608382,
+    "rolling_std_7d_yield": 0.7849672115222495,
+    "rolling_mean_14d_yield": 2.4367483315723653,
+    "rolling_mean_30d_yield": 2.3131967288011697
+  },
+  "feature_count": 41,
+  "provisional_concern_sites": {
+    "site_19": {
+      "corrected_mean_yf": 18.21,
+      "capacity_factor_24h": 0.7587,
+      "hypothesis": "feeder/building aggregation"
+    },
+    "site_24": {
+      "corrected_mean_yf": 6.08,
+      "capacity_factor_24h": 0.2534,
+      "hypothesis": "underreported DC capacity"
+    }
+  },
+  "peer_median_specific_yield": 2.94
+}
