@@ -2,6 +2,9 @@
 
 This directory contains the standardized, modular Jupyter notebooks for the SolarSelect MLOps project.
 
+> [!NOTE]
+> For the complete architectural, mathematical, and data governance documentation, please consult the central [**Documentation Portal (`docs/`)**](../docs/README.md).
+
 ---
 
 ## Directory Structure
@@ -112,19 +115,72 @@ notebooks/
    - Delivers the 14-gate Phase 3 Technical Handover Matrix, cleanly separating closed EDA determinations from Phase 3 pipeline implementation responsibilities.
 
 7. [**Target Definition and Data Preparation (`notebooks/phase3/target_definition_and_data_preparation.ipynb`)**](phase3/target_definition_and_data_preparation.ipynb):
-   - Implements and completes Phase 3 (Target Definition and Data Preparation): transforms approved raw datasets into ML-ready feature matrices.
+   - Implements and finalizes Phase 3 (Target Definition and Data Preparation): transforms approved raw datasets into ML-ready feature matrices across a dual-dataset architecture.
    - Finalizes primary target as Daily Specific Yield ($Y_f = \frac{\sum E_{15\text{m}}}{\text{kW}_p}$ in $\text{kWh}/\text{kW}_p/\text{day}$) on verified valid site-days.
-   - Establishes complete site-day accounting reconciliation across the 24-site cohort over the 365-day annual window ($24 \times 365 = 8,760$ expected site-days): $7,039$ valid site-days ($80.35\%$), $1,481$ observed invalid site-days ($16.91\%$), and $240$ site-days from the 10 completely absent calendar dates ($2.74\%$).
-   - Formulates 41-column feature matrix with 100% dictionary alignment ($3$ identifiers/split, $3$ target/derivatives, $29$ primary predictive continuous/cyclical features, and $6$ site diagnostic flags; total $35$ model input features).
-   - Audits target physical plausibility: localizes maximum target yield ($40.79\text{ kWh}/\text{kW}_p/\text{day}$) strictly to Site 19 ($1,399.81\text{ kWh}$ on $34.32\text{ kW}_p$ on 2021-12-30) due to meter/building aggregation; confirms peer cohort median of $2.633\text{ kWh}/\text{kW}_p/\text{day}$ (max $6.917\text{ kWh}/\text{kW}_p/\text{day}$, $\text{CF}_{24\text{h}} \le 28.82\%$). Preserves data without artificial clipping, supported by binary sensitivity flags.
-   - Prevents leakage: enforces day-ahead lag horizon $\tau \ge 24\text{h}$, completely eliminates same-day weather leakage, and fits imputer statistics strictly on training data.
-   - Exports chronological splits: Train ($4,770$, 8 mos), Validation ($1,037$, 2 mos), Test ($1,232$, 2 mos), with imputer statistics fitted strictly on training data.
-   - Prepares isolated Kaggle Benchmark (Plants 1 & 2: $136,472$ intervals) for high-frequency short-horizon inverter power forecasting (`AC_POWER` in kW) under on-site `IRRADIATION`; clarifies Plant 1 DC/AC $10\times$ ratio as an observed discrepancy rather than an asserted sensor bug.
+   - Establishes two parallel modeling datasets for Layer A: Dataset A (Full Cohort, 24 sites, $n = 7,039$) and Dataset B (Peer Cohort, 22 sites, $n = 6,456$, stored under `data/processed/unisolar/peer_cohort/`).
+   - Reconciles full site-day accounting across the 365-day annual window ($24 \times 365 = 8,760$ expected site-days): $7,039$ valid site-days ($80.35\%$), $1,481$ observed invalid site-days ($16.91\%$), and $240$ site-days from the 10 completely absent calendar dates ($2.74\%$).
+   - Strictly separates primary predictive features ($29$ continuous/cyclical features) from post-hoc diagnostic metadata and quality indicators, isolating diagnostic flags in `diagnostic_metadata.csv` to prevent model leakage.
+   - Enforces calendar-aware day-ahead lag horizon $\tau \ge 24\text{h}$ on continuous daily grid without forward-fill distortion; eliminates same-day weather leakage; fits imputation medians strictly on training partition.
+   - Audits daily energy interval completeness: confirms sub-threshold missingness outside the core window tracks astronomical daylight hours, with equal interval counts across cohorts ($43.7$ to $44.8$ valid intervals/day).
+   - Audits target physical plausibility: documents Site 19 ($34.32\text{ kW}_p$, max $40.79\text{ kWh}/\text{kW}_p/\text{day}$) and Site 24 ($40.26\text{ kW}_p$, mean $6.08\text{ kWh}/\text{kW}_p/\text{day}$) as unresolved data-quality anomalies (feeder aggregation is an unproven hypothesis); confirms Peer Cohort is $100\%$ physically bounded ($Y_{f,\text{max}} = 6.917\text{ kWh}/\text{kW}_p/\text{day}$, $\text{CF}_{24\text{h}} \le 28.82\%$).
+   - Exports chronological splits for both Dataset A (Train 4,770, Val 1,037, Test 1,232) and Dataset B (Train 4,383, Val 945, Test 1,128).
+   - Prepares isolated Kaggle Benchmark (Plants 1 & 2: $136,472$ intervals); clarifies Plant 1 DC/AC $10\times$ ratio as an observed discrepancy rather than an asserted sensor bug.
    - Verifies deterministic pipeline execution via `src/prepare_phase3_data.py`.
+
+- **Phase 4: Model Development and Comparison**
+  - Directory: `notebooks/phase4/`
+  - Master Notebook: `notebooks/phase4/baseline_and_model_development.ipynb`
+  - Scope & Status: Complete (Prompts 1 & 2). Covers empirical baseline establishment, benchmarking of 8 machine learning algorithms, expanding-window temporal cross-validation, hyperparameter optimization, permutation feature importance, residual/site-wise diagnostics, multi-objective latency and footprint profiling, and candidate model selection.
+  - Key Outcomes:
+    - Reconciled feature naming and chronological partition dates: verified exact 29 Phase 3 features (`kWp`, `daylight_hours`, `extraterrestrial_radiation_h0`, `lag1_temp_mean`, `lag1_rh_mean`, etc.) and confirmed quarantined test partition (March 1 – April 23, 2022) was never touched.
+    - Designed 4-fold expanding window temporal cross-validation within training partition (grouped strictly by date, zero leakage across sites on same calendar day).
+    - Selected candidates for **Dataset A (Full Cohort, 24 sites)**:
+      * Primary ML Candidate: **Tuned Elastic Net** ($\alpha=0.05, l_1=0.9$, $\text{MAE}=1.3765, \text{RMSE}=2.0134, R^2=0.8484$, $2.7\text{ KB}$, $350\ \mu\text{s}$ latency).
+      * Fallback Candidate: **Tuned Extra Trees** ($\text{MAE}=1.4924, \text{RMSE}=2.7264, R^2=0.7220$).
+      * Reference Benchmark: Persistence Baseline ($\text{MAE}=1.4981, \text{RMSE}=3.1874, R^2=0.6207$).
+    - Selected candidates for **Dataset B (Peer Cohort, 22 sites)**:
+      * Primary ML Candidate: **Tuned Extra Trees** ($n=100, \text{depth}=12, \text{max\_features}=0.8$, $\text{MAE}=1.0793, \text{RMSE}=1.3462, R^2=-0.2637$, $17.7\text{ MB}$, $14.2\text{ ms}$ latency). Outperforms Train Mean baseline RMSE ($2.0716$) by $35.0\%$ and beats Persistence benchmark ($\text{RMSE}=1.4984$).
+      * Fallback Candidate: **Tuned Elastic Net** ($\alpha=0.05, l_1=0.7$, $\text{MAE}=1.3871, \text{RMSE}=1.6366, R^2=-0.8677$).
+      * Reference Benchmark: Persistence Baseline ($\text{MAE}=1.1319, \text{RMSE}=1.4984, R^2=-0.5661$).
+    - Diagnosed mathematical mechanics of negative $R^2$ in Peer Cohort midsummer validation: low summer cross-sectional variance ($\text{Var}=1.436$) coupled with winter-to-summer seasonal shift renders $R^2$ negative even for highly accurate forecasts, establishing MAE and RMSE as authoritative physical criteria.
+    - Serialized tuned candidate models to `models/phase4/` and generated comprehensive metadata in `models/phase4/model_metadata.json`.
+
+- **Phase 5: Model Evaluation and Finalization**
+  - Directory: `notebooks/phase5/`
+  - Master Notebooks:
+    * `notebooks/phase5/model_diagnostics_and_improvement_investigation.ipynb` (Prompt 1 Diagnostics)
+    * `notebooks/phase5/model_improvement_experiments.ipynb` (Prompt 2 Improvement Experiments)
+    * `notebooks/phase5/final_model_evaluation_and_generalization.ipynb` (Prompt 3 Master Test Evaluation)
+  - Scope & Status: Complete (Prompts 1, 2, & 3) (**STATUS: FORMALLY COMPLETED AND FINALIZED**). Covers deep model failure diagnostics, error decomposition of negative $R^2$, ensemble blending optimization, secondary validation checks, and the single, leakage-safe held-out test evaluation on the previously quarantined partition (March 1 – April 23, 2022).
+  - Key Outcomes:
+    - Maintained strict quarantine over test partition until Prompt 3; single evaluation execution with zero post-test iterative tuning.
+    - Combined pre-test retraining (Train + Val, May 1, 2021 – Feb 28, 2022) successfully resolved seasonal underprediction bias in Peer Cohort.
+    - **Peer Cohort (22 Sites, Test $N=1,128$):**
+      * **Primary Candidate (Tuned ExtraTrees):** Achieved $\text{MAE} = \mathbf{0.9050}$, $\text{RMSE} = \mathbf{1.0700}$, $\mathbf{R^2 = +0.2580}$, $\text{Bias} = -0.1036$. Significantly outperformed Persistence ($\text{MAE}=1.0875, \text{RMSE}=1.3713, R^2=-0.2187$). Verdict: **ACCEPTED**.
+      * **Fallback Candidate (50/50 Ensemble Blend):** Achieved $\text{MAE} = \mathbf{0.8898}$, $\text{RMSE} = \mathbf{1.0615}$, $\mathbf{R^2 = +0.2698}$. Verdict: **ACCEPTED (Authorized Fallback)**.
+    - **Full Cohort (24 Sites, Test $N=1,232$):**
+      * **Primary Candidate (Tuned ElasticNet):** Achieved $\text{MAE} = \mathbf{1.1463}$, $\text{RMSE} = \mathbf{1.9494}$, $\mathbf{R^2 = +0.7407}$, $\text{Bias} = -0.3144$. Outperformed Persistence ($\text{MAE}=1.3952, \text{RMSE}=2.4225, R^2=0.5996$). Verdict: **CONDITIONALLY ACCEPTED WITH DOCUMENTED LIMITATIONS**.
+      * **Fallback Candidate (70/30 Ensemble Blend):** Achieved $\text{MAE} = \mathbf{1.1623}$, $\text{RMSE} = \mathbf{1.9567}$, $\mathbf{R^2 = +0.7388}$. Verdict: **CONDITIONALLY ACCEPTED WITH DOCUMENTED LIMITATIONS**.
+    - Generated publication-grade test evaluation figures, complete metadata in `models/phase5/final_model_metadata.json`, and CSV reports in `reports/phase5/`.
+    - Handover established for Phase 6: Layer B Constraint-Aware Solar Panel Recommendation and Uncertainty Quantification.
+
+- **Phase 6: Real Solar Panel Catalogue**
+  - Directory: `notebooks/phase6/`
+  - Master Notebook: `notebooks/phase6/panel_catalogue_inventory_and_validation.ipynb` (Prompt 1)
+  - Scope & Status: Prompt 1 Complete (**STATUS: IN PROGRESS — INVENTORY & CANONICAL SCHEMA ESTABLISHED**). Covers existing repository catalogue audit, reconciliation against Appendix B claims, canonical 43-column schema definition across 8 engineering domains, automated engineering validation engine, missingness analysis, and technology gap assessment.
+  - Key Outcomes:
+    - Proved conclusively that `configs/panels_catalogue.csv` did not previously exist; Appendix B commercial models (Waaree, Canadian Solar, First Solar, Mission Solar) exist only as documentation claims, with zero verified datasheets in codebase.
+    - Extracted 3 raw module references from `data/raw/unisolar/Solar_Site_Details.csv` (Trina 330W, Trina 310W, SunpowerSPR-E20-435-COM) and populated `configs/panels_catalogue.csv` with zero assumed/fabricated values (34 fields set strictly to null, status: `UNVERIFIED_PENDING_EXTERNAL_DATASHEET`).
+    - Established canonical schema in `configs/panels_catalogue_schema.json` and clean template in `configs/panels_catalogue_template.csv`.
+    - Implemented modular validator `src/validate_panel_catalogue.py` with diagnostic efficiency, thermal sign/unit, electrical curve, and pricing basis checks.
+    - Formulated official External Data Acquisition Request for Phase 6 Prompt 2.
 
 ---
 
 ## Project Status
 - **Phase 1 (Data Inspection):** Complete and verified.
 - **Phase 2 (Exploratory Data Analysis):** Complete and verified (all 6 notebooks execute with 0 errors).
-- **Phase 3 (Target Definition and Data Preparation):** Complete, verified, and formally closed with documented limitations (**STATUS: CLOSED WITH DOCUMENTED LIMITATIONS**). Ready for Phase 4 (Model Development and Comparison).
+- **Phase 3 (Target Definition and Data Preparation):** Complete, verified, and formally finalized with documented limitations (**STATUS: FINALIZED WITH DOCUMENTED LIMITATIONS**).
+- **Phase 4 (Model Development and Comparison):** Complete and formally finalized (**STATUS: COMPLETED WITH DOCUMENTED LIMITATIONS**).
+- **Phase 5 (Model Evaluation and Finalization):** Complete, verified, and formally finalized (**STATUS: FORMALLY COMPLETED AND FINALIZED**).
+- **Phase 6 (Real Solar Panel Catalogue):** Prompt 1 Complete (**STATUS: IN PROGRESS — INVENTORY & CANONICAL SCHEMA ESTABLISHED**). Ready for Prompt 2 (External Datasheet Acquisition Approval & Population).

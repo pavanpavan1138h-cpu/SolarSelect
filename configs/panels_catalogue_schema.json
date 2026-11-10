@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SolarSelect Commercial Solar Panel Catalogue Schema",
+  "version": "1.0.0",
+  "description": "Canonical schema for commercial photovoltaic modules used in SolarSelect Layer B recommendation and configuration engine.",
+  "required_columns": [
+    "panel_id",
+    "manufacturer",
+    "model"
+  ],
+  "total_columns": 43,
+  "column_groups": {
+    "A_product_identification": [
+      "panel_id",
+      "manufacturer",
+      "model",
+      "cell_technology",
+      "module_type"
+    ],
+    "B_rated_power_and_efficiency": [
+      "rated_power_wp",
+      "module_efficiency_pct",
+      "stc_irradiance_w_m2",
+      "stc_cell_temperature_c"
+    ],
+    "C_physical_specifications": [
+      "length_mm",
+      "width_mm",
+      "thickness_mm",
+      "area_m2",
+      "weight_kg"
+    ],
+    "D_thermal_specifications": [
+      "pmax_temp_coefficient_pct_per_c",
+      "voc_temp_coefficient_pct_per_c",
+      "isc_temp_coefficient_pct_per_c",
+      "noct_c",
+      "nmot_c"
+    ],
+    "E_electrical_specifications": [
+      "voc_v",
+      "isc_a",
+      "vmp_v",
+      "imp_a",
+      "max_system_voltage_v",
+      "max_series_fuse_rating_a"
+    ],
+    "F_lifetime_and_degradation": [
+      "product_warranty_years",
+      "performance_warranty_years",
+      "annual_degradation_pct",
+      "end_of_warranty_power_pct"
+    ],
+    "G_economic_information": [
+      "price_per_module",
+      "price_per_wp",
+      "currency",
+      "price_basis",
+      "price_region",
+      "price_confidence",
+      "price_observed_date"
+    ],
+    "H_provenance_and_verification": [
+      "specification_source",
+      "specification_source_url",
+      "source_document_name",
+      "source_page",
+      "verification_status",
+      "verification_date",
+      "notes"
+    ]
+  },
+  "columns": {
+    "panel_id": {
+      "type": "string",
+      "description": "Unique immutable identifier for each catalogue entry (e.g., PNL-001, PNL-TRINA-330).",
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "Official legal or commercial name of the PV module manufacturer (e.g., Trina Solar, SunPower)."
+    },
+    "model": {
+      "type": "string",
+      "description": "Manufacturer model identifier or series designation as stated on technical datasheet."
+    },
+    "cell_technology": {
+      "type": "string",
+      "description": "Semiconductor and cell architecture technology.",
+      "enum": [
+        "Monocrystalline PERC",
+        "N-type TOPCon",
+        "Heterojunction (HJT)",
+        "Polycrystalline",
+        "Thin-film CdTe",
+        "IBC (Interdigitated Back Contact)",
+        "Unknown / Pending Datasheet"
+      ]
+    },
+    "module_type": {
+      "type": "string",
+      "description": "Mechanical module construction format.",
+      "enum": [
+        "Monofacial",
+        "Bifacial (Glass-Glass)",
+        "Bifacial (Transparent Backsheet)",
+        "Flexible / Lightweight",
+        "Unknown / Pending Datasheet"
+      ]
+    },
+    "rated_power_wp": {
+      "type": "number",
+      "description": "Nominal peak power rating under STC (Wp). Must be strictly positive.",
+      "minimum": 50.0,
+      "maximum": 1000.0,
+      "unit": "Wp"
+    },
+    "module_efficiency_pct": {
+      "type": "number",
+      "description": "Module gross aperture conversion efficiency under STC (%).",
+      "minimum": 5.0,
+      "maximum": 30.0,
+      "unit": "%"
+    },
+    "stc_irradiance_w_m2": {
+      "type": "number",
+      "description": "Standard Test Condition reference irradiance (nominally 1000 W/m²).",
+      "default": 1000.0,
+      "unit": "W/m²"
+    },
+    "stc_cell_temperature_c": {
+      "type": "number",
+      "description": "Standard Test Condition reference cell temperature (nominally 25°C).",
+      "default": 25.0,
+      "unit": "°C"
+    },
+    "length_mm": {
+      "type": "number",
+      "description": "Physical module outer length along frame (mm).",
+      "minimum": 500.0,
+      "maximum": 3000.0,
+      "unit": "mm"
+    },
+    "width_mm": {
+      "type": "number",
+      "description": "Physical module outer width along frame (mm).",
+      "minimum": 500.0,
+      "maximum": 2000.0,
+      "unit": "mm"
+    },
+    "thickness_mm": {
+      "type": "number",
+      "description": "Module frame profile thickness (mm).",
+      "minimum": 15.0,
+      "maximum": 60.0,
+      "unit": "mm"
+    },
+    "area_m2": {
+      "type": "number",
+      "description": "Gross module surface area calculated as (length_mm * width_mm) / 1,000,000.",
+      "minimum": 0.5,
+      "maximum": 4.5,
+      "unit": "m²"
+    },
+    "weight_kg": {
+      "type": "number",
+      "description": "Gross module weight including frame and junction box (kg).",
+      "minimum": 5.0,
+      "maximum": 50.0,
+      "unit": "kg"
+    },
+    "pmax_temp_coefficient_pct_per_c": {
+      "type": "number",
+      "description": "Temperature coefficient of maximum power (gamma_Pmp). Physically negative for silicon cells.",
+      "minimum": -0.60,
+      "maximum": -0.15,
+      "unit": "%/°C"
+    },
+    "voc_temp_coefficient_pct_per_c": {
+      "type": "number",
+      "description": "Temperature coefficient of open-circuit voltage (beta_Voc). Physically negative.",
+      "minimum": -0.50,
+      "maximum": -0.15,
+      "unit": "%/°C"
+    },
+    "isc_temp_coefficient_pct_per_c": {
+      "type": "number",
+      "description": "Temperature coefficient of short-circuit current (alpha_Isc). Physically positive.",
+      "minimum": 0.01,
+      "maximum": 0.10,
+      "unit": "%/°C"
+    },
+    "noct_c": {
+      "type": "number",
+      "description": "Nominal Operating Cell Temperature (800 W/m², 20°C ambient, 1 m/s wind) (°C).",
+      "minimum": 35.0,
+      "maximum": 52.0,
+      "unit": "°C"
+    },
+    "nmot_c": {
+      "type": "number",
+      "description": "Nominal Module Operating Temperature under modern IEC 61215 standard (°C).",
+      "minimum": 35.0,
+      "maximum": 52.0,
+      "unit": "°C"
+    },
+    "voc_v": {
+      "type": "number",
+      "description": "Open-circuit voltage under STC (V).",
+      "minimum": 20.0,
+      "maximum": 100.0,
+      "unit": "V"
+    },
+    "isc_a": {
+      "type": "number",
+      "description": "Short-circuit current under STC (A).",
+      "minimum": 2.0,
+      "maximum": 25.0,
+      "unit": "A"
+    },
+    "vmp_v": {
+      "type": "number",
+      "description": "Voltage at maximum power point under STC (V). Must be < voc_v.",
+      "minimum": 15.0,
+      "maximum": 90.0,
+      "unit": "V"
+    },
+    "imp_a": {
+      "type": "number",
+      "description": "Current at maximum power point under STC (A). Must be < isc_a.",
+      "minimum": 2.0,
+      "maximum": 24.0,
+      "unit": "A"
+    },
+    "max_system_voltage_v": {
+      "type": "number",
+      "description": "Maximum allowable DC string system voltage (typically 1000V or 1500V IEC/UL).",
+      "enum": [600, 1000, 1500],
+      "unit": "V"
+    },
+    "max_series_fuse_rating_a": {
+      "type": "number",
+      "description": "Maximum allowable series protective fuse rating (A).",
+      "minimum": 10.0,
+      "maximum": 40.0,
+      "unit": "A"
+    },
+    "product_warranty_years": {
+      "type": "number",
+      "description": "Manufacturer warranty duration against materials and workmanship defects.",
+      "minimum": 0,
+      "maximum": 40,
+      "unit": "years"
+    },
+    "performance_warranty_years": {
+      "type": "number",
+      "description": "Manufacturer guaranteed linear power output warranty duration.",
+      "minimum": 0,
+      "maximum": 40,
+      "unit": "years"
+    },
+    "annual_degradation_pct": {
+      "type": "number",
+      "description": "Guaranteed maximum linear annual power degradation rate (%/year).",
+      "minimum": 0.1,
+      "maximum": 1.5,
+      "unit": "%/year"
+    },
+    "end_of_warranty_power_pct": {
+      "type": "number",
+      "description": "Guaranteed residual power output percentage at end of performance warranty period (%).",
+      "minimum": 70.0,
+      "maximum": 95.0,
+      "unit": "%"
+    },
+    "price_per_module": {
+      "type": "number",
+      "description": "Observed or quoted commercial unit purchase price for single module.",
+      "minimum": 0.0
+    },
+    "price_per_wp": {
+      "type": "number",
+      "description": "Normalized commercial price per rated peak watt (price_per_module / rated_power_wp).",
+      "minimum": 0.0
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 three-letter currency code (e.g., USD, AUD, EUR, INR).",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "price_basis": {
+      "type": "string",
+      "description": "Commercial supply chain pricing context and tier.",
+      "enum": [
+        "Manufacturer List Price (MSRP)",
+        "Wholesale / Commercial EPC Tier (MW-scale)",
+        "Distributor Wholesale (Pallet-scale)",
+        "Retail Listing",
+        "Historical Project Procurement",
+        "Unverified Estimate / Placeholder"
+      ]
+    },
+    "price_region": {
+      "type": "string",
+      "description": "Geographical region or national market where pricing was quoted (e.g., Australia, US, India, Global)."
+    },
+    "price_confidence": {
+      "type": "string",
+      "description": "Confidence level in commercial pricing accuracy.",
+      "enum": [
+        "High (Audited Invoice or Official Quote)",
+        "Medium (Published Distributor Catalog)",
+        "Low (Informal Web Listing or Index)",
+        "Unverified / Null"
+      ]
+    },
+    "price_observed_date": {
+      "type": "string",
+      "description": "Date on which the price quote or index was recorded (YYYY-MM-DD).",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "specification_source": {
+      "type": "string",
+      "description": "Primary repository file, datasheet, or catalogue from which record was extracted."
+    },
+    "specification_source_url": {
+      "type": "string",
+      "description": "Documented URL for manufacturer product page or datasheet if available in repo."
+    },
+    "source_document_name": {
+      "type": "string",
+      "description": "Formal filename or document title of manufacturer technical specification datasheet."
+    },
+    "source_page": {
+      "type": "string",
+      "description": "Page number or section in source document where ratings appear."
+    },
+    "verification_status": {
+      "type": "string",
+      "description": "Traceability and verification level of the record specifications.",
+      "enum": [
+        "VERIFIED_OFFICIAL_DATASHEET",
+        "PROVISIONAL_PARTIAL_SPECIFICATION",
+        "UNVERIFIED_PENDING_EXTERNAL_DATASHEET",
+        "UNVERIFIED_HISTORICAL_CLAIM"
+      ]
+    },
+    "verification_date": {
+      "type": "string",
+      "description": "Date on which specifications were verified against authoritative source (YYYY-MM-DD).",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Technical notes, special mounting requirements, certification standards, or provenance disclaimers."
+    }
+  }
+}
+

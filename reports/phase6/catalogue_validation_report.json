@@ -1,0 +1,424 @@
+{
+  "catalogue_file": "configs/panels_catalogue.csv",
+  "schema_file": "configs/panels_catalogue_schema.json",
+  "file_exists": true,
+  "total_records": 12,
+  "total_columns": 43,
+  "automated_checks": {
+    "schema_conformance": true,
+    "missing_columns": [],
+    "extra_columns": [],
+    "critical_errors": 0,
+    "engineering_warnings": 0,
+    "status": "PASS"
+  },
+  "documentary_evidence_checks": {
+    "technical_specifications_verified_count": 12,
+    "exact_model_identity_confirmed_count": 10,
+    "candidate_model_mapping_count": 2,
+    "unverified_records_count": 0,
+    "provenance_alerts": 0,
+    "commercial_pricing_completeness_pct": 0.0,
+    "pricing_policy": "EXPLICIT_GAPS_MAINTAINED_PER_GOVERNANCE",
+    "status": "TECHNICAL_SPECIFICATIONS_VERIFIED_WITH_CANDIDATE_CAMPUS_MAPPINGS",
+    "scope_note": "Validates catalogue structure, schema conformance, and engineering consistency against retained compiled specification records; does not independently authenticate inaccessible original manufacturer documents."
+  },
+  "column_completeness": {
+    "panel_id": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "manufacturer": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "model": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "cell_technology": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "module_type": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "rated_power_wp": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "module_efficiency_pct": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "stc_irradiance_w_m2": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "stc_cell_temperature_c": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "length_mm": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "width_mm": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "thickness_mm": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "area_m2": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "weight_kg": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "pmax_temp_coefficient_pct_per_c": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "voc_temp_coefficient_pct_per_c": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "isc_temp_coefficient_pct_per_c": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "noct_c": {
+      "non_null_count": 8,
+      "null_count": 4,
+      "completeness_pct": 66.67
+    },
+    "nmot_c": {
+      "non_null_count": 4,
+      "null_count": 8,
+      "completeness_pct": 33.33
+    },
+    "voc_v": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "isc_a": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "vmp_v": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "imp_a": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "max_system_voltage_v": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "max_series_fuse_rating_a": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "product_warranty_years": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "performance_warranty_years": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "annual_degradation_pct": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "end_of_warranty_power_pct": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "price_per_module": {
+      "non_null_count": 0,
+      "null_count": 12,
+      "completeness_pct": 0.0
+    },
+    "price_per_wp": {
+      "non_null_count": 0,
+      "null_count": 12,
+      "completeness_pct": 0.0
+    },
+    "currency": {
+      "non_null_count": 0,
+      "null_count": 12,
+      "completeness_pct": 0.0
+    },
+    "price_basis": {
+      "non_null_count": 0,
+      "null_count": 12,
+      "completeness_pct": 0.0
+    },
+    "price_region": {
+      "non_null_count": 0,
+      "null_count": 12,
+      "completeness_pct": 0.0
+    },
+    "price_confidence": {
+      "non_null_count": 0,
+      "null_count": 12,
+      "completeness_pct": 0.0
+    },
+    "price_observed_date": {
+      "non_null_count": 0,
+      "null_count": 12,
+      "completeness_pct": 0.0
+    },
+    "specification_source": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "specification_source_url": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "source_document_name": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "source_page": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "verification_status": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "verification_date": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    },
+    "notes": {
+      "non_null_count": 12,
+      "null_count": 0,
+      "completeness_pct": 100.0
+    }
+  },
+  "group_completeness": {
+    "A_product_identification": 100.0,
+    "B_rated_power_and_efficiency": 100.0,
+    "C_physical_specifications": 100.0,
+    "D_thermal_specifications": 80.0,
+    "E_electrical_specifications": 100.0,
+    "F_lifetime_and_degradation": 100.0,
+    "G_economic_information": 0.0,
+    "H_provenance_and_verification": 100.0
+  },
+  "records_audit": [
+    {
+      "panel_id": "PNL-TRINA-330W",
+      "manufacturer": "Trina Solar",
+      "model": "Trina 330W (TSM-330PD14)",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "CANDIDATE_INSTALLATION_MAPPING",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 1.9443,
+        "diagnostic_efficiency_pct": 16.97,
+        "calc_pmax_wp": 330.24
+      }
+    },
+    {
+      "panel_id": "PNL-TRINA-310W",
+      "manufacturer": "Trina Solar",
+      "model": "Trina 310W (TSM-310DD05A.08)",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "CANDIDATE_INSTALLATION_MAPPING",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 1.6368,
+        "diagnostic_efficiency_pct": 18.94,
+        "calc_pmax_wp": 310.15
+      }
+    },
+    {
+      "panel_id": "PNL-SUNPOWER-435W",
+      "manufacturer": "SunPower",
+      "model": "SunPower SPR-E20-435-COM",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "CONFIRMED_CAMPUS_INSTALLATION",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 2.1621,
+        "diagnostic_efficiency_pct": 20.12,
+        "calc_pmax_wp": 435.21
+      }
+    },
+    {
+      "panel_id": "PNL-CANADIAN-445W",
+      "manufacturer": "Canadian Solar",
+      "model": "HiKu CS3W-445MS",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 2.2092,
+        "diagnostic_efficiency_pct": 20.14,
+        "calc_pmax_wp": 445.4
+      }
+    },
+    {
+      "panel_id": "PNL-CANADIAN-BIFI-575W",
+      "manufacturer": "Canadian Solar",
+      "model": "TOPBiHiKu6 CS6W-575TB-AG",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 2.5833,
+        "diagnostic_efficiency_pct": 22.26,
+        "calc_pmax_wp": 575.29
+      }
+    },
+    {
+      "panel_id": "PNL-JINKO-430W",
+      "manufacturer": "Jinko Solar",
+      "model": "Tiger Neo JKM430N-54HL4-V",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 1.9527,
+        "diagnostic_efficiency_pct": 22.02,
+        "calc_pmax_wp": 430.06
+      }
+    },
+    {
+      "panel_id": "PNL-TRINA-VERTEX-440W",
+      "manufacturer": "Trina Solar",
+      "model": "Vertex S+ TSM-440NEG9R.28",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 1.9981,
+        "diagnostic_efficiency_pct": 22.02,
+        "calc_pmax_wp": 440.44
+      }
+    },
+    {
+      "panel_id": "PNL-REC-ALPHA-420W",
+      "manufacturer": "REC Group",
+      "model": "REC Alpha Pure-R (REC420AA Pure-R)",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 1.9341,
+        "diagnostic_efficiency_pct": 21.72,
+        "calc_pmax_wp": 420.0
+      }
+    },
+    {
+      "panel_id": "PNL-FIRSTSOLAR-460W",
+      "manufacturer": "First Solar",
+      "model": "Series 6 Plus FS-6460",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 2.4751,
+        "diagnostic_efficiency_pct": 18.59,
+        "calc_pmax_wp": 460.67
+      }
+    },
+    {
+      "panel_id": "PNL-WAAREE-540W",
+      "manufacturer": "Waaree Energies",
+      "model": "Bi-55-540 (Ahnay Series)",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 2.5742,
+        "diagnostic_efficiency_pct": 20.98,
+        "calc_pmax_wp": 540.66
+      }
+    },
+    {
+      "panel_id": "PNL-MAXEON-400W",
+      "manufacturer": "Maxeon Solar Technologies",
+      "model": "Maxeon 3 SPR-MAX3-400",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 1.7677,
+        "diagnostic_efficiency_pct": 22.63,
+        "calc_pmax_wp": 400.06
+      }
+    },
+    {
+      "panel_id": "PNL-LONGI-580W",
+      "manufacturer": "LONGi Solar",
+      "model": "Hi-MO 7 LR5-72HGD-580M",
+      "verification_status": "VERIFIED_OFFICIAL_DATASHEET",
+      "installation_mapping": "BENCHMARK_REFERENCE_MODULE",
+      "errors": [],
+      "warnings": [],
+      "diagnostics": {
+        "calc_area_m2": 2.5833,
+        "diagnostic_efficiency_pct": 22.45,
+        "calc_pmax_wp": 580.01
+      }
+    }
+  ],
+  "overall_status": "PASS_AUTOMATED_WITH_CANDIDATE_CAMPUS_MAPPINGS"
+}

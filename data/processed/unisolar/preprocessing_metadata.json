@@ -1,5 +1,5 @@
 {
-  "dataset_name": "UNISOLAR Campus 1 Consistent Cohort",
+  "dataset_name": "UNISOLAR Campus 1 Full Cohort (Dataset A)",
   "primary_target": "target_daily_yield",
   "target_unit": "kWh/kWp/day",
   "cohort_sites": [
@@ -30,6 +30,7 @@
   ],
   "cohort_site_count": 24,
   "temporal_window": "2021-05-01 to 2022-04-30 (12 months / 1 complete annual cycle)",
+  "telemetry_end_date": "2022-04-23",
   "expected_annual_calendar_days": 365,
   "expected_annual_site_days": 8760,
   "observed_telemetry_calendar_dates": 355,
@@ -51,7 +52,7 @@
   "valid_site_day_criteria": {
     "expected_intervals": 96,
     "core_window": "09:00 to 15:45 (28 intervals)",
-    "min_core_valid_intervals": 26,
+    "min_core_nonnull_intervals": 26,
     "capacity_requirement": "documented kWp > 0"
   },
   "total_evaluated_site_days": 8760,
@@ -59,13 +60,12 @@
   "total_excluded_site_days": 1721,
   "valid_site_day_percentage_of_annual": 80.35388127853881,
   "valid_site_day_percentage_of_observed": 82.61737089201878,
-  "column_accounting": {
-    "total_columns": 41,
-    "identifiers_and_splits": 3,
-    "target_and_derivatives": 3,
+  "column_architecture": {
+    "model_matrix_columns": 33,
+    "identifiers": 3,
+    "target": 1,
     "primary_predictive_features": 29,
-    "site_diagnostic_flags": 6,
-    "total_model_input_features": 35
+    "diagnostic_metadata_columns": 17
   },
   "split_boundaries": {
     "train": {
@@ -82,7 +82,7 @@
     },
     "test": {
       "start": "2022-03-01",
-      "end": "2022-04-30",
+      "end": "2022-04-23",
       "months": 2,
       "count": 1232
     }
@@ -93,26 +93,34 @@
     "lag1_temp_min": 8.1,
     "lag1_temp_range": 8.899999999999999,
     "lag1_rh_mean": 78.11388888885416,
-    "lag1_daily_yield": 2.349695585996956,
-    "lag2_daily_yield": 2.3154947916666666,
-    "lag7_daily_yield": 2.2682380837033413,
+    "lag1_daily_yield": 2.2798828988068935,
+    "lag2_daily_yield": 2.2569444444444446,
+    "lag7_daily_yield": 2.2679036458333335,
     "rolling_mean_7d_yield": 2.5852299046608382,
     "rolling_std_7d_yield": 0.7849672115222495,
     "rolling_mean_14d_yield": 2.4367483315723653,
     "rolling_mean_30d_yield": 2.3131967288011697
   },
-  "feature_count": 41,
   "provisional_concern_sites": {
     "site_19": {
-      "corrected_mean_yf": 18.21,
-      "capacity_factor_24h": 0.7587,
-      "hypothesis": "feeder/building aggregation"
+      "documented_kwp": 34.32,
+      "documented_inverter": "1 x SolarEdge SE27.6K",
+      "mean_yf": 18.20959784861118,
+      "median_yf": 16.383486305361306,
+      "max_yf": 40.787077505827504,
+      "max_24h_cf": 1.6994615627428127,
+      "unresolved_anomaly_note": "Observed 15m generation reaches 42.22 kWh (168.88 kW power = 492% STC rating) and target yield reaches 40.79 kWh/kWp/day. Feeder/building aggregation is an unproven hypothesis; anomaly is preserved without clipping."
     },
     "site_24": {
-      "corrected_mean_yf": 6.08,
-      "capacity_factor_24h": 0.2534,
-      "hypothesis": "underreported DC capacity"
+      "documented_kwp": 40.26,
+      "documented_inverter": "1 x SolarEdge SE82.8K",
+      "mean_yf": 6.081038929826499,
+      "median_yf": 5.996569175360159,
+      "max_yf": 13.568445727769499,
+      "max_24h_cf": 0.5653519053237291,
+      "unresolved_anomaly_note": "Observed target yield averages 6.08 kWh/kWp/day (max 13.57). Inverter rating is 82.8 kW while panels document 40.26 kWp. Preserved without clipping."
     }
   },
-  "peer_median_specific_yield": 2.94
+  "peer_median_specific_yield": 2.6325162670350006,
+  "peer_mean_specific_yield": 2.8803509712514774
 }

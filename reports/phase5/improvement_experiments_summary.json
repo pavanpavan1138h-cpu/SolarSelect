@@ -1,0 +1,79 @@
+{
+  "project": "SolarSelect",
+  "phase": 5,
+  "prompt": 2,
+  "objective": "Model Improvement Experiments: Ensemble Blending, Seasonal Calibration & Site-Baseline Adjustment",
+  "test_partition_accessed": false,
+  "experiments": {
+    "experiment_1_blending": {
+      "peer_cohort": {
+        "tested_weights": [
+          0.0,
+          0.1,
+          0.2,
+          0.30000000000000004,
+          0.4,
+          0.5,
+          0.6000000000000001,
+          0.7000000000000001,
+          0.8,
+          0.9,
+          1.0
+        ],
+        "optimal_weight": 0.5,
+        "cv_rmse_best": 1.2714950893211618,
+        "cv_mae_best": 1.0585058079745047,
+        "cv_rmse_base_et": 1.319,
+        "improvement_cv_rmse": 0.0475,
+        "validation_transfer": "Does not transfer to summer validation because ElasticNet underprediction bias degrades ExtraTrees' superior summer centering"
+      },
+      "full_cohort": {
+        "tested_weights": [
+          0.0,
+          0.1,
+          0.2,
+          0.30000000000000004,
+          0.4,
+          0.5,
+          0.6000000000000001,
+          0.7000000000000001,
+          0.8,
+          0.9,
+          1.0
+        ],
+        "optimal_weight": 0.7,
+        "cv_rmse_best": 2.1122054809833193,
+        "cv_mae_best": 1.3492183982758914,
+        "cv_rmse_base_enet": 2.1299,
+        "improvement_cv_rmse": 0.0177,
+        "validation_transfer": "Maintains robust performance (Val MAE 1.3625 improves over Pure ElasticNet 1.3765)"
+      }
+    },
+    "experiment_2_astronomical_calibration": {
+      "peer_cohort_delta_rmse": 0.0,
+      "full_cohort_delta_rmse": -0.0017,
+      "verdict": "REJECTED",
+      "reason": "Astronomical features are already present in primary model inputs; post-hoc residual calibration produces negligible gain (<0.0001) on tree models and increases error on linear models due to collinear overfitting"
+    },
+    "experiment_3_site_bias_adjustment": {
+      "peer_cohort_delta_rmse": -0.0012,
+      "full_cohort_delta_rmse": -0.0053,
+      "verdict": "REJECTED",
+      "reason": "Shrunk trailing site bias yields negligible CV reduction (-0.0012) while introducing operational state complexity and risk of drift during seasonal ramp-up"
+    }
+  },
+  "candidate_selection_for_prompt_3": {
+    "peer_cohort": {
+      "primary": "Tuned ExtraTrees (P4)",
+      "fallback": "50/50 Ensemble Blend (Exp 1)",
+      "reference": "Persistence Baseline (Lag 1)",
+      "justification": "While 50/50 blend achieved lowest training CV RMSE (1.2715), ExtraTrees demonstrates far superior performance on the seasonal validation split (RMSE 1.3462 vs 1.4635) and lower complexity"
+    },
+    "full_cohort": {
+      "primary": "Tuned ElasticNet (P4)",
+      "fallback": "70/30 Ensemble Blend (Exp 1)",
+      "reference": "Persistence Baseline (Lag 1)",
+      "justification": "Tuned ElasticNet provides un-saturating linear scaling on extreme Site 19 yields with minimal footprint (2.7 KB) and microsecond latency (350 us); 70/30 blend provides competitive fallback (Val MAE 1.3625)"
+    }
+  }
+}

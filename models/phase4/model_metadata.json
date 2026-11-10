@@ -1,0 +1,143 @@
+{
+  "project": "SolarSelect",
+  "phase": 4,
+  "prompt": 2,
+  "status": "PHASE 4 \u2014 COMPLETED WITH DOCUMENTED LIMITATIONS",
+  "target": "target_daily_yield",
+  "target_unit": "kWh/kWp/day",
+  "predictive_features_count": 29,
+  "predictive_features": [
+    "kWp",
+    "lat",
+    "Lon",
+    "day_of_year",
+    "month",
+    "day_of_week",
+    "is_weekend",
+    "sin_doy",
+    "cos_doy",
+    "sin_month",
+    "cos_month",
+    "solar_declination_deg",
+    "solar_noon_elevation_deg",
+    "solar_noon_zenith_deg",
+    "daylight_hours",
+    "extraterrestrial_radiation_h0",
+    "has_valid_lag1",
+    "lag1_daily_yield",
+    "lag2_daily_yield",
+    "lag7_daily_yield",
+    "rolling_mean_7d_yield",
+    "rolling_std_7d_yield",
+    "rolling_mean_14d_yield",
+    "rolling_mean_30d_yield",
+    "lag1_temp_mean",
+    "lag1_temp_max",
+    "lag1_temp_min",
+    "lag1_temp_range",
+    "lag1_rh_mean"
+  ],
+  "date_partitions": {
+    "training": {
+      "start": "2021-05-01",
+      "end": "2021-12-31",
+      "full_rows": 4770,
+      "peer_rows": 4383
+    },
+    "validation": {
+      "start": "2022-01-01",
+      "end": "2022-02-28",
+      "full_rows": 1037,
+      "peer_rows": 945
+    },
+    "test_quarantined": {
+      "start": "2022-03-01",
+      "end": "2022-04-23",
+      "full_rows": 1232,
+      "peer_rows": 1128,
+      "evaluated": false
+    }
+  },
+  "full_cohort_candidates": {
+    "primary": {
+      "name": "Tuned Elastic Net",
+      "family": "Linear Regularized",
+      "hyperparameters": {
+        "alpha": 0.05,
+        "l1_ratio": 0.9
+      },
+      "val_mae": 1.3765,
+      "val_rmse": 2.0134,
+      "val_r2": 0.8484,
+      "artifact_path": "models/phase4/full_cohort/tuned_elastic_net.joblib",
+      "size_kb": 2.7,
+      "latency_us": 349.6
+    },
+    "fallback": {
+      "name": "Tuned Extra Trees",
+      "family": "Tree Ensemble",
+      "hyperparameters": {
+        "n_estimators": 50,
+        "max_depth": 10,
+        "min_samples_split": 5,
+        "min_samples_leaf": 2,
+        "max_features": 1.0,
+        "rmse": 2.204754185145914,
+        "mae": 1.4110334617062983
+      },
+      "val_mae": 1.4924,
+      "val_rmse": 2.7264,
+      "val_r2": 0.722,
+      "artifact_path": "models/phase4/full_cohort/tuned_extra_trees.joblib",
+      "size_kb": 1884.5,
+      "latency_us": 14366.6
+    },
+    "reference_benchmark": {
+      "name": "Persistence Baseline (Lag 1)",
+      "val_mae": 1.4981,
+      "val_rmse": 3.1874,
+      "val_r2": 0.6207
+    }
+  },
+  "peer_cohort_candidates": {
+    "primary": {
+      "name": "Tuned Extra Trees",
+      "family": "Tree Ensemble",
+      "hyperparameters": {
+        "n_estimators": 100,
+        "max_depth": 12,
+        "min_samples_split": 2,
+        "min_samples_leaf": 1,
+        "max_features": 0.8,
+        "rmse": 1.3189911088356427,
+        "mae": 1.08799576754296
+      },
+      "val_mae": 1.0793,
+      "val_rmse": 1.3462,
+      "val_r2": -0.2637,
+      "artifact_path": "models/phase4/peer_cohort/tuned_extra_trees.joblib",
+      "size_kb": 17671.8,
+      "latency_us": 14206.0
+    },
+    "fallback": {
+      "name": "Tuned Elastic Net",
+      "family": "Linear Regularized",
+      "hyperparameters": {
+        "alpha": 0.05,
+        "l1_ratio": 0.7
+      },
+      "val_mae": 1.3871,
+      "val_rmse": 1.6366,
+      "val_r2": -0.8677,
+      "artifact_path": "models/phase4/peer_cohort/tuned_elastic_net.joblib",
+      "size_kb": 2.7,
+      "latency_us": 340.5
+    },
+    "reference_benchmark": {
+      "name": "Persistence Baseline (Lag 1)",
+      "val_mae": 1.1319,
+      "val_rmse": 1.4984,
+      "val_r2": -0.5661
+    }
+  }
+}

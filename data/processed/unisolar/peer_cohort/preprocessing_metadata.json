@@ -1,0 +1,88 @@
+{
+  "dataset_name": "UNISOLAR Campus 1 Peer Cohort (Dataset B - Excluding Sites 19 & 24)",
+  "primary_target": "target_daily_yield",
+  "target_unit": "kWh/kWp/day",
+  "cohort_sites": [
+    15,
+    16,
+    17,
+    18,
+    20,
+    21,
+    22,
+    23,
+    25,
+    26,
+    27,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40
+  ],
+  "cohort_site_count": 22,
+  "excluded_anomalous_sites": [
+    19,
+    24
+  ],
+  "temporal_window": "2021-05-01 to 2022-04-30 (12 months / 1 complete annual cycle)",
+  "telemetry_end_date": "2022-04-23",
+  "expected_annual_calendar_days": 365,
+  "expected_annual_site_days": 8030,
+  "total_valid_site_days": 6456,
+  "column_architecture": {
+    "model_matrix_columns": 33,
+    "identifiers": 3,
+    "target": 1,
+    "primary_predictive_features": 29,
+    "diagnostic_metadata_columns": 17
+  },
+  "split_boundaries": {
+    "train": {
+      "start": "2021-05-01",
+      "end": "2021-12-31",
+      "months": 8,
+      "count": 4383
+    },
+    "validation": {
+      "start": "2022-01-01",
+      "end": "2022-02-28",
+      "months": 2,
+      "count": 945
+    },
+    "test": {
+      "start": "2022-03-01",
+      "end": "2022-04-23",
+      "months": 2,
+      "count": 1128
+    }
+  },
+  "training_imputation_values": {
+    "lag1_temp_mean": 12.1665972221875,
+    "lag1_temp_max": 16.72666667,
+    "lag1_temp_min": 8.1,
+    "lag1_temp_range": 8.899999999999999,
+    "lag1_rh_mean": 78.11388888885416,
+    "lag1_daily_yield": 2.147785572087355,
+    "lag2_daily_yield": 2.13180807706558,
+    "lag7_daily_yield": 2.126054488539898,
+    "rolling_mean_7d_yield": 2.4027828690127078,
+    "rolling_std_7d_yield": 0.7344341363533602,
+    "rolling_mean_14d_yield": 2.2392103897078806,
+    "rolling_mean_30d_yield": 2.175244284901071
+  },
+  "target_statistics": {
+    "min": 0.25545271260997066,
+    "median": 2.6325162670350006,
+    "mean": 2.8803509712514774,
+    "max": 6.916690742167438,
+    "std": 1.461396679995552,
+    "max_24h_cf": 0.2881954475903099
+  }
+}

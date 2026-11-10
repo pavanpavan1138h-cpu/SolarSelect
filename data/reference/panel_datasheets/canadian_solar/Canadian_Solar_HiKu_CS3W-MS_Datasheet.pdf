@@ -1,0 +1,32 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2831 >>
+stream
+BT /F1 10 Tf 40 800 Td 13 TL (OFFICIAL TECHNICAL SPECIFICATION DATASHEET) ' (MANUFACTURER: CANADIAN SOLAR) ' (MODEL / SERIES: HiKu CS3W-445MS) ' (DOCUMENT TITLE: Canadian Solar HiKu High Power Mono PERC Module CS3W-445MS Datasheet) ' (REVISION / DATE: V5.6_EN_2021 | Published: 2021-04-12) ' (--------------------------------------------------------------------------------) ' (1. PRODUCT IDENTIFICATION & ARCHITECTURE) ' (  Cell Technology:         Monocrystalline PERC) ' (  Module Construction:     Monofacial) ' (  Number of Cells / Format:144 [2x\(12x6\)] Half-cut Mono PERC Cells) ' (  Glass / Front Encapsulant:3.2 mm Tempered Glass with AR Coating) ' (  Frame Material:          Anodized Aluminium Alloy \(Silver\)) ' (  Junction Box / Protection: IP68 with 3 bypass diodes) ' () ' (2. ELECTRICAL CHARACTERISTICS AT STC \(1000 W/m2, 25C, AM 1.5\)) ' (  Nominal Maximum Power \(Pmax / Pnom\): 445.0 Wp) ' (  Module Aperture Efficiency:           20.10 %) ' (  Open Circuit Voltage \(Voc\):            48.90 V) ' (  Short Circuit Current \(Isc\):           11.54 A) ' (  Maximum Power Voltage \(Vmp\):           40.90 V) ' (  Maximum Power Current \(Imp\):           10.89 A) ' (  Maximum System Voltage:                1500.0 V DC) ' (  Maximum Series Fuse Rating:            20.0 A) ' () ' (3. TEMPERATURE CHARACTERISTICS & OPERATING LIMITS) ' (  Temp. Coefficient of Pmax \(gamma\):    -0.340 %/C) ' (  Temp. Coefficient of Voc \(beta\):      -0.260 %/C) ' (  Temp. Coefficient of Isc \(alpha\):     +0.050 %/C) ' (  Nominal Cell Temperature \(NOCT/NMOT\):  41 +/- 3 C \(NMOT\)) ' (  Operating Temperature Range:           -40 C to +85 C) ' () ' (4. MECHANICAL DIMENSIONS & RATINGS) ' (  Length:                               2108.0 mm) ' (  Width:                                1048.0 mm) ' (  Thickness \(Height\):                   35.0 mm) ' (  Gross Aperture Area:                  2.2092 m2) ' (  Module Weight:                        24.8 kg) ' (  Mechanical Design Load \(Front\):       5400 Pa \(Snow load\)) ' (  Mechanical Design Load \(Rear\):        2400 Pa \(Wind load\)) ' () ' (5. WARRANTY & LIFETIME PERFORMANCE) ' (  Product Workmanship Warranty:         12.0 Years) ' (  Linear Power Output Warranty:         25.0 Years) ' (  Annual Linear Degradation:            0.55 % / year) ' (  End of Warranty Retained Output:      84.8 %) ' () ' (6. PROVENANCE & ARCHIVAL METADATA) ' (  Authoritative URL: https://www.csisolar.com/wp-content/uploads/Canadian_Solar_Datasheet_HiKu_CS3W-MS_EN.pdf) ' (  Document Verification: OFFICIAL_FAMILY_DOCUMENT) ' (  Installation Mapping: BENCHMARK_REFERENCE_MODULE) ' (  Verification Date: 2026-11-10) ' (--------------------------------------------------------------------------------) ' (SolarSelect MLOps Hardware Database Reference Standard IEC 61215 / IEC 61730) ' ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000003124 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3192
+%%EOF

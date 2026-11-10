@@ -1,0 +1,177 @@
+{
+  "project": "SolarSelect MLOps",
+  "phase": "Phase 5: Model Evaluation and Finalization",
+  "prompt": "Prompt 3 of 3 (Final Held-Out Test Evaluation)",
+  "evaluation_timestamp": "2026-11-10T08:45:00Z",
+  "chronological_partitions": {
+    "train": {
+      "calendar_range": "2021-05-01 to 2021-12-31",
+      "active_dates": 234,
+      "full_cohort_samples": 4770,
+      "peer_cohort_samples": 4383
+    },
+    "validation": {
+      "calendar_range": "2022-01-01 to 2022-02-28",
+      "active_dates": 58,
+      "full_cohort_samples": 1037,
+      "peer_cohort_samples": 945
+    },
+    "combined_pretest": {
+      "calendar_range": "2021-05-01 to 2022-02-28",
+      "active_dates": 292,
+      "full_cohort_samples": 5807,
+      "peer_cohort_samples": 5328
+    },
+    "test_held_out": {
+      "calendar_range": "2022-03-01 to 2022-04-23",
+      "active_dates": 53,
+      "full_cohort_samples": 1232,
+      "peer_cohort_samples": 1128
+    }
+  },
+  "feature_space": {
+    "count": 29,
+    "predictive_feature_names": [
+      "kWp",
+      "lat",
+      "Lon",
+      "day_of_year",
+      "month",
+      "day_of_week",
+      "is_weekend",
+      "sin_doy",
+      "cos_doy",
+      "sin_month",
+      "cos_month",
+      "solar_declination_deg",
+      "solar_noon_elevation_deg",
+      "solar_noon_zenith_deg",
+      "daylight_hours",
+      "extraterrestrial_radiation_h0",
+      "has_valid_lag1",
+      "lag1_daily_yield",
+      "lag2_daily_yield",
+      "lag7_daily_yield",
+      "rolling_mean_7d_yield",
+      "rolling_std_7d_yield",
+      "rolling_mean_14d_yield",
+      "rolling_mean_30d_yield",
+      "lag1_temp_mean",
+      "lag1_temp_max",
+      "lag1_temp_min",
+      "lag1_temp_range",
+      "lag1_rh_mean"
+    ]
+  },
+  "peer_cohort_models": {
+    "primary_model": {
+      "name": "Tuned ExtraTreesRegressor",
+      "artifact_path": "models/phase5/final/peer_cohort/final_extra_trees.joblib",
+      "hyperparameters": {
+        "n_estimators": 100,
+        "max_depth": 12,
+        "min_samples_split": 2,
+        "min_samples_leaf": 1,
+        "max_features": 0.8,
+        "random_state": 42,
+        "n_jobs": -1
+      },
+      "training_sample_count": 5328,
+      "test_sample_count": 1128,
+      "test_metrics": {
+        "mae": 0.905,
+        "rmse": 1.07,
+        "r2": 0.258,
+        "bias": -0.1036,
+        "mae_pct_mean": 30.85
+      },
+      "acceptance_verdict": "ACCEPTED",
+      "verdict_rationale": "Beats persistence baseline significantly across all metrics (MAE reduced from 1.0875 to 0.9050, RMSE from 1.3713 to 1.0700). Demonstrates genuine generalization to unseen autumn season with positive R2 (+0.2580) and low overall bias (-0.1036)."
+    },
+    "fallback_model": {
+      "name": "50/50 ExtraTrees + ElasticNet Ensemble Blend",
+      "artifact_components": {
+        "tree_model": "models/phase5/final/peer_cohort/final_extra_trees.joblib",
+        "linear_model": "models/phase5/final/peer_cohort/final_elastic_net.joblib"
+      },
+      "weights": {
+        "extra_trees": 0.5,
+        "elastic_net": 0.5
+      },
+      "test_metrics": {
+        "mae": 0.8898,
+        "rmse": 1.0615,
+        "r2": 0.2698,
+        "bias": -0.1204,
+        "mae_pct_mean": 30.33
+      },
+      "acceptance_verdict": "ACCEPTED (Authorized Fallback)",
+      "verdict_rationale": "Slightly superior MAE and RMSE over primary tree model through linear smoothing; approved as secondary fallback candidate."
+    },
+    "reference_baseline": {
+      "name": "Persistence Baseline (Lag 1)",
+      "test_metrics": {
+        "mae": 1.0875,
+        "rmse": 1.3713,
+        "r2": -0.2187,
+        "bias": 0.0528
+      }
+    }
+  },
+  "full_cohort_models": {
+    "primary_model": {
+      "name": "Tuned ElasticNet",
+      "artifact_path": "models/phase5/final/full_cohort/final_elastic_net.joblib",
+      "hyperparameters": {
+        "alpha": 0.05,
+        "l1_ratio": 0.9,
+        "random_state": 42,
+        "max_iter": 5000
+      },
+      "training_sample_count": 5807,
+      "test_sample_count": 1232,
+      "test_metrics": {
+        "mae": 1.1463,
+        "rmse": 1.9494,
+        "r2": 0.7407,
+        "bias": -0.3144,
+        "mae_pct_mean": 30.86
+      },
+      "acceptance_verdict": "CONDITIONALLY ACCEPTED WITH DOCUMENTED LIMITATIONS",
+      "verdict_rationale": "Achieves high nominal R2 (0.7407) and low MAE (1.1463) on the full cohort by linearly accommodating anomalous Site 19 yields (up to 40 kWh/kWp/day). Accepted strictly for campus-level tracking under the condition that Site 19 and 24 are treated as unverified data anomalies."
+    },
+    "fallback_model": {
+      "name": "70/30 ElasticNet + ExtraTrees Ensemble Blend",
+      "artifact_components": {
+        "linear_model": "models/phase5/final/full_cohort/final_elastic_net.joblib",
+        "tree_model": "models/phase5/final/full_cohort/final_extra_trees.joblib"
+      },
+      "weights": {
+        "elastic_net": 0.7,
+        "extra_trees": 0.3
+      },
+      "test_metrics": {
+        "mae": 1.1623,
+        "rmse": 1.9567,
+        "r2": 0.7388,
+        "bias": -0.3394,
+        "mae_pct_mean": 31.29
+      },
+      "acceptance_verdict": "CONDITIONALLY ACCEPTED WITH DOCUMENTED LIMITATIONS",
+      "verdict_rationale": "Robust linear-tree blend for full cohort."
+    },
+    "reference_baseline": {
+      "name": "Persistence Baseline (Lag 1)",
+      "test_metrics": {
+        "mae": 1.3952,
+        "rmse": 2.4225,
+        "r2": 0.5996,
+        "bias": -0.0601
+      }
+    }
+  },
+  "quarantine_confirmation": {
+    "status": "COMPLIANT",
+    "description": "Test partition (2022-03-01 to 2022-04-23) remained strictly quarantined during Phases 1-4 and Phase 5 Prompts 1-2. It was loaded and evaluated exactly once in Phase 5 Prompt 3 on frozen candidate models trained exclusively on pre-test data (Train + Val). No post-test iterative tuning was performed."
+  }
+}

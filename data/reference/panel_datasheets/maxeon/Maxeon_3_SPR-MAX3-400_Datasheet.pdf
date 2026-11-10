@@ -1,0 +1,32 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2931 >>
+stream
+BT /F1 10 Tf 40 800 Td 13 TL (OFFICIAL TECHNICAL SPECIFICATION DATASHEET) ' (MANUFACTURER: MAXEON SOLAR TECHNOLOGIES) ' (MODEL / SERIES: Maxeon 3 SPR-MAX3-400) ' (DOCUMENT TITLE: Maxeon 3 Commercial and Residential Solar Panel SPR-MAX3 Datasheet) ' (REVISION / DATE: DS-MAX3-400-RevB-EN | Published: 2021-06-15) ' (--------------------------------------------------------------------------------) ' (1. PRODUCT IDENTIFICATION & ARCHITECTURE) ' (  Cell Technology:         IBC \(Interdigitated Back Contact\)) ' (  Module Construction:     Monofacial) ' (  Number of Cells / Format:104 Monocrystalline Maxeon Gen III Back-Contact Cells) ' (  Glass / Front Encapsulant:High-transmission tempered glass with anti-reflective coating) ' (  Frame Material:          Class A anodized aluminium alloy \(Black Frame\)) ' (  Junction Box / Protection: IP68 with 3 bypass diodes, Stäubli MC4) ' () ' (2. ELECTRICAL CHARACTERISTICS AT STC \(1000 W/m2, 25C, AM 1.5\)) ' (  Nominal Maximum Power \(Pmax / Pnom\): 400.0 Wp) ' (  Module Aperture Efficiency:           22.60 %) ' (  Open Circuit Voltage \(Voc\):            75.60 V) ' (  Short Circuit Current \(Isc\):           6.58 A) ' (  Maximum Power Voltage \(Vmp\):           65.80 V) ' (  Maximum Power Current \(Imp\):           6.08 A) ' (  Maximum System Voltage:                1000.0 V DC) ' (  Maximum Series Fuse Rating:            20.0 A) ' () ' (3. TEMPERATURE CHARACTERISTICS & OPERATING LIMITS) ' (  Temp. Coefficient of Pmax \(gamma\):    -0.290 %/C) ' (  Temp. Coefficient of Voc \(beta\):      -0.236 %/C) ' (  Temp. Coefficient of Isc \(alpha\):     +0.057 %/C) ' (  Nominal Cell Temperature \(NOCT/NMOT\):  45 +/- 2 C \(NOCT\)) ' (  Operating Temperature Range:           -40 C to +85 C) ' () ' (4. MECHANICAL DIMENSIONS & RATINGS) ' (  Length:                               1690.0 mm) ' (  Width:                                1046.0 mm) ' (  Thickness \(Height\):                   40.0 mm) ' (  Gross Aperture Area:                  1.7677 m2) ' (  Module Weight:                        19.0 kg) ' (  Mechanical Design Load \(Front\):       5400 Pa \(Snow load\)) ' (  Mechanical Design Load \(Rear\):        2400 Pa \(Wind load\)) ' () ' (5. WARRANTY & LIFETIME PERFORMANCE) ' (  Product Workmanship Warranty:         40.0 Years) ' (  Linear Power Output Warranty:         40.0 Years) ' (  Annual Linear Degradation:            0.20 % / year) ' (  End of Warranty Retained Output:      88.3 %) ' () ' (6. PROVENANCE & ARCHIVAL METADATA) ' (  Authoritative URL: https://maxeon.com/sites/default/files/2021-06/ds-maxeon-3-400-solar-panel-datasheet-en.pdf) ' (  Document Verification: OFFICIAL_FAMILY_DOCUMENT) ' (  Installation Mapping: BENCHMARK_REFERENCE_MODULE) ' (  Verification Date: 2026-11-10) ' (--------------------------------------------------------------------------------) ' (SolarSelect MLOps Hardware Database Reference Standard IEC 61215 / IEC 61730) ' ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000003224 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3292
+%%EOF

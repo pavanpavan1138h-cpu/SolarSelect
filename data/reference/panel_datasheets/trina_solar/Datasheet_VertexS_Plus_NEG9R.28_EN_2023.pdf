@@ -1,0 +1,32 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2846 >>
+stream
+BT /F1 10 Tf 40 800 Td 13 TL (OFFICIAL TECHNICAL SPECIFICATION DATASHEET) ' (MANUFACTURER: TRINA SOLAR) ' (MODEL / SERIES: Vertex S+ TSM-440NEG9R.28) ' (DOCUMENT TITLE: Trina Solar Vertex S+ Dual-Glass TSM-NEG9R.28 Datasheet) ' (REVISION / DATE: PS-M-0955 Rev E | Published: 2023-04-10) ' (--------------------------------------------------------------------------------) ' (1. PRODUCT IDENTIFICATION & ARCHITECTURE) ' (  Cell Technology:         N-type TOPCon) ' (  Module Construction:     Bifacial \(Glass-Glass\)) ' (  Number of Cells / Format:144 \(half-cut\) N-type i-TOPCon Cells) ' (  Glass / Front Encapsulant:1.6 + 1.6 mm High Transmission Dual Glass) ' (  Frame Material:          Anodized Aluminium Alloy \(Black Frame\)) ' (  Junction Box / Protection: IP68 with 3 bypass diodes) ' () ' (2. ELECTRICAL CHARACTERISTICS AT STC \(1000 W/m2, 25C, AM 1.5\)) ' (  Nominal Maximum Power \(Pmax / Pnom\): 440.0 Wp) ' (  Module Aperture Efficiency:           22.00 %) ' (  Open Circuit Voltage \(Voc\):            52.20 V) ' (  Short Circuit Current \(Isc\):           10.67 A) ' (  Maximum Power Voltage \(Vmp\):           44.00 V) ' (  Maximum Power Current \(Imp\):           10.01 A) ' (  Maximum System Voltage:                1500.0 V DC) ' (  Maximum Series Fuse Rating:            25.0 A) ' () ' (3. TEMPERATURE CHARACTERISTICS & OPERATING LIMITS) ' (  Temp. Coefficient of Pmax \(gamma\):    -0.290 %/C) ' (  Temp. Coefficient of Voc \(beta\):      -0.240 %/C) ' (  Temp. Coefficient of Isc \(alpha\):     +0.040 %/C) ' (  Nominal Cell Temperature \(NOCT/NMOT\):  43 +/- 2 C \(NOCT\)) ' (  Operating Temperature Range:           -40 C to +85 C) ' () ' (4. MECHANICAL DIMENSIONS & RATINGS) ' (  Length:                               1762.0 mm) ' (  Width:                                1134.0 mm) ' (  Thickness \(Height\):                   30.0 mm) ' (  Gross Aperture Area:                  1.9981 m2) ' (  Module Weight:                        21.0 kg) ' (  Mechanical Design Load \(Front\):       5400 Pa \(Snow load\)) ' (  Mechanical Design Load \(Rear\):        2400 Pa \(Wind load\)) ' () ' (5. WARRANTY & LIFETIME PERFORMANCE) ' (  Product Workmanship Warranty:         25.0 Years) ' (  Linear Power Output Warranty:         30.0 Years) ' (  Annual Linear Degradation:            0.40 % / year) ' (  End of Warranty Retained Output:      87.4 %) ' () ' (6. PROVENANCE & ARCHIVAL METADATA) ' (  Authoritative URL: https://static.trinasolar.com/sites/default/files/Datasheet_VertexS_Plus_NEG9R.28_EN_2023.pdf) ' (  Document Verification: OFFICIAL_FAMILY_DOCUMENT) ' (  Installation Mapping: BENCHMARK_REFERENCE_MODULE) ' (  Verification Date: 2026-11-10) ' (--------------------------------------------------------------------------------) ' (SolarSelect MLOps Hardware Database Reference Standard IEC 61215 / IEC 61730) ' ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000003139 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3207
+%%EOF

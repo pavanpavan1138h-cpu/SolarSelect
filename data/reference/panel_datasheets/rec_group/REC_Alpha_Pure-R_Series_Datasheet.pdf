@@ -1,0 +1,32 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2911 >>
+stream
+BT /F1 10 Tf 40 800 Td 13 TL (OFFICIAL TECHNICAL SPECIFICATION DATASHEET) ' (MANUFACTURER: REC GROUP) ' (MODEL / SERIES: REC Alpha Pure-R \(REC420AA Pure-R\)) ' (DOCUMENT TITLE: REC Alpha Pure-R Series Heterojunction Module Technical Datasheet) ' (REVISION / DATE: Rev B - 05.22 | Published: 2022-05-01) ' (--------------------------------------------------------------------------------) ' (1. PRODUCT IDENTIFICATION & ARCHITECTURE) ' (  Cell Technology:         Heterojunction \(HJT\)) ' (  Module Construction:     Monofacial) ' (  Number of Cells / Format:80 half-cut REC heterojunction cells with lead-free gapless technology) ' (  Glass / Front Encapsulant:3.2 mm solar glass with anti-reflective surface treatment) ' (  Frame Material:          Anodized aluminium \(black\) with cross-support bars) ' (  Junction Box / Protection: IP68 with 4 bypass diodes) ' () ' (2. ELECTRICAL CHARACTERISTICS AT STC \(1000 W/m2, 25C, AM 1.5\)) ' (  Nominal Maximum Power \(Pmax / Pnom\): 420.0 Wp) ' (  Module Aperture Efficiency:           21.80 %) ' (  Open Circuit Voltage \(Voc\):            59.40 V) ' (  Short Circuit Current \(Isc\):           8.88 A) ' (  Maximum Power Voltage \(Vmp\):           50.00 V) ' (  Maximum Power Current \(Imp\):           8.40 A) ' (  Maximum System Voltage:                1000.0 V DC) ' (  Maximum Series Fuse Rating:            25.0 A) ' () ' (3. TEMPERATURE CHARACTERISTICS & OPERATING LIMITS) ' (  Temp. Coefficient of Pmax \(gamma\):    -0.240 %/C) ' (  Temp. Coefficient of Voc \(beta\):      -0.240 %/C) ' (  Temp. Coefficient of Isc \(alpha\):     +0.040 %/C) ' (  Nominal Cell Temperature \(NOCT/NMOT\):  44 +/- 2 C \(NMOT\)) ' (  Operating Temperature Range:           -40 C to +85 C) ' () ' (4. MECHANICAL DIMENSIONS & RATINGS) ' (  Length:                               1730.0 mm) ' (  Width:                                1118.0 mm) ' (  Thickness \(Height\):                   30.0 mm) ' (  Gross Aperture Area:                  1.9341 m2) ' (  Module Weight:                        21.5 kg) ' (  Mechanical Design Load \(Front\):       5400 Pa \(Snow load\)) ' (  Mechanical Design Load \(Rear\):        2400 Pa \(Wind load\)) ' () ' (5. WARRANTY & LIFETIME PERFORMANCE) ' (  Product Workmanship Warranty:         20.0 Years) ' (  Linear Power Output Warranty:         25.0 Years) ' (  Annual Linear Degradation:            0.25 % / year) ' (  End of Warranty Retained Output:      92.0 %) ' () ' (6. PROVENANCE & ARCHIVAL METADATA) ' (  Authoritative URL: https://www.recgroup.com/sites/default/files/documents/ds_rec_alpha_pure-r_series_en.pdf) ' (  Document Verification: OFFICIAL_FAMILY_DOCUMENT) ' (  Installation Mapping: BENCHMARK_REFERENCE_MODULE) ' (  Verification Date: 2026-11-10) ' (--------------------------------------------------------------------------------) ' (SolarSelect MLOps Hardware Database Reference Standard IEC 61215 / IEC 61730) ' ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000003204 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3272
+%%EOF

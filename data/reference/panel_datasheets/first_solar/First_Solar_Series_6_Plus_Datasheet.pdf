@@ -1,0 +1,32 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2904 >>
+stream
+BT /F1 10 Tf 40 800 Td 13 TL (OFFICIAL TECHNICAL SPECIFICATION DATASHEET) ' (MANUFACTURER: FIRST SOLAR) ' (MODEL / SERIES: Series 6 Plus FS-6460) ' (DOCUMENT TITLE: First Solar Series 6 Plus Photovoltaic Module Technical Datasheet) ' (REVISION / DATE: PD-5-401-06 Rev 2.0 | Published: 2021-08-01) ' (--------------------------------------------------------------------------------) ' (1. PRODUCT IDENTIFICATION & ARCHITECTURE) ' (  Cell Technology:         Thin-film CdTe) ' (  Module Construction:     Monofacial) ' (  Number of Cells / Format:Thin-film Cadmium Telluride \(CdTe\) continuous semiconductor layer) ' (  Glass / Front Encapsulant:Heat-strengthened front glass laminated to heat-strengthened back glass) ' (  Frame Material:          Anodized Aluminium with Under-mount Mounting Rails) ' (  Junction Box / Protection: IP68 with bypass diodes) ' () ' (2. ELECTRICAL CHARACTERISTICS AT STC \(1000 W/m2, 25C, AM 1.5\)) ' (  Nominal Maximum Power \(Pmax / Pnom\): 460.0 Wp) ' (  Module Aperture Efficiency:           18.60 %) ' (  Open Circuit Voltage \(Voc\):            222.90 V) ' (  Short Circuit Current \(Isc\):           2.59 A) ' (  Maximum Power Voltage \(Vmp\):           188.80 V) ' (  Maximum Power Current \(Imp\):           2.44 A) ' (  Maximum System Voltage:                1500.0 V DC) ' (  Maximum Series Fuse Rating:            5.0 A) ' () ' (3. TEMPERATURE CHARACTERISTICS & OPERATING LIMITS) ' (  Temp. Coefficient of Pmax \(gamma\):    -0.320 %/C) ' (  Temp. Coefficient of Voc \(beta\):      -0.280 %/C) ' (  Temp. Coefficient of Isc \(alpha\):     +0.040 %/C) ' (  Nominal Cell Temperature \(NOCT/NMOT\):  45 C \(NMOT\)) ' (  Operating Temperature Range:           -40 C to +85 C) ' () ' (4. MECHANICAL DIMENSIONS & RATINGS) ' (  Length:                               2009.0 mm) ' (  Width:                                1232.0 mm) ' (  Thickness \(Height\):                   49.0 mm) ' (  Gross Aperture Area:                  2.4751 m2) ' (  Module Weight:                        34.5 kg) ' (  Mechanical Design Load \(Front\):       5400 Pa \(Snow load\)) ' (  Mechanical Design Load \(Rear\):        2400 Pa \(Wind load\)) ' () ' (5. WARRANTY & LIFETIME PERFORMANCE) ' (  Product Workmanship Warranty:         12.0 Years) ' (  Linear Power Output Warranty:         25.0 Years) ' (  Annual Linear Degradation:            0.50 % / year) ' (  End of Warranty Retained Output:      85.0 %) ' () ' (6. PROVENANCE & ARCHIVAL METADATA) ' (  Authoritative URL: https://www.firstsolar.com/-/media/First-Solar/Technical-Documents/Series-6-Plus-Datasheet.pdf) ' (  Document Verification: OFFICIAL_FAMILY_DOCUMENT) ' (  Installation Mapping: BENCHMARK_REFERENCE_MODULE) ' (  Verification Date: 2026-11-10) ' (--------------------------------------------------------------------------------) ' (SolarSelect MLOps Hardware Database Reference Standard IEC 61215 / IEC 61730) ' ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000003197 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3265
+%%EOF
