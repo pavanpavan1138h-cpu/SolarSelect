@@ -1,0 +1,5 @@
+outs:
+- md5: 2ea38e4cca315095f76e07d63c4c2064
+  size: 1616
+  hash: md5
+  path: final_elastic_net.joblib

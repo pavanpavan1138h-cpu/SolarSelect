@@ -1,0 +1,6 @@
+outs:
+- md5: 69d5505ecf6616e349fc43d20803d995.dir
+  size: 106413609
+  nfiles: 4
+  hash: md5
+  path: unisolar

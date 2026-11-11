@@ -1,0 +1,14 @@
+Cohort,Candidate,CV_RMSE_Mean,CV_RMSE_Std,CV_MAE_Mean,Status
+Peer Cohort (22),Persistence Baseline,1.7160558496089209,0.32581760633225576,1.392460277850089,Reference
+Peer Cohort (22),Tuned ExtraTrees (P4),1.319,0.1774,1.088,P4 Primary
+Peer Cohort (22),Tuned ElasticNet (P4),1.3097,0.2338,1.0481,P4 Fallback
+Peer Cohort (22),Exp 1: 50/50 Ensemble Blend,1.2715,0.1846,1.0585,Strong Improvement
+Peer Cohort (22),Exp 2: Astro Calibration (ET),1.3190355069201358,0.1774863134938616,1.0880490732917014,Rejected (No Gain)
+Peer Cohort (22),Exp 3: Site Bias Adjustment (ET),1.3177619683907218,0.17809380759187687,1.0872230737343749,Rejected (Negligible Gain)
+Full Cohort (24),Persistence Baseline,3.169749556885539,0.798257697531278,1.8259442874969487,Reference
+Full Cohort (24),Tuned ElasticNet (P4),2.1299,0.4018,1.3683,P4 Primary
+Full Cohort (24),Tuned ExtraTrees (P4),2.2048,0.4006,1.411,P4 Fallback
+Full Cohort (24),Exp 1: 70/30 Ensemble Blend (w=0.7),2.1122,0.401,1.3492,Strong Improvement
+Full Cohort (24),Exp 1: 50/50 Ensemble Blend,2.12,0.3994,1.3525,Moderate Improvement
+Full Cohort (24),Exp 2: Astro Calibration (ENet),2.128259753942153,0.39271067269452314,1.3603906628237037,Rejected (Increased Error)
+Full Cohort (24),Exp 3: Site Bias Adjustment (ENet),2.124609833718803,0.3976526039523703,1.3684773112134823,Rejected (Negligible Gain)

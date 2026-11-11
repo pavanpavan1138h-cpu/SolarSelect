@@ -1,6 +1,6 @@
 # SolarSelect — An End-to-End MLOps System for AI-Based Solar Panel Selection
 
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![Python 3.13.9](https://img.shields.io/badge/python-3.13.9-blue.svg)](https://www.python.org/downloads/release/python-3139/)
 [![License: ODbL / Academic](https://img.shields.io/badge/license-Academic%20Open-green.svg)](#licensing)
 [![Status: Phase 7 Design Active](https://img.shields.io/badge/status-Phase%207%20Design%20Active-orange.svg)](#authoritative-project-status-phases-110)
 [![MLOps: DVC & Scikit-Learn](https://img.shields.io/badge/MLOps-DVC%20%7C%20Joblib-red.svg)](#repository-quickstart)
@@ -91,35 +91,71 @@ Evaluated on the strictly quarantined Test partition (`2022-03-01` to `2022-04-2
 
 ## Repository Quickstart
 
-### 1. Environment Setup
+### 1. Environment Setup (Single Canonical Python 3.13.9)
 ```bash
 # Clone repository
 git clone https://github.com/your-org/SolarSelect.git
 cd SolarSelect
 
-# Create Python 3.11 virtual environment
-python3.11 -m venv .venv
-source .venv/bin/activate
+# Use unified Python 3.13.9 runtime (pinned in .python-version)
+conda activate base          # or: python3.13 -m venv .venv && source .venv/bin/activate
+python --version             # Expected: Python 3.13.9
 
-# Install dependencies
+# Install pinned dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Run Data Preprocessing Pipeline
+### 2. Pull Datasets and Model Artifacts (DVC)
 ```bash
-# Regenerates all Phase 3 ML datasets from raw telemetry deterministically
+# Optional: Configure DagsHub remote credentials if pulling fresh from remote
+dvc remote modify origin --local access_key_id <YOUR_KEY>
+dvc remote modify origin --local secret_access_key <YOUR_SECRET>
+
+# Pull all versioned raw data, processed matrices, and Phase 5 models
+dvc pull
+
+# Verify local cache matches remote DagsHub S3 storage
+dvc status -c
+```
+
+### 3. Run Data Preprocessing Pipeline (DVC & Python)
+```bash
+# Option A: Deterministic execution via DVC DAG (recomputes only when dependencies change)
+dvc repro prepare_phase3_data
+
+# Option B: Direct Python execution
 python3 src/prepare_phase3_data.py
 ```
 
-### 3. Run Panel Catalogue Validator
+### 4. Run Panel Catalogue Validator
 ```bash
 # Validates commercial panel catalogue against canonical schema & physical laws
 python3 src/validate_panel_catalogue.py
 ```
 
-### 4. Interactive Notebooks Execution
+### 5. Automated Regression Test Suite
+```bash
+# Run 238 automated regression tests (100% pass rate)
+pytest -q tests/
+```
+
+### 6. Interactive Notebooks Execution
 All 12 research and modeling notebooks in `notebooks/` are self-contained and execute cleanly end-to-end. For details on notebook order, see [`docs/engineering/execution_guide.md`](docs/engineering/execution_guide.md).
+
+---
+
+## MLOps Architecture & Artifact Governance
+
+SolarSelect separates large binary artifact versioning from code and metric tracking:
+
+- **Data Version Control (DVC):**
+  - Manages immutable raw telemetry (`data/raw/archive.dvc`, `data/raw/unisolar.dvc`).
+  - Tracks reproducible pipeline stages (`dvc.yaml`, `dvc.lock`) producing 18 processed CSV outputs while keeping lightweight metadata JSONs in Git.
+  - Versions 8 frozen Phase 5 scikit-learn models (`models/phase5/**/*.joblib.dvc`).
+  - Synchronized with DagsHub S3 remote storage (`origin`).
+- **MLflow Observability (Planned for Phase 9 Serving):**
+  - Reserved for experiment tracking, hyperparameter runs, metric logging, and model registry lifecycle. *(Note: MLflow experiment logging integration is pending).*
 
 ---
 
@@ -127,15 +163,18 @@ All 12 research and modeling notebooks in `notebooks/` are self-contained and ex
 
 ```text
 SolarSelect/
+├── .dvc/                # DVC remote configuration and cache pointers (credentials ignored)
 ├── configs/             # Canonical 43-col PV schema, template & active catalogue CSV
-├── data/                # Raw (immutable), interim, and processed ML matrices
+├── data/                # Raw (immutable DVC), interim, and processed ML matrices
 ├── docs/                # Central technical documentation suite
-├── models/              # Serialized production models (.joblib) & metadata (.json)
+├── models/              # Serialized production models (.joblib.dvc) & metadata (.json)
 ├── notebooks/           # Phase 1 to Phase 6 research notebooks & figures
 ├── reports/             # Structured validation reports, test metrics, and CV CSVs
 ├── src/                 # Production pipeline scripts (prepare_phase3_data.py, etc.)
+├── dvc.yaml             # DVC pipeline specification (prepare_phase3_data)
+├── dvc.lock             # Immutable DVC output hash lockfile
 ├── log.txt              # Authoritative chronological project audit trail
-└── requirements.txt     # Pinned Python package dependencies
+└── requirements.txt     # Pinned Python package dependencies (including dvc-s3)
 ```
 
 ---

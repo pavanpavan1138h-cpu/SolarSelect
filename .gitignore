@@ -102,6 +102,20 @@ dist/
 *.npy
 *.npz
 
+# Authoritative configuration, provenance, and report CSV exceptions (tracked in Git)
+!configs/panels_catalogue.csv
+!configs/panels_catalogue_template.csv
+!data/reference/panel_datasheets/source_manifest.csv
+!data/reference/panel_datasheets/field_provenance.csv
+!reports/phase4/experiment_results.csv
+!reports/phase4/feature_importance_analysis.csv
+!reports/phase5/improvement_experiments_results.csv
+!reports/phase5/site_bias_analysis.csv
+!reports/phase5/temporal_cv_improvement_comparison.csv
+!reports/phase5/test_evaluation_results.csv
+!reports/phase5/test_site_evaluation.csv
+!reports/phase5/validation_comparison_secondary.csv
+
 # Raw dataset documentation & report files in data/
 data/raw/**/*.pdf
 data/raw/**/*.PDF

@@ -21,9 +21,9 @@ This roadmap outlines the complete 10-phase engineering lifecycle for **SolarSel
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ LAYER B: CONSTRAINT-AWARE REAL SOLAR PANEL RECOMMENDATION                   │
 │                                                                             │
-│ [Phase 6] Real Solar Panel Catalogue                ==> IN PROGRESS (P1)    │
-│ [Phase 7] Roof-Fit & Panel Configuration Engine     ==> PENDING (FUTURE)    │
-│ [Phase 8] Energy, Economics & Recommendation Engine ==> PENDING (FUTURE)    │
+│ [Phase 6] Real Solar Panel Catalogue                ==> COMPLETED (W/ LIMS) │
+│ [Phase 7] Roof-Fit & Panel Configuration Engine     ==> COMPLETED           │
+│ [Phase 8] Energy, Economics & Recommendation Engine ==> COMPLETED (W/ LIMS) │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
@@ -66,21 +66,25 @@ This roadmap outlines the complete 10-phase engineering lifecycle for **SolarSel
 
 ### Phase 6: Real Solar Panel Catalogue
 - **Goal:** Build an auditable, structured 43-column commercial solar panel database.
-- **Prompt 1 Deliverables:** Repository inventory, canonical JSON schema, header-only template, baseline CSV, validation script `src/validate_panel_catalogue.py`.
-- **Prompt 2 (Pending Approval):** Official manufacturer datasheet acquisition and population of commercial PV specifications.
-- **Current Status:** **IN PROGRESS (PROMPT 1 COMPLETED; PROMPT 2 PENDING APPROVAL).**
+- **Key Deliverables:** 12 verified commercial PV modules across 6 technology families, schema validation tooling, and provenance manifests.
+- **Current Status:** **COMPLETED WITH DOCUMENTED LIMITATIONS.**
 
-### Phase 7: Roof-Fit and Panel Configuration Engine (Future Work)
-- **Goal:** Model 2D rectangular array geometry, packing factor, module orientation, setbacks, and pitch/azimuth losses.
-- **Current Status:** **PENDING.**
+### Phase 7: Roof-Fit and Panel Configuration Engine
+- **Goal:** Model 2D rectangular array geometry, packing factor, module orientation, setbacks, keep-out obstacles, and walkways.
+- **Key Deliverables:** Discrete integer coordinate placement engine, 12 catalogue panels fit, deterministic output contract (`src/roof_fit/`).
+- **Current Status:** **COMPLETED.**
 
-### Phase 8: Energy, Economics and Recommendation Engine (Future Work)
-- **Goal:** Couple Layer A forecasts with hardware parameters to simulate annual energy, compute 25-year LCOE and payback, and rank panels via multi-criteria decision analysis (AHP / TOPSIS).
-- **Current Status:** **PENDING.**
+### Phase 8: Energy, Economics and Recommendation Engine
+- **Goal:** Couple Layer A forecasts with hardware parameters to estimate energy, compute lifecycle economics (LCOE, NPV, payback), evaluate electrical compatibility, and generate multi-objective Pareto and weighted recommendations.
+- **Key Deliverables:** 10-stage modular architecture (`src/energy_economics/`), deterministic Pareto peeling, multi-criteria scoring, trade-off explanations, and end-to-end orchestration (`EnergyEconomicsEngine`).
+- **Current Status:** **COMPLETED WITH DOCUMENTED LIMITATIONS.**
 
-### Phase 9: Integration, Application and MLOps (Future Work)
-- **Goal:** Package Layer A and Layer B into a REST API (FastAPI) and interactive consumer dashboard (Streamlit) with DVC data versioning and MLflow tracking.
-- **Current Status:** **PENDING.**
+### Phase 9: Integration, Application and MLOps (Active Implementation)
+- **Goal:** Package Layer A and Layer B into a REST API (FastAPI) and interactive consumer dashboard (Streamlit) with DVC data/model versioning and MLflow tracking.
+- **Current Status:** **IN PROGRESS (Prompt 1 UI Foundation & DVC Tracking Complete).**
+  * *DVC Data & Model Lineage:* Fully completed and verified. Tracks raw datasets (`data/raw/archive.dvc`, `data/raw/unisolar.dvc`), reproducible Phase 3 pipeline (`prepare_phase3_data` with 18 CSV outputs in `dvc.lock`), and 8 frozen Phase 5 model binaries (`.joblib.dvc`). Remote synchronization active with DagsHub S3 (`dvc status -c` verified).
+  * *Application UI Foundation:* Multi-page Streamlit dashboard, minimal SaaS design system, reusable component library, and service boundary established.
+  * *Pending Work:* FastAPI REST endpoints, full UI recommendation orchestration wiring, and MLflow experiment logging/registry integration. 238 total repository tests passing.
 
 ### Phase 10: Testing, Monitoring and Final Validation (Future Work)
 - **Goal:** Implement end-to-end integration tests, data drift monitoring via Evidently AI, and automated retraining pipelines in CI/CD.

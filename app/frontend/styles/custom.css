@@ -1,0 +1,262 @@
+/* SolarSelect — Phase 9 Minimal SaaS Design System CSS */
+
+/* Global Typography & Base Background */
+.stApp {
+    background-color: #FFFFFF;
+    color: #0F172A;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Main Content Container Padding */
+.block-container {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3rem !important;
+    max-width: 1280px !important;
+}
+
+/* Sidebar Refinement */
+section[data-testid="stSidebar"] {
+    background-color: #F8FAFC !important;
+    border-right: 1px solid #E2E8F0 !important;
+}
+
+section[data-testid="stSidebar"] .stRadio > label {
+    font-weight: 500;
+    color: #334155;
+}
+
+/* Headers & Hierarchy */
+h1, h2, h3, h4 {
+    color: #0F172A !important;
+    letter-spacing: -0.015em;
+    font-weight: 600 !important;
+}
+
+/* Custom SaaS Card Component */
+.ss-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    margin-bottom: 1rem;
+    transition: border-color 0.15s ease;
+}
+
+.ss-card:hover {
+    border-color: #CBD5E1;
+}
+
+.ss-metric-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748B;
+    margin-bottom: 0.35rem;
+}
+
+.ss-metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0F172A;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.ss-metric-caption {
+    font-size: 0.82rem;
+    color: #475569;
+}
+
+/* Status Badges */
+.ss-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.3;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.ss-badge-success {
+    background-color: #F0FDF4;
+    color: #166534;
+    border-color: #BBF7D0;
+}
+
+.ss-badge-warning {
+    background-color: #FFFBEB;
+    color: #92400E;
+    border-color: #FDE68A;
+}
+
+.ss-badge-error {
+    background-color: #FEF2F2;
+    color: #991B1B;
+    border-color: #FECACA;
+}
+
+.ss-badge-neutral {
+    background-color: #F1F5F9;
+    color: #475569;
+    border-color: #CBD5E1;
+}
+
+/* Information & Warning Banners */
+.ss-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 6px;
+    border: 1px solid #E2E8F0;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+.ss-banner-info {
+    background-color: #F8FAFC;
+    border-left: 4px solid #475569;
+    color: #334155;
+}
+
+.ss-banner-warning {
+    background-color: #FFFBEB;
+    border-color: #FDE68A;
+    border-left: 4px solid #D97706;
+    color: #78350F;
+}
+
+.ss-banner-error {
+    background-color: #FEF2F2;
+    border-color: #FECACA;
+    border-left: 4px solid #DC2626;
+    color: #7F1D1D;
+}
+
+.ss-banner-success {
+    background-color: #F0FDF4;
+    border-color: #BBF7D0;
+    border-left: 4px solid #15803D;
+    color: #14532D;
+}
+
+/* Breadcrumbs & Page Header */
+.ss-breadcrumb {
+    font-size: 0.8rem;
+    color: #64748B;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+}
+
+.ss-page-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 1.5rem;
+}
+
+.ss-page-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0 0 0.25rem 0;
+}
+
+.ss-page-subtitle {
+    font-size: 0.95rem;
+    color: #475569;
+    margin: 0;
+}
+
+/* Empty & Placeholder States */
+.ss-empty-state {
+    background-color: #F8FAFC;
+    border: 1px dashed #CBD5E1;
+    border-radius: 8px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.ss-empty-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 0.4rem;
+}
+
+.ss-empty-desc {
+    font-size: 0.9rem;
+    color: #475569;
+    max-width: 580px;
+    margin: 0 auto 0.75rem auto;
+    line-height: 1.5;
+}
+
+/* Section Divider */
+.ss-section-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0F172A;
+    margin: 1.5rem 0 0.75rem 0;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+/* Step Workflow Strip */
+.ss-step-box {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 0.9rem;
+    height: 100%;
+}
+
+.ss-step-num {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #15803D;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.ss-step-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0F172A;
+    margin-bottom: 0.25rem;
+}
+
+.ss-step-desc {
+    font-size: 0.82rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
+/* Subtle Button Styling */
+.stButton > button[kind="primary"] {
+    background-color: #15803D !important;
+    border-color: #15803D !important;
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+}
+
+.stButton > button[kind="primary"]:hover {
+    background-color: #166534 !important;
+    border-color: #166534 !important;
+}
+
+.stButton > button[kind="secondary"] {
+    background-color: #FFFFFF !important;
+    border-color: #CBD5E1 !important;
+    color: #334155 !important;
+    border-radius: 6px !important;
+}

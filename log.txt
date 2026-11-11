@@ -2495,3 +2495,1341 @@ Perform targeted, narrowly scoped corrections to the Phase 7 final validation re
 - Phase 7 Status: PHASE 7 — COMPLETE (FORMALLY CLOSED)
 - Phase 8 Status: NOT STARTED (SCHEDULED NEXT IMPLEMENTATION PHASE)
 ================================================================================
+
+================================================================================
+[2026-11-11T11:10:00+05:30] SESSION 50: PHASE 8 MATHEMATICAL SPECIFICATION & I/O CONTRACT (DESIGN ONLY)
+================================================================================
+[OBJECTIVE]
+Prepare the Phase 8 (Energy, Economics and Recommendation Engine) specification after inspecting actual Phase 5, 6 and 7 artefacts. Design/documentation only.
+
+[FILES CHANGED]
+- Created: reports/phase8/phase8_mathematical_specification_and_io_contract.md
+- Modified: log.txt (this entry)
+- Created directory: reports/phase8/
+
+[KEY FINDINGS]
+1. Phase 5: models are bare sklearn joblib files (peer ExtraTrees primary); 29 features verified from feature_names_in_; target kWh/kWp/day. No inference module, no serialized preprocessing/imputation, no semantic model version.
+2. data_dictionary.md feature names conflict with the actual model feature names; model is authoritative.
+3. Single-location (Melbourne) training: geographical transfer limitation documented.
+4. AC/DC basis only asserted in target_definition.md, not verifiable from raw sources: marked BLOCKING UNRESOLVED (B-1).
+5. 12/29 features are lagged measured yields of the same system: prospective roofs lack them (B-2, blocking).
+6. Catalogue: 12 records; all 7 price/currency/provenance fields 0/12 populated; adapter exposes only dimensions/rated power; spec summaries not independently authenticated.
+7. Phase 7: RoofFitEngine.run_dict() output verified by execution; installed_dc_capacity_kwp exposed and cross-checked via N x Wp/1000.
+8. Readiness: NOT ready for full implementation; restricted implementation feasible (see spec section 13).
+
+[SCOPE CONFIRMATION]
+No Phase 8 code or modules created. No changes to Phase 1-7 artefacts, models, catalogue, src/roof_fit, or tests. Phase 9 not started; Phase 10 remains postponed until after Phase 9.
+================================================================================
+
+================================================================================
+[2026-11-11T11:30:00+05:30] SESSION 51: PHASE 8 SPECIFICATION CORRECTIONS (DOCUMENTATION ONLY)
+================================================================================
+Updated reports/phase8/phase8_mathematical_specification_and_io_contract.md (six corrections):
+1. Degradation: explicit compounded vs linear models; catalogue annual_degradation_pct not auto-treated as compounded; warranty limitations.
+2. Historical annualization: observed-period energy, coverage, missing-day count, method, extrapolation flag; monthly/seasonal checks required; coverage threshold alone does not prove representativeness; <12 consecutive months = not a validated complete year.
+3. Payback: cumulative cashflow including CF_0 >= 0 (simple and discounted); interpolation and never-achieved handling; CAPEX not subtracted twice.
+4. CAPEX: gross / upfront incentives / net separated; basis per metric defined and recorded (NPV and paybacks use net; LCOE basis explicit).
+5. Electrical compatibility: expanded inverter/string/temperature input list; per-check evaluability; all NOT_EVALUATED with currently available inputs; no string sizing.
+6. Capacity-dependent prediction: Y_hat=f(X,kWp), candidate capacity passed into kWp feature; training range 21.39-539.80 kWp checked, OOD flagged.
+Files changed: that document and log.txt only. No Phase 8 code, no changes to Phases 1-7, models or catalogue.
+================================================================================
+
+================================================================================
+[2026-11-11T11:45:00+05:30] SESSION 52: PHASE 8 TRAINING-CAPACITY SUPPORT SPECIFICATION REFINEMENT (DOCUMENTATION ONLY)
+================================================================================
+[OBJECTIVE]
+Refine the Phase 8 mathematical specification and I/O contract (`reports/phase8/phase8_mathematical_specification_and_io_contract.md`) to establish a rigorous, evidence-based training-capacity support assessment for the Phase 5 Peer Cohort model.
+
+[EMPIRICAL EVIDENCE & CAPACITY DISTRIBUTION]
+1. Verified 22 unique installations from authoritative training partition (`data/processed/unisolar/peer_cohort/train.csv`):
+   Unique SiteKeys: [15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+   Unique Capacities (kWp): [21.39, 29.45, 30.00, 35.64, 38.94, 39.27, 42.16, 45.26, 47.74, 49.83, 51.15, 56.76, 58.90, 72.27, 76.23, 77.22, 84.81, 87.78, 94.24, 167.97, 384.12, 539.80]
+2. Summary statistics across unique training sites:
+   - Count: N = 22 physical installations
+   - Min: 21.39 kWp (Site 34)
+   - Q1 (25th percentile): 39.99 kWp (39.9925 kWp, linear interpolation)
+   - Median (50th percentile): 53.96 kWp (53.955 kWp)
+   - Mean: 96.86 kWp (std: 124.59 kWp)
+   - Q3 (75th percentile): 82.91 kWp (82.9125 kWp)
+   - Max: 539.80 kWp (Site 27)
+   - IQR: 42.92 kWp
+3. Documented capacity bands and support density:
+   - Dense Commercial Core [21.39, 100.00] kWp: 19 sites (86.4% of cohort; lower core [21.39, 50.00] has 10 sites, upper core (50.00, 100.00] has 9 sites).
+   - High-Capacity Sparse Band (100.00, 539.80] kWp: 3 sites (13.6% of cohort; Site 18: 167.97, Site 25: 384.12, Site 27: 539.80 kWp, with a 216.15 kWp void between 168 and 384 kWp).
+   - Sub-Minimum Band [0.00, 21.39) kWp: 0 sites (residential scale 3-15 kWp and Phase 7 test layout 5.28 kWp).
+   - Super-Maximum Band > 539.80 kWp: 0 sites.
+
+[SUPPORT STATUSES & RECOMMENDATION SAFEGUARDS]
+1. Explicit Capacity-Support Statuses:
+   - `SUPPORTED_WITHIN_OBSERVED_DISTRIBUTION` (21.39 - 100.00 kWp, dense empirical support).
+   - `SPARSE_TRAINING_SUPPORT` (100.00 - 539.80 kWp, permitted with mandatory warning `SPARSE_TRAINING_SUPPORT_WARNING`).
+   - `OUT_OF_TRAINING_RANGE` (< 21.39 or > 539.80 kWp, unvalidated extrapolation with `CAPACITY_OUT_OF_DISTRIBUTION_WARNING`).
+   - `CAPACITY_DISTRIBUTION_UNAVAILABLE` (missing distribution metadata).
+2. Recommendation Eligibility Verdicts:
+   - `RECOMMENDATION_ELIGIBLE_SUPPORTED` (`ELIGIBLE`): Core candidates eligible for primary Pareto and weighted rankings.
+   - `RECOMMENDATION_FLAGGED_SPARSE_SUPPORT` (`FLAGGED_SPARSE_SUPPORT`): Permitted in rankings with visible sparse-support flag.
+   - `RECOMMENDATION_INELIGIBLE_UNSUPPORTED_CAPACITY` (`INELIGIBLE_UNSUPPORTED_CAPACITY`): Disqualified from primary recommendation; segregated into exploratory annex to prevent unvalidated extrapolations from masquerading as optimal.
+3. Model Applicability Scope:
+   - Documented that capacity support is strictly necessary but not sufficient (does not imply geographic validity, temporal validity, or prospective-roof feature availability).
+
+[SECTIONS UPDATED IN SPECIFICATION]
+- §3.1 (Phase 5 contract table), §4.1 (daily energy mathematics, capacity distribution table, 6 safeguard rules), §4.7 (feasibility filtering), §4.8 (Pareto ranking), §4.9 (weighted ranking), §5.1 (Schema A), §6 (Output JSON schema), §8.2 & §8.3 (status definitions and partitioned uncertainty), §9 (provenance), §10 (known limitations item 8), §11 (decision D-5), §13 (readiness assessment).
+
+[PRESERVATION CONFIRMATION]
+- Documentation-only correction.
+- ZERO modifications to Phase 1-7 datasets, pipelines, models, catalogue, or tests (126/126 tests passing).
+- ZERO Phase 8 implementation code created.
+================================================================================
+
+================================================================================
+[2026-11-11T12:00:00+05:30] SESSION 53: PHASE 8 FINAL CAPACITY-SUPPORT TERMINOLOGY & STATISTICAL CLARIFICATION (DOCUMENTATION ONLY)
+================================================================================
+[OBJECTIVE]
+Execute the final terminology and statistical clarification in the Phase 8 mathematical specification and I/O contract (`reports/phase8/phase8_mathematical_specification_and_io_contract.md`) to ensure marginal capacity distribution representation is not conflated with predictive validity or joint feature-space coverage.
+
+[CLARIFICATIONS APPLIED]
+1. Marginal Capacity Support Interpretation Corrected:
+   - Eliminated all overclaiming "valid empirical interpolation" phrasing.
+   - Clarified that `SUPPORTED_WITHIN_OBSERVED_DISTRIBUTION` indicates dense marginal representation (19/22 installations, 21.39–100.00 kWp), which is strictly a univariate marginal assessment on the `kWp` input feature.
+   - Explicitly recorded that marginal capacity support does NOT establish validated predictive accuracy at that capacity, joint 29-feature space support, or geographic/temporal generalization.
+   - Documented that passing the capacity check is necessary for eligibility, but not sufficient for overall model applicability.
+2. Capacity-Support Statuses Refined:
+   - `SUPPORTED_WITHIN_OBSERVED_DISTRIBUTION`: Dense marginal representation, not proof of prediction validity.
+   - `SPARSE_TRAINING_SUPPORT`: Inside observed range, but has limited or discontinuous marginal representation (only 3 isolated sites, 216.15 kWp void). Reliable model support cannot be assumed.
+   - `OUT_OF_TRAINING_RANGE`: Outside observed minimum or maximum (< 21.39 or > 539.80 kWp); unvalidated extrapolation.
+   - `CAPACITY_DISTRIBUTION_UNAVAILABLE`: Authoritative training distribution cannot be established.
+3. Standard Deviation Rigorously Labeled:
+   - Sample standard deviation explicitly labeled: $s = 124.59\text{ kWp}$ ($\text{ddof}=1$).
+   - Population standard deviation explicitly labeled: $\sigma \approx 121.72\text{ kWp}$ ($\text{ddof}=0$).
+   - Mean ($96.86\text{ kWp}$), median ($53.96\text{ kWp}$), $Q_1$ ($39.99\text{ kWp}$), $Q_3$ ($82.91\text{ kWp}$), min ($21.39\text{ kWp}$), max ($539.80\text{ kWp}$), and site count ($22$) strictly preserved.
+4. Synchronized Affected Sections:
+   - §3.1 (Phase 5 contract table), §4.1 (mathematical specification and distinctions), §4.7 (feasibility filtering), §4.8 (Pareto ranking), §4.9 (weighted ranking), §5.1 (Schema A), §6 (output JSON contract), §8.2 & §8.3 (status definitions and partitioned uncertainty), §9 (provenance), §10 (known limitations item 8), §11 (decision D-5), §13 (implementation-readiness assessment).
+
+[PRESERVATION CONFIRMATION]
+- Documentation-only clarification; specification frozen for Phase 8 design.
+- ZERO modifications to Phase 1–7 datasets, pipelines, models, catalogue, or tests (126/126 tests passing).
+- ZERO Phase 8 implementation code created.
+================================================================================
+SESSION 54 — 2026-11-11
+TASK: SolarSelect Phase 8 — Separate Capacity Eligibility from Overall Recommendation Eligibility
+
+[OBJECTIVE]
+Decouple marginal training-capacity support (`capacity_eligibility`) from overall recommendation eligibility (`overall_recommendation_eligibility`) in `reports/phase8/phase8_mathematical_specification_and_io_contract.md`. Ensure that passing the marginal capacity-support check (`SUPPORTED_WITHIN_OBSERVED_DISTRIBUTION`) never automatically grants overall recommendation eligibility.
+
+[CHANGES APPLIED]
+1. Decoupled Capacity Eligibility from Overall Recommendation Eligibility:
+   - Introduced two independent, decoupled fields:
+     * `capacity_eligibility`: determined exclusively by marginal training-capacity support assessment on the 22-site Peer Cohort distribution (`CAPACITY_ELIGIBLE`, `CAPACITY_FLAGGED_SPARSE`, `CAPACITY_INELIGIBLE_OUT_OF_RANGE`, `CAPACITY_INELIGIBLE_UNAVAILABLE`).
+     * `overall_recommendation_eligibility`: composite multi-gate lifecycle verdict (`RECOMMENDATION_ELIGIBLE`, `RECOMMENDATION_FLAGGED`, `RECOMMENDATION_INELIGIBLE`, `RECOMMENDATION_NOT_EVALUATED`).
+2. Multi-Gate Evaluation Rules for Overall Recommendation Eligibility:
+   - `RECOMMENDATION_ELIGIBLE`: requires ALL mandatory evaluation gates to pass (geometric feasibility, catalogue validity, capacity eligibility, prediction availability, resolved lag-feature policy B-2, geographic/temporal validity, electrical compatibility, and budget if specified). Dense capacity support is strictly a necessary prerequisite, never sufficient on its own.
+   - `RECOMMENDATION_FLAGGED`: all mandatory gates pass, but with non-blocking warnings or sensitivity flags (e.g. `capacity_eligibility == "CAPACITY_FLAGGED_SPARSE"` or experimental Method B comparison).
+   - `RECOMMENDATION_INELIGIBLE`: any evaluated mandatory gate fails (geometric infeasibility, catalogue invalid, out-of-range capacity, electrical incompatibility, budget exceeded).
+   - `RECOMMENDATION_NOT_EVALUATED`: unevaluated mandatory gates or unresolved dependencies (e.g. unbuilt site with unresolved B-2 lag features, missing weather inputs, electrical checks unsupplied, or costs missing for required economics). Unevaluated gates never count as pass.
+3. Updated Ranking Safeguards (§4.8 & §4.9):
+   - Restricted primary Pareto frontier and primary weighted ranking to candidates with `overall_recommendation_eligibility ∈ {"RECOMMENDATION_ELIGIBLE", "RECOMMENDATION_FLAGGED"}`.
+   - Marginal capacity support alone cannot authorize ranking. Unevaluated candidates receive `pareto_status = "NOT_EVALUATED_UNRESOLVED_GATES"` / `weighted_status = "EXCLUDED_UNRESOLVED_GATES"`.
+   - Missing or unsupported predictions are never treated as zero or valid estimates. Out-of-range candidates are quarantined under `EXTRAPOLATED_CAPACITY_QUARANTINED` only upon explicit user request.
+4. Synchronized Contract & Schema (§5.1, §6, §8.2, §9, §10, §13):
+   - Output JSON contract and feasibility schema explicitly expose both `capacity_eligibility` and `overall_recommendation_eligibility`.
+   - Updated §8.2 into §8.2.1 (Marginal Capacity Support & Capacity Eligibility) and §8.2.2 (Overall Recommendation Eligibility & Multi-Gate Evaluation Rules).
+   - Updated provenance registry, known limitations, and implementation-readiness assessment.
+
+[PRESERVATION CONFIRMATION]
+- Documentation-only refinement in `reports/phase8/phase8_mathematical_specification_and_io_contract.md`.
+- ZERO modifications to Phase 1–7 datasets, trained models, catalogues, or tests.
+- ZERO Phase 8 implementation code created.
+- Automated tests executed and verified: 126/126 passing (`pytest -q tests/`).
+================================================================================
+SESSION 55 — 2026-11-11
+TASK: SolarSelect Phase 8, Stage 1: Foundation and Integration Layer
+
+[STAGE 1 SCOPE]
+Implemented the integration foundation connecting the frozen Phase 6 catalogue and frozen Phase 7 roof-fit engine to Phase 8, following `reports/phase8/phase8_mathematical_specification_and_io_contract.md`. Established read-only catalogue access, Phase 7 ingestion and capacity cross-checking, marginal training-capacity support evaluation on the 22-site Peer Cohort distribution, multi-gate feasibility tracking, and JSON contract formatting.
+
+[FILES CREATED OR MODIFIED]
+- Created package `src/energy_economics/`:
+  * `src/energy_economics/__init__.py` (package exports)
+  * `src/energy_economics/types.py` (enums, domain models, TrainingDistributionMetrics, FeasibilityResult)
+  * `src/energy_economics/exceptions.py` (typed domain exceptions)
+  * `src/energy_economics/catalogue.py` (ReadOnlyPanelCatalogue, PanelRecord, SHA-256 integrity check)
+  * `src/energy_economics/phase7_adapter.py` (Phase7Adapter, validation, batch ingestion, capacity cross-check)
+  * `src/energy_economics/capacity_evaluator.py` (CapacitySupportEvaluator, 22-site distribution audit)
+  * `src/energy_economics/feasibility.py` (FeasibilityEvaluator, multi-gate status tracker)
+  * `src/energy_economics/foundation.py` (Phase8FoundationEngine, orchestrator, contract JSON formatting)
+- Created test suite:
+  * `tests/test_phase8_foundation.py` (16 unit and integration test cases)
+- Created report:
+  * `reports/phase8/phase8_stage1_foundation_report.md` (Stage 1 implementation report)
+- Modified tracking log:
+  * `log.txt` (appended Session 55)
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -v tests/test_phase8_foundation.py`: 16/16 PASSED in 0.66s.
+- `pytest -q tests/`: 142/142 PASSED in 1.15s (126 existing + 16 new; zero regressions).
+- Verified test cases: valid Phase 7 ingestion, batch ingestion, malformed inputs, valid catalogue records, unknown panel ID, missing catalogue fields preserved as None, dense capacity support (21.39–100 kWp), sparse capacity support (100–539.80 kWp), below-range capacity (<21.39 kWp), above-range capacity (>539.80 kWp), missing distribution metadata, preservation of Phase 7 configuration and panel IDs, unevaluated electrical specs, pending prediction status, overall recommendation eligibility remaining NOT_EVALUATED, and source catalogue file immutability.
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–5 datasets, pipelines, trained models, and artifacts remained frozen and untouched.
+- Phase 6 catalogue (`configs/panels_catalogue.csv`) was accessed strictly read-only; source file SHA-256 hash verified unchanged.
+- Phase 7 implementation, public API, tests, and reports remained frozen and unmodified.
+- ZERO Phase 9 or Phase 10 work was initiated.
+- ZERO fabricated prices, electrical specs, or model predictions were introduced.
+
+[REMAINING PHASE 8 WORK]
+- Stage 2: Historical replay and scenario-based energy calculation pipeline (with B-2 and D-2 handling).
+- Stage 3: Full financial calculator (CAPEX, OPEX, LCOE, NPV, simple and discounted payback).
+- Stage 4: Multi-objective Pareto frontier identification and weighted multi-criteria scoring.
+- Stage 5: Final recommendation synthesis, automated explanatory generation, and end-to-end Phase 8 closure.
+================================================================================
+SESSION 56 — 2026-11-11
+TASK: SolarSelect Phase 8 Stage 1: Provenance and Energy-Basis Clarification
+
+[OBJECTIVE]
+Correct Stage 1 output serialization, provenance representation, and documentation to qualify Phase 6 catalogue technical specs as local PDF summaries (not independently authenticated original manufacturer datasheets), explicitly set energy basis to UNVERIFIED without premature AC assumptions under Blocking Issue B-1, and clarify model_input_kwp placeholder semantics.
+
+[CHANGES APPLIED]
+1. Phase 6 Provenance Qualification:
+   - Updated `ReadOnlyPanelCatalogue.get_provenance()` in `src/energy_economics/catalogue.py` to preserve as-recorded Phase 6 `verification_status` (`VERIFIED_OFFICIAL_DATASHEET`) while pairing it with an explicit `provenance_qualification` distinguishing local compiled PDF specification summaries from independent original manufacturer authentication.
+   - Reflected provenance qualification in candidate catalogue provenance and top-level recommendation caveats.
+   - Preserved Phase 6 catalogue records and documentation without modification.
+2. Energy-Basis Clarification:
+   - Corrected `energy_basis` in candidate energy block from `UNVERIFIED_ASSUMED_AC` to strictly `UNVERIFIED` in `src/energy_economics/foundation.py`.
+   - Maintained Blocking Issue B-1 as an unresolved input (`unresolved_inputs`); applied zero AC/DC conversions or loss adjustments.
+3. Model Input Placeholder Clarification:
+   - Explicitly documented `model_input_kwp` in candidate energy block with `model_input_kwp_status: PENDING_INFERENCE_BINDING` and `model_input_kwp_note` clarifying that it represents candidate DC capacity designated for feature binding, not completed model inference.
+   - Preserved `prediction_availability: PREDICTION_PENDING_LAG_POLICY` with zero model loading or execution.
+4. Testing & Documentation:
+   - Added Tests 17, 18, and 19 to `tests/test_phase8_foundation.py` to verify qualified provenance, UNVERIFIED energy basis with B-1 tracking, and model_input_kwp placeholder semantics.
+   - Synchronized `reports/phase8/phase8_stage1_foundation_report.md` with updated definitions, sample output JSON, and test results.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -v tests/test_phase8_foundation.py`: 19/19 PASSED in 0.66s.
+- `pytest -q tests/`: 145/145 PASSED in 0.92s (126 existing + 19 Phase 8; zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 datasets, pipelines, trained models, catalogues, and test suites remained frozen and unmodified.
+- ZERO Stage 2, Phase 9, or Phase 10 work was initiated.
+- Execution stopped after Stage 1 clarifications.
+================================================================================
+
+SESSION 57 — 2026-11-11
+TASK: SolarSelect MLOps EL — Phase 8, Stage 2: Phase 5 Inference Interface and UNISOLAR Historical Replay
+
+[OBJECTIVE]
+Implement Phase 8 Stage 2 controlled inference interface (`Phase5PeerCohortPredictor`) and restricted historical energy-replay pipeline (`UNISOLARHistoricalReplayEngine`) using the existing frozen Phase 5 Peer Cohort models (`final_extra_trees.joblib`, fallback `final_elastic_net.joblib`) and prepared UNISOLAR feature dataset (`data/processed/unisolar/peer_cohort/features.csv`). Strictly enforce that this is NOT prospective-roof prediction (Blocking Issue B-2 remains unresolved), energy basis remains UNVERIFIED (Blocking Issue B-1), negative yield predictions are unclipped with warning flags (Decision D-4), and partial-period datasets (< 12 full calendar months) are reported without annual extrapolation.
+
+[FILES CREATED OR MODIFIED]
+- Modified `src/energy_economics/exceptions.py`:
+  * Added `Phase5InferenceError`, `FeatureValidationError`, `HistoricalReplayError`.
+- Modified `src/energy_economics/types.py`:
+  * Added `ReplaySampleClassification` (`IN_SAMPLE`, `OUT_OF_SAMPLE`).
+  * Added `ModelVariant` (`primary_extra_trees`, `fallback_blend_50_50`).
+  * Added `HistoricalYearStatus` (`VALIDATED_COMPLETE_YEAR`, `PARTIAL_PERIOD_NOT_A_FULL_YEAR`, `NOT_APPLICABLE_SCENARIO`).
+  * Added domain models: `HistoricalObservationResult`, `HistoricalReplaySummary`, `ModelProvenanceMetadata`.
+- Created `src/energy_economics/inference.py`:
+  * Implemented `Phase5PeerCohortPredictor`: loads frozen joblib models, enforces exact 29-feature schema and canonical column ordering, rejects non-finite values (NaN/Inf), excludes metadata/target columns from estimator input, implements primary model and authorized 50/50 blend variants, and prevents `.fit()` or retraining.
+- Created `src/energy_economics/historical_replay.py`:
+  * Implemented `UNISOLARHistoricalReplayEngine`: ingests `features.csv`, enforces chronological date sorting, detects duplicate `(SiteKey, Date)` pairs, preserves historical `kWp`, labels `2022-03-01` to `2022-04-23` as `OUT_OF_SAMPLE` and prior dates as `IN_SAMPLE`, applies daily energy arithmetic ($E_{daily} = \hat{Y} \times kWp$), preserves unclipped negative yield predictions with `NEGATIVE_YIELD_PREDICTION` warning flag, tracks coverage metrics (358 calendar days, 345 active days, 13 missing days), sets `historical_year_status = "PARTIAL_PERIOD_NOT_A_FULL_YEAR"` without annual extrapolation, and sets `energy_basis = "UNVERIFIED"`.
+- Modified `src/energy_economics/__init__.py`:
+  * Exported all Stage 2 classes, exceptions, and enum types.
+- Created test suite:
+  * `tests/test_phase8_stage2_inference_and_replay.py` (21 comprehensive test cases covering all prompt requirements).
+- Created report:
+  * `reports/phase8/phase8_stage2_historical_replay_report.md` (Stage 2 implementation and verification report).
+- Modified tracking log:
+  * `log.txt` (appended Session 57).
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -v tests/test_phase8_stage2_inference_and_replay.py`: 21/21 PASSED in 2.75s.
+- `pytest -q tests/`: 166/166 PASSED in 3.09s (126 Phase 7 + 19 Phase 8 Stage 1 + 21 Phase 8 Stage 2; zero regressions).
+- Verified test coverage:
+  * Frozen artifact loading and SHA-256 recording (`final_extra_trees.joblib`, `final_elastic_net.joblib`).
+  * Exact 29-feature validation, canonical ordering enforcement, missing/non-finite feature rejection, and target column exclusion.
+  * Prohibition of `.fit()` or model retraining.
+  * Correct primary and 50/50 blend predictions.
+  * Historical site capacity (`kWp`) preservation.
+  * In-sample (< 2022-03-01) vs out-of-sample (>= 2022-03-01) classification.
+  * Duplicate date/site pair rejection.
+  * Negative prediction preservation without clipping and exclusion from positive sum.
+  * Daily energy math ($E_{daily} = \hat{Y} \times kWp$) precision.
+  * Unverified energy basis tracking per Blocking Issue B-1.
+  * Partial-period handling without 365-day extrapolation (`PARTIAL_PERIOD_NOT_A_FULL_YEAR`).
+  * Unresolved Blocking Issue B-2 for prospective roofs (`PREDICTION_PENDING_LAG_POLICY`, `RECOMMENDATION_NOT_EVALUATED`).
+  * Preservation of Stage 1 foundation behavior.
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–5 datasets, pipelines, trained models, and artifacts remained frozen and untouched.
+- Phase 6 catalogue, provenance, and schemas remained read-only.
+- Phase 7 implementation, public API, and test suite remained frozen.
+- Phase 8 Stage 1 foundation behavior remained intact and 100% backwards-compatible.
+- ZERO prospective lag-yield synthesis was introduced; ZERO model retraining was performed.
+- Execution stopped after Stage 2; Stage 3 was NOT initiated.
+
+[REMAINING PHASE 8 WORK]
+- Stage 3: Scenario-based prospective energy calculation pipeline (contingent on resolving Blocking Issue B-2).
+- Stage 4: Financial analysis engine (CAPEX, OPEX, LCOE, NPV, payback).
+- Stage 5: Multi-attribute ranking, explanatory engine, and final end-to-end integration.
+================================================================================
+
+SESSION 58 — 2026-11-11
+TASK: SolarSelect Phase 8, Stage 2: Model Artifact Reconciliation and Output Semantics Audit
+
+[OBJECTIVE]
+Investigate and resolve review observations from Session 57 before formally accepting Stage 2:
+1. Reconcile Phase 5 model artifacts against authoritative documentation, notebook execution, and metadata.
+2. Correct fallback blend terminology (distinguish component linear model artifact from runtime 50/50 ensemble blend strategy).
+3. Audit negative prediction output semantics (preserve raw unclipped values and unclipped mathematical energy, flag warnings, exclude from positive sums, and prevent presenting negative values as physical generation).
+4. Verify out-of-sample date classification boundary (2022-03-01 through 2022-04-23, inclusive; 1,128 records) and correct contradictory report phrasing.
+5. Execute regression and governance audit across all test suites.
+
+[FINDINGS AND EVIDENCE]
+1. Phase 5 Model Artifact Reconciliation:
+   - `models/phase5/final/peer_cohort/final_extra_trees.joblib`:
+     * Actual Python class: `sklearn.ensemble._forest.ExtraTreesRegressor` (Bare estimator, NOT a Pipeline; `hasattr(steps) is False`).
+     * SHA-256 Checksum: `39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9`.
+     * Preprocessing / Imputation: None embedded in the artifact. Imputation of missing lags with static training medians was applied upstream in `src/prepare_phase3_data.py`.
+   - `models/phase5/final/peer_cohort/final_elastic_net.joblib`:
+     * Actual Python class: `sklearn.linear_model._coordinate_descent.ElasticNet` (Bare estimator, linear model component, NOT a Pipeline; `hasattr(steps) is False`).
+     * SHA-256 Checksum: `422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb`.
+     * Preprocessing / Imputation: None embedded in the artifact.
+   - Hash Context & Continuity Proof:
+     * Models were excluded from git via `.gitignore` (`*.joblib`), and SHA-256 hashes were not logged during Phase 5 (only paths and metrics were recorded).
+     * Artifact continuity is conclusively established via mathematical proof:
+       a) Evaluating `final_extra_trees.joblib` on the 1,128 held-out test rows reproduces Phase 5 test metrics exactly down to the decimal: MAE = 0.904968 (0.9050), RMSE = 1.070045 (1.0700), R2 = +0.257957 (+0.2580), Bias = -0.103567 (-0.1036).
+       b) Evaluating `final_elastic_net.joblib` matches a deterministic refit on the pre-test partition ($N=5,328$) with max absolute coefficient difference of 0.0 (`intercept_ = 4.198852745743913`).
+       c) The 50/50 blend of these artifacts matches the actual executed output of Cell 8 in `notebooks/phase5/final_model_evaluation_and_generalization.ipynb` (MAE = 0.8767, RMSE = 1.0444, R2 = +0.2930, Bias = -0.0885).
+2. Fallback Blend Terminology:
+   - Verified that `final_elastic_net.joblib` is strictly the component linear model, whereas the fallback model is the runtime ensemble blend strategy ($\hat{Y}_{blend} = 0.5 \times \hat{Y}_{ET} + 0.5 \times \hat{Y}_{EN}$). Corrected report terminology that mislabeled the ElasticNet file as a "Fallback Blend Model".
+3. Negative Prediction Output Semantics:
+   - Preserved raw specific yield in `predicted_specific_yield_kwh_per_kwp_day` (e.g., -0.50).
+   - Preserved raw unclipped mathematical energy in `raw_unclipped_daily_energy_kwh` ($\hat{Y} \times kWp$).
+   - Explicitly flagged negative yield rows with `prediction_status = "NEGATIVE_PREDICTION_WARNING"`.
+   - Prevented negative values from being presented as valid physical generation by setting `estimated_daily_energy_kwh = None` on negative yield rows.
+   - Verified that negative predictions contribute 0 kWh to positive aggregate sums (`observed_period_estimated_energy_kwh`).
+4. OOS Date Classification:
+   - Verified date boundaries: `OUT_OF_SAMPLE` is from `2022-03-01` through `2022-04-23`, inclusive (1,128 records, matching `split == 'test'`).
+   - `IN_SAMPLE` is all dates before `2022-03-01` (5,328 records, matching `split in ['train', 'validation']`).
+   - Corrected contradictory phrasing "strictly between ... inclusive" across documentation and reports.
+
+[FILES MODIFIED]
+- `src/energy_economics/historical_replay.py`: Added `raw_unclipped_daily_energy_kwh` to prediction records to preserve raw unclipped mathematical energy while maintaining `estimated_daily_energy_kwh = None` for physical exclusion.
+- `tests/test_phase8_stage2_inference_and_replay.py`: Added assertion verifying `raw_unclipped_daily_energy_kwh` in Test 16.
+- `reports/phase8/phase8_stage2_historical_replay_report.md`: Updated comprehensive reconciliation report, clarifying estimator classes (bare estimators), preprocessing/imputation absence, hash continuity proof, blend terminology, negative prediction semantics, and OOS classification.
+- `log.txt`: Appended Session 58.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -v tests/test_phase8_stage2_inference_and_replay.py`: 21/21 PASSED in 2.98s.
+- `pytest -v tests/test_phase8_foundation.py`: 19/19 PASSED in 0.65s.
+- `pytest -q tests/`: 166/166 PASSED in 3.12s (126 Phase 7 + 19 Stage 1 + 21 Stage 2; zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, and metadata remained untouched.
+- Stage 1 behavior and contracts remained unchanged.
+- ZERO prospective lag-yield synthesis was introduced.
+- ZERO Stage 3, Phase 9, or Phase 10 work was initiated.
+
+[FINAL STATUS]
+STAGE_2_ACCEPTED_WITH_DOCUMENTED_LIMITATIONS
+- Non-blocking limitations documented: B-1 (unverified energy basis), B-2 (prospective roofs pending lag policy), D-2 (weather source for non-UNISOLAR sites), D-4 (operational clipping policy for negative yields).
+- Execution stopped after Stage 2 report production; awaiting user review.
+================================================================================
+
+SESSION 59 — 2026-11-11
+TASK: SolarSelect Phase 8, Stage 2: Final Phase 5 Blend Metric Reconciliation
+
+[OBJECTIVE]
+Resolve the discrepancy between the Peer Cohort 50/50 blend metrics recorded in earlier Phase 5 documents (MAE = 0.8898, RMSE = 1.0615, R² = 0.2698) and those reported in Session 58 (MAE = 0.8767, RMSE = 1.0444, R² = 0.2930, Bias = -0.0885).
+1. Forensically trace both metric sets to their origin across Phase 5 notebooks, CSVs, metadata, and reports.
+2. Recompute predictions and metrics from the frozen Phase 5 artifacts on the exact 1,128 held-out test rows.
+3. Refine artifact continuity language: distinguish cryptographic identity verification from structural equivalence and mathematical/behavioral consistency.
+4. Update the Stage 2 report and log without altering models or test data.
+5. Run full test suite to confirm zero regressions.
+
+[FINDINGS AND EVIDENCE]
+1. Forensic Trace of Both Metric Sets:
+   - Result Set A (Earlier Record: MAE = 0.8898, RMSE = 1.0615, R² = 0.2698, Bias = -0.1204):
+     * Source: `reports/phase5/test_evaluation_results.csv` (Row 4), `models/phase5/final_model_metadata.json`, and markdown summary text.
+     * Origin: In `test_evaluation_results.csv`, Row 4 was computed as the blend of Row 2 (`Tuned ExtraTrees`: MAE = 0.9050, Bias = -0.1036) and Row 5 (`Tuned ElasticNet Component`: MAE = 0.8883, Bias = -0.1372). This represented an intermediate evaluation pass prior to the final notebook execution.
+   - Result Set B (Executed Notebook Cell 8 & Session 58: MAE = 0.8767, RMSE = 1.0444, R² = 0.2930, Bias = -0.0885):
+     * Source: The actual executed HTML output table of Cell 8 in `notebooks/phase5/final_model_evaluation_and_generalization.ipynb`.
+     * Origin: Generated when the final fitted models on pre-test data (`df_pretest_peer`, $N=5,328$) were evaluated on the held-out test set (`df_test_peer`, $N=1,128$).
+2. Recomputation from Exact Frozen Disk Artifacts:
+   - Primary ExtraTrees (`final_extra_trees.joblib`):
+     * MAE = 0.904968 (0.9050), RMSE = 1.070045 (1.0700), R² = +0.257957 (+0.2580), Bias = -0.103567 (-0.1036).
+     * Exactly matches both the notebook, metadata, and `test_evaluation_results.csv` to 16 decimal places.
+   - Component ElasticNet (`final_elastic_net.joblib`):
+     * MAE = 0.860295, RMSE = 1.038500, R² = +0.301062, Bias = -0.073340.
+     * Intercept (`4.198853`) and coefficients match an exact deterministic refit on pre-test data with 0.0 diff.
+   - 50/50 Ensemble Blend:
+     * MAE = 0.876715, RMSE = 1.044441, R² = +0.293044, Bias = -0.088454.
+     * Exactly matches Result Set B (executed Cell 8 HTML output inside `final_model_evaluation_and_generalization.ipynb`).
+   - Conclusion: Result Set B represents the true, verified behavior of the frozen model artifacts preserved on disk.
+3. Artifact Continuity Language Refinement:
+   - Cryptographic identity verification cannot be claimed historically because baseline SHA-256 hashes were not logged during Phase 5 (joblib files were gitignored). Session 57 hashes establish the initial cryptographic baseline for Phase 8.
+   - Structural equivalence is confirmed: both models are bare scikit-learn estimators without pipelines or embedded imputation.
+   - Mathematical and behavioral consistency is confirmed: ExtraTrees reproduces exact Phase 5 test metrics; ElasticNet matches pre-test refit parameters; the blend matches executed notebook output.
+
+[FILES MODIFIED]
+- `reports/phase8/phase8_stage2_historical_replay_report.md`: Updated Section 2.3 and added Section 2.4 detailing the forensic trace, recomputation table, root cause, and refined continuity language.
+- `log.txt`: Appended Session 59.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 166/166 PASSED in 3.37s (126 Phase 7 + 19 Stage 1 + 21 Stage 2; zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, and metadata remained untouched.
+- Stage 1 behavior and contracts remained unchanged.
+- ZERO model retraining or data modifications were performed.
+- ZERO Stage 3, Phase 9, or Phase 10 work was initiated.
+
+[FINAL STATUS]
+STAGE_2_ACCEPTED_WITH_DOCUMENTED_LIMITATIONS
+- Non-blocking limitations documented: B-1 (unverified energy basis), B-2 (prospective roofs pending lag policy), D-2 (weather source for non-UNISOLAR sites), D-4 (operational clipping policy for negative yields).
+- Execution stopped; awaiting user review.
+================================================================================
+
+
+SESSION 60: PHASE 8, STAGE 3 — ENERGY ESTIMATION ENGINE AND SCENARIO HANDLING
+Timestamp: 2026-11-11 08:15:00 UTC [13:45:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Implement the Phase 8 Stage 3 energy estimation layer under src/energy_economics/ using the accepted Stage 1 foundation and Stage 2 historical replay interface. Establish a consistent, mathematically verified energy estimation contract while preserving all unresolved scientific and modelling limitations.
+
+[IMPLEMENTATION SUMMARY]
+1. Dedicated Energy Estimation Component:
+   - Implemented `Phase8EnergyEstimationEngine` in `src/energy_economics/energy_engine.py`.
+   - Consumes validated Stage 2 replay outputs and accepts direct feature inputs.
+   - Preserves site identifier, timestamp/date, capacity (kWp), ground truth, and partition labels.
+   - Enforces single capacity scaling: E_daily = round(Y_hat * kWp, 6) [kWh/day], with verification against incoming records to prevent double scaling.
+   - Retains strict unit typing: specific yield in kWh/kWp/day, daily energy in kWh/day, aggregated energy in kWh, capacity in kWp.
+   - Differentiates ground-truth energy (actual_daily_energy_kwh) from model-estimated energy.
+   - Preserves raw unclipped negative yield predictions for mathematical integrity while flagging with NEGATIVE_PREDICTION_WARNING and excluding them from positive accepted generation (accepted_positive_daily_energy_kwh = None, contributing 0.0 kWh).
+   - Implemented observed-period aggregation (per-site and cohort-wide) without 365-day extrapolation, reporting historical_year_status = "PARTIAL_PERIOD_NOT_A_FULL_YEAR" and tracking in-sample vs out-of-sample contributions independently.
+2. Explicit Scenario Contracts:
+   - `HISTORICAL_REPLAY`: Fully supported for UNISOLAR Peer Cohort datasets with chronological replay and in-sample vs OOS partitioning.
+   - `REPRESENTATIVE_PERIOD`: Supported only when complete 29 features with verified provenance are supplied; rejects missing/incomplete profiles with UNAVAILABLE_INPUT_PROFILE and disallows synthetic lag generation or future leakage.
+   - `PROSPECTIVE_ROOF`: Formally blocked under Blocking Issue B-2; returns BLOCKED_PENDING_LAG_POLICY and prediction_status = "PREDICTION_PENDING_LAG_POLICY" without invoking models with fabricated lags.
+3. Integration & Governance:
+   - Preserves Blocking Issue B-1: all outputs maintain energy_basis = "UNVERIFIED" with zero AC/DC, derate, temperature, or tilt/azimuth adjustments.
+   - Seamlessly integrates with Phase 8 Stage 1 foundation and Stage 2 models.
+
+[FILES CREATED / MODIFIED]
+- `src/energy_economics/energy_engine.py`: Created Phase8EnergyEstimationEngine.
+- `src/energy_economics/types.py`: Added EnergyScenarioType, ScenarioEvaluationStatus, DailyEnergyEstimate, SiteEnergySummary, EnergyAggregationSummary.
+- `src/energy_economics/exceptions.py`: Added EnergyEstimationError, ScenarioValidationError.
+- `src/energy_economics/__init__.py`: Exported Stage 3 classes and types.
+- `tests/test_phase8_stage3_energy_estimation.py`: Created 14 unit and integration tests.
+- `reports/phase8/phase8_stage3_energy_estimation_report.md`: Created Stage 3 comprehensive report.
+- `log.txt`: Appended Session 60.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/test_phase8_stage3_energy_estimation.py`: 14/14 PASSED in 2.05s.
+- `pytest -q tests/`: 180/180 PASSED in 3.57s (126 Phase 7 + 19 Stage 1 + 21 Stage 2 + 14 Stage 3; zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–5 datasets, notebooks, preprocessing, models, and metadata remained untouched.
+- Phase 6 catalogue, schemas, and provenance remained read-only.
+- Phase 7 implementation, API, and closure records remained frozen.
+- Phase 8 Stage 1 and Stage 2 behaviors remained intact and backwards-compatible.
+- ZERO financial calculations (Stage 4), ZERO recommendation rankings (Stage 5), and ZERO Phase 9/10 work were initiated.
+
+[FINAL STATUS]
+STAGE_3_COMPLETED_WITH_DOCUMENTED_LIMITATIONS
+- Non-blocking limitations documented: B-1 (unverified energy basis), B-2 (prospective roofs pending lag policy), D-2 (weather source for non-UNISOLAR sites), D-4 (operational clipping policy for negative yields).
+- Execution stopped; awaiting user review.
+================================================================================
+
+
+SESSION 61: PHASE 8, STAGE 3 — FINAL DOCUMENTATION & ROADMAP RECONCILIATION
+Timestamp: 2026-11-11 09:40:00 UTC [15:10:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform a narrow documentation-only audit of the completed Stage 3 implementation. Reconcile Decision D-4 terminology and correct Phase 8 stage roadmap numbering in documentation without altering Stage 3 calculations or source-code behavior.
+
+[AUDIT & RECONCILIATION PERFORMED]
+1. Decision D-4 Terminology & Scope Distinction:
+   - Formally clarified the distinction between implemented numerical accounting and open operational policy.
+   - IMPLEMENTED:
+     * Raw negative specific yields (Y_hat < 0) are preserved unclipped for complete numerical transparency.
+     * Raw mathematical daily energy (E_raw = Y_hat * kWp) is preserved separately.
+     * Negative observations receive an explicit status tag: prediction_status = "NEGATIVE_PREDICTION_WARNING".
+     * Negative observations are excluded from accepted positive generation (accepted_positive_daily_energy_kwh = None, contributing 0.0 kWh).
+     * No physical clipping or zero-substitution is performed.
+   - UNRESOLVED:
+     * Formal operational policy for negative predictions remains open under Decision D-4.
+     * No physical correction or clipping policy has been authorized.
+     * Stage 3 provides an accounting and disclosure framework, not an authorized operational decision.
+   - Replaced misleading descriptions such as "Decision D-4 policy" that could imply D-4 is resolved.
+2. Approved Phase 8 Stage Roadmap Formally Reconciled:
+   - Audited all Stage 3 documentation to align with the authoritative 10-stage Phase 8 roadmap:
+     * Stage 1 — Foundation and Phase 6/7 integration [COMPLETE]
+     * Stage 2 — Phase 5 inference and UNISOLAR historical replay [ACCEPTED]
+     * Stage 3 — Energy estimation and scenario handling [CURRENTLY UNDER REVIEW]
+     * Stage 4 — Temperature evaluation (Method A/B)
+     * Stage 5 — Annualization and lifetime energy
+     * Stage 6 — Degradation modelling
+     * Stage 7 — System cost and financial evaluation
+     * Stage 8 — Feasibility filtering and electrical evaluation
+     * Stage 9 — Pareto and weighted ranking
+     * Stage 10 — Recommendation and explanation engine
+   - Corrected misleading references in the Stage 3 report:
+     * Stage 4 is Temperature Evaluation (Method A/B) — not the financial engine.
+     * Stage 5 is Annualization and Lifetime Energy — not Pareto ranking.
+     * Financial calculations belong exclusively to Stage 7.
+     * Pareto and weighted ranking belong exclusively to Stage 9.
+   - Confirmed no future stages have been initiated, reordered, or implemented.
+3. Governance Confirmation:
+   - Stage 3 performs observed-period aggregation only (historical_year_status = "PARTIAL_PERIOD_NOT_A_FULL_YEAR").
+   - Zero annualization or 365-day extrapolation is applied.
+   - energy_basis remains strictly UNVERIFIED (Blocking Issue B-1).
+   - Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+   - Zero temperature modeling, degradation modeling, financial calculations, electrical checks, or ranking were introduced.
+
+[FILES MODIFIED]
+- `reports/phase8/phase8_stage3_energy_estimation_report.md`: Updated Section 1, added Section 2 (Roadmap) and Section 5 (Decision D-4 breakdown), corrected stage cross-references, and updated governance confirmations.
+- `src/energy_economics/energy_engine.py`: Refined docstring and warning strings to reflect open Decision D-4 policy without altering calculations.
+- `log.txt`: Appended Session 61 (Session 60 history preserved intact).
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 180/180 PASSED in 3.55s (126 Phase 7 + 19 Stage 1 + 21 Stage 2 + 14 Stage 3; zero regressions).
+- Source-code calculation behavior confirmed 100% unchanged.
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, and metadata remained untouched.
+- Stage 1 and Stage 2 implementations and tests remained untouched and backwards-compatible.
+- ZERO Stage 4 (Temperature), Stage 5, Stage 6, Stage 7 (Financial), Stage 8, Stage 9 (Ranking), Stage 10, Phase 9, or Phase 10 work was initiated.
+
+[FINAL STATUS]
+STAGE_3_COMPLETED_WITH_DOCUMENTED_LIMITATIONS
+- Execution stopped; awaiting user review.
+================================================================================
+
+
+SESSION 62: STAGE 3 RUNTIME CHANGE VERIFICATION
+Timestamp: 2026-11-11 10:00:00 UTC [15:30:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform a narrow forensic verification of Session 61 changes across src/energy_economics/energy_engine.py, reports, and tests. Confirm no calculation, control flow, output schema, or runtime behavior changed, and verify all Stage 3 boundaries and D-4 runtime handling.
+
+[FORENSIC VERIFICATION OF SESSION 61 CODE CHANGES]
+1. Detailed Inspection of `src/energy_economics/energy_engine.py`:
+   - Change 1 (Line 40, Class docstring):
+     * Before: "Distinguishes raw mathematical energy output from accepted positive energy (Decision D-4)."
+     * After:  "Distinguishes raw mathematical energy output from accepted positive energy while operational clipping policy remains open under Decision D-4."
+     * Classification: Comment/docstring-only.
+   - Change 2 (Lines 357-358, Warning string):
+     * Before: "Preserved {total_negative_days} negative specific yield predictions. Per Decision D-4, raw values are preserved with NEGATIVE_PREDICTION_WARNING and excluded from positive accepted energy totals."
+     * After:  "Preserved {total_negative_days} negative specific yield predictions. Operational clipping policy remains open under Decision D-4; raw values are preserved with NEGATIVE_PREDICTION_WARNING and excluded from positive accepted energy totals without clipping."
+     * Classification: Error or warning message.
+   - Change 3 (Line 379, Unresolved inputs metadata string):
+     * Before: "D-4: Negative prediction clipping policy (unresolved; raw predictions preserved with warning)"
+     * After:  "D-4: Negative prediction clipping policy (unresolved; raw predictions preserved with warning; no physical clipping policy authorized)"
+     * Classification: Metadata/status/unresolved-input reporting.
+   - Summary of Code Changes:
+     * Runtime control flow: ZERO changes.
+     * Numerical calculations: ZERO changes.
+     * Output schema / dictionary keys / field types: ZERO changes.
+2. Other Source Files:
+   - File modification timestamps confirmed that NO other source files in `src/energy_economics/` or `tests/` were touched during Session 61.
+
+[VERIFICATION OF D-4 RUNTIME BEHAVIOR]
+- Confirmed via code inspection (lines 228-250) and Test 4 (`test_negative_predictions_unclipped_and_excluded_from_positive_totals`):
+  * Raw negative specific yield predictions (Y_hat < 0) remain unclipped in `predicted_specific_yield_kwh_per_kwp_day`.
+  * Raw mathematical daily energy (round(Y_hat * kWp, 6)) is preserved unclipped in `raw_mathematical_daily_energy_kwh`.
+  * Negative predictions strictly receive `prediction_status = "NEGATIVE_PREDICTION_WARNING"`.
+  * `accepted_positive_daily_energy_kwh` strictly evaluates to `None` when Y_hat < 0.
+  * Negative predictions are strictly excluded from positive accepted sums (`accepted_positive_energy_kwh`), contributing 0.0 kWh.
+  * Total raw mathematical energy (`raw_mathematical_energy_kwh`) accumulates raw unclipped daily energies.
+  * ZERO zero-substitution, baseline shifting, or physical corrections are performed.
+
+[VERIFICATION OF STAGE 3 BOUNDARIES]
+- Historical aggregation remains observed-period only (historical_year_status = "PARTIAL_PERIOD_NOT_A_FULL_YEAR", annualization_extrapolation_applied = False).
+- Zero 365-day annual extrapolation or scaling factors exist.
+- energy_basis remains strictly UNVERIFIED (Blocking Issue B-1).
+- Prospective roofs remain strictly blocked under Blocking Issue B-2 (PREDICTION_PENDING_LAG_POLICY, overall_recommendation_status = "RECOMMENDATION_NOT_EVALUATED").
+- Zero temperature evaluation (Stage 4), annualization (Stage 5), degradation (Stage 6), financial evaluation (Stage 7), electrical checks (Stage 8), or ranking (Stage 9) calculations were introduced.
+
+[REGRESSION VERIFICATION]
+- Test Suite Execution: `pytest -v tests/`
+  * Total tests collected: 180
+  * Passed: 180
+  * Failed: 0
+  * Skipped: 0
+  * Test count remains exactly 180 (126 Phase 7 + 19 Stage 1 + 21 Stage 2 + 14 Stage 3; zero regressions).
+  * Zero test or source files were modified during this Session 62 verification.
+
+[FINAL STATUS]
+STAGE_3_ACCEPTED_WITH_DOCUMENTED_LIMITATIONS
+- No code-level discrepancies remain unresolved.
+- Stage 3 is accepted with documented limitations (B-1, B-2, D-2, D-4).
+- Execution stopped; Stage 4 has not been started.
+================================================================================
+
+
+SESSION 63: PHASE 8, STAGE 4 — TEMPERATURE EVALUATION AND METHODOLOGY AUDIT
+Timestamp: 2026-11-11 10:15:00 UTC [15:45:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform an evidence-based methodology and implementation-readiness audit for Phase 8 Stage 4: Temperature Evaluation (Method A/B). Investigate whether an explicit module-temperature correction is scientifically justified, identify available temperature data in UNISOLAR and Phase 6 catalogue, evaluate the risk of double-counting temperature effects, compare Method A and Method B, and define a leakage-safe validation strategy.
+
+[AUDIT FINDINGS & EVIDENCE]
+1. Phase 5 Model Thermal Learning & Target Semantics:
+   - Target variable is actual observed site-specific yield: Y = E_daily / kWp (kWh/kWp/day). It is NOT STC-normalized or temperature-neutral reference yield.
+   - The model was trained on operational rooftop telemetry where real-world thermal derating is already embedded in measured generation.
+   - The model explicitly includes 5 historical weather features: lag1_temp_mean, lag1_temp_max, lag1_temp_min, lag1_temp_range, and lag1_rh_mean.
+   - Strong learned negative temperature dependence confirmed: ElasticNet coefficient for lag1_temp_mean is -0.147440; lag1_temp_min is #1 weather feature in ExtraTrees permutation importance (+0.0688 RMSE drop).
+   - Direct application of a module-temperature coefficient [1 + gamma * (T_cell - 25)] to model output would artificially penalize predicted generation twice (double-counting thermal losses).
+2. UNISOLAR Temperature & Meteorological Telemetry Audit:
+   - Module temperature (T_mod) and cell temperature (T_cell): 0.0% available (NO sensors deployed in UNISOLAR).
+   - Plane-of-array irradiance (G_POA) and global horizontal irradiance (GHI): 0.0% available (NO pyranometers deployed).
+   - Extraterrestrial radiation (extraterrestrial_radiation_h0): Deterministic astronomical formula (NOAA); measures top-of-atmosphere horizontal insolation; cannot substitute for terrestrial POA irradiance.
+   - Ambient temperature (AirTemperature): Available at 15-minute resolution with 18.26% missing intervals for Campus 1.
+   - Wind speed (WindSpeed): 36.65% missing for Campus 1, preventing convective cooling modeling.
+   - Array tilt and azimuth: Unrecorded in metadata for the 22 training sites.
+   - Clarification: The IRRADIATION column exists solely in the synthetic Indian utility-scale Kaggle benchmark dataset, completely absent from UNISOLAR Melbourne data.
+3. Phase 6 Catalogue Temperature Parameters:
+   - Pmax temperature coefficient (gamma_Pmax): Available for 12/12 catalogue modules (-0.24 to -0.41 %/°C).
+   - NOCT: Available for 8/12 modules (43.0 to 45.0 °C).
+   - NMOT: Available for 4/12 modules (41.0 to 45.0 °C).
+   - Non-interchangeability: NOCT (IEC 61215-2, open-circuit) and NMOT (IEC 61215:2016, maximum power point) reflect distinct thermal equilibrium standards (NMOT typically 2–4°C lower). They cannot be treated interchangeably without introducing systematic bias.
+   - Provenance: Local datasheets are 1-page compiled summaries; link rot prevents live web re-verification.
+4. Evaluation of Method A (Baseline) vs Method B (Additional Correction):
+   - Method A (Existing Model Baseline): Retained as primary operational baseline. Grounded in actual operating telemetry, incorporates empirical thermal derates, has zero double-counting risk, and is fully verified through Stage 2/3 interfaces.
+   - Method B (Additional Module-Temperature Correction): Evaluated as scientifically defective in direct form due to double-counting. Differential formulation requires an uncalibrated baseline fleet response (gamma_base) and unmeasured cell temperatures (T_cell) and POA irradiance.
+   - Decision: Method B is designated as EXPERIMENTAL and DISABLED.
+5. Leakage-Safe Validation Strategy Defined:
+   - Formal protocol established: pre-test calibration boundary (<= 2022-02-28), quarantined test window (2022-03-01 to 2022-04-23), GroupKFold site partitioning, and stratified ambient temperature regimes (<15°C, 15–25°C, 25–35°C, >=35°C).
+
+[FILES CREATED / MODIFIED]
+- `reports/phase8/phase8_stage4_temperature_evaluation_report.md`: Created comprehensive 12-section Stage 4 evaluation report with relative Markdown links.
+- `log.txt`: Appended Session 63.
+- Source code files modified: ZERO.
+- Runtime code changes: ZERO.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 180/180 PASSED in 3.55s (zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 datasets, code, models, catalogue, and closure records remain frozen and untouched.
+- Phase 8 Stage 1 foundation, Stage 2 inference/replay, and Stage 3 energy estimation remain completely unchanged.
+- ZERO temperature correction algorithms added to runtime engine.
+- ZERO Stage 5 (Annualization), Stage 6 (Degradation), Stage 7 (Financial), Stage 8, Stage 9, Stage 10, Phase 9, or Phase 10 work was initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_4_EVALUATION_COMPLETE_METHOD_B_DISABLED
+- Method A is retained as the sole operational estimation method.
+- Method B is disabled and documented as experimental pending future physical sensors.
+- Execution stopped; awaiting user review.
+================================================================================
+
+
+SESSION 64: PHASE 8, STAGE 4 — SCIENTIFIC WORDING AND EVIDENCE RECONCILIATION
+Timestamp: 2026-11-11 10:25:00 UTC [15:55:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform a narrow, documentation-only scientific and evidence reconciliation of reports/phase8/phase8_stage4_temperature_evaluation_report.md. Align terminology with empirical evidence, clarify statistical association vs physical causation, formalize double-counting as a material and unquantified risk, refine NOCT/NMOT distinction without cross-catalogue inferences, and qualify Method A readiness as an active empirical baseline for supported historical replay.
+
+[AUDIT & RECONCILIATION PERFORMED]
+1. Phase 5 Temperature Interpretation Reconciled:
+   - Clarified that the negative ElasticNet coefficient for `lag1_temp_mean` (-0.1474) represents a conditional predictive association in a multi-feature regression model, not causal proof of semiconductor thermal degradation.
+   - Clarified that ExtraTrees permutation importance indicates predictive utility within tree ensembles, not physical causation.
+   - Explicitly stated that all four temperature features (`lag1_temp_mean`, `lag1_temp_max`, `lag1_temp_min`, `lag1_temp_range`) are lagged ambient-air measurements from day t-1.
+   - Confirmed that the model receives zero contemporaneous (t) ambient measurements and zero contemporaneous module or cell temperature measurements.
+   - Explicitly distinguished the observed energy target (which embodies real operating-system behavior) from the statistical model's capability: the model does not isolate, separate, or quantify any individual physical loss mechanism and does not explicitly model panel-specific thermal response.
+2. Double-Counting Assessment Qualified:
+   - Double-counting formally characterized as a material and unquantified risk.
+   - Removed speculative compounded-loss percentage assertions (e.g. 19–22% or 20–28%).
+   - Stated that an additional catalogue-based temperature adjustment cannot currently be justified without an empirically established baseline fleet response and validated calibration.
+   - Maintained that the existing model's thermal response has not been independently isolated or quantified.
+3. NOCT and NMOT Interpretation Refined:
+   - Retained the technical distinction between NOCT (IEC 61215-2, open-circuit, P=0) and NMOT (IEC 61215:2016, maximum power point).
+   - Reaffirmed that NOCT and NMOT are distinct measurement standards and cannot be used interchangeably.
+   - Removed the universal claim that NMOT is systematically 2–4°C cooler across heterogeneous catalogue records, noting that comparing NOCT and NMOT across different manufacturers/models is invalid.
+   - Preserved catalogue provenance limitations (compiled text extracts, web link rot).
+4. Method A Readiness Terminology Corrected:
+   - Replaced "PRODUCTION / ACTIVE BASELINE" with "ACTIVE EMPIRICAL BASELINE FOR SUPPORTED HISTORICAL REPLAY".
+   - Explicitly documented that Phase 5 models are offline evaluated research artifacts, not production-deployed models.
+   - Documented that held-out test evaluation (March 1–April 23, 2022) does not establish generalization to unseen geographies or operating fleets.
+   - Reaffirmed that Method A does not resolve the unverified AC/DC energy basis under B-1, and prospective roofs remain blocked under B-2.
+5. Telemetry & Feature Availability Clarification:
+   - Specified that feature availability refers strictly to the prepared UNISOLAR peer-cohort historical feature dataset (`data/processed/unisolar/peer_cohort/features.csv`), and does not imply that all 29 features can be generated for an arbitrary prospective roof.
+
+[FILES MODIFIED]
+- `reports/phase8/phase8_stage4_temperature_evaluation_report.md`: Updated Sections 1, 2, 3, 4, 5, 6, 7, 10, and 11.
+- `log.txt`: Appended Session 64 (Session 63 preserved intact).
+- Runtime source code files modified: ZERO.
+- Test files modified: ZERO.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 180/180 PASSED in 3.61s (zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 datasets, code, models, catalogue, and closure records remain frozen and untouched.
+- Phase 8 Stage 1 foundation, Stage 2 inference/replay, and Stage 3 energy estimation remain completely unchanged.
+- ZERO temperature correction algorithms added to runtime engine.
+- ZERO Stage 5 (Annualization), Stage 6 (Degradation), Stage 7 (Financial), Stage 8, Stage 9, Stage 10, Phase 9, or Phase 10 work was initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_4_EVALUATION_COMPLETE_METHOD_B_DISABLED
+- Method A remains the active empirical baseline for supported historical replay.
+- Method B remains experimental and disabled.
+- No additional temperature correction is authorized.
+- No temperature correction has been implemented.
+- Execution stopped; awaiting user review.
+================================================================================
+
+
+SESSION 65: PHASE 8, STAGE 5 — ANNUALIZATION AND LIFETIME ENERGY METHODOLOGY AUDIT
+Timestamp: 2026-11-11 10:45:00 UTC [16:15:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform an evidence-based methodology and data-readiness audit for Phase 8 Stage 5: Annualization and Lifetime Energy. Audit the UNISOLAR historical dataset for annual coverage, evaluate historical annualization methods, examine representative-year scenarios, enforce prospective roof boundaries (B-2), define the constant-performance lifetime energy baseline, and prepare a comprehensive methodology report without modifying runtime code.
+
+[AUDIT FINDINGS & METHODOLOGY DETERMINATIONS]
+1. UNISOLAR Historical Dataset Coverage Audit:
+   - Observation start: 2021-05-01; observation end: 2022-04-23.
+   - Total calendar span: 358 days (< 365-day calendar year).
+   - Unique active observation dates across cohort: 345 days; missing dates: 13 days.
+   - Cohort date coverage fraction: 345 / 358 = 0.963687 (96.37%).
+   - Missing date distribution: Clusters in multi-day blocks (July 9–11 [3 days], Aug 10–12 [3 days], Oct 3, Oct 30, Nov 26–28 [3 days], Feb 15, Mar 23).
+   - Incomplete 12th Month: May 2021 through March 2022 contain 11 complete calendar months; April 2022 terminates on April 23 (23 of 30 days observed, 76.67% of calendar month).
+   - Ineligibility: Fails the requirement of >= 12 consecutive complete calendar months. The dataset cannot be certified as a complete historical year and must be reported with historical_year_status = "NOT_A_VALIDATED_COMPLETE_YEAR".
+2. Individual Site Coverage Disparities:
+   - Across the 22 peer sites, observed days range from 279 days (Site 25, 77.93% of window) to 324 days (Site 34, 90.50% of window), with cohort mean 293.45 days (81.97%).
+   - Site-level dropouts reflect local inverter faults and communication outages; cohort date union mask cannot be assumed for individual sites.
+3. Historical Annualization Method Evaluation:
+   - Method A (Complete Historical Year): Ineligible due to truncated 358-day window; returns observed-period energy only.
+   - Method B (Coverage-Adjusted Monthly Annualization): Evaluated as an extrapolation method (extrapolated = True) relying on unverified intra-month representativeness assumptions (especially late April). Cannot be certified as a physical complete year.
+   - Method C (Simple Daily Scaling, x 365 / N): Strictly rejected per specification rule ("Never `daily x 365`") because it distorts seasonal insolation profiles by over-allocating energy to winter outages.
+4. Representative-Year Scenarios:
+   - Evaluated as conditional on external, user-supplied 365/366-day profiles with verified provenance.
+   - Synthetic weather or lag fabrication is prohibited.
+5. Prospective Roof Constraints (Blocking Issue B-2):
+   - Prospective roofs lack operational lag history; annual energy prediction remains strictly BLOCKED_PENDING_LAG_POLICY.
+   - Default annual specific yield multipliers are prohibited.
+6. Constant-Performance Lifetime Energy Baseline:
+   - Defined as: E_lifetime_baseline = E_annual * L (constant performance reference).
+   - Degradation modeling is strictly deferred to Stage 6; financial discounting is deferred to Stage 7.
+   - Inherits status: if annual energy is partial/unvalidated, lifetime energy inherits UNVALIDATED_REFERENCE_ONLY.
+
+[FILES CREATED / MODIFIED]
+- `reports/phase8/phase8_stage5_annualization_lifetime_methodology_report.md`: Created comprehensive 12-section Stage 5 methodology audit report with portable relative links.
+- `log.txt`: Appended Session 65.
+- Runtime source code files modified: ZERO.
+- Test files modified: ZERO.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 180/180 PASSED in 3.64s (zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, catalogue, and closure records remain untouched.
+- Phase 8 Stage 1 foundation, Stage 2 inference/replay, and Stage 3 energy estimation remain completely unchanged.
+- ZERO annualization or lifetime calculations implemented in runtime engine.
+- ZERO Stage 6 (Degradation), Stage 7 (Financial), Stage 8, Stage 9, Stage 10, Phase 9, or Phase 10 work was initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_5_METHODOLOGY_AUDIT_COMPLETE
+- Methodology and data constraints audited and documented.
+- Execution stopped; awaiting user review before implementation.
+================================================================================
+
+
+SESSION 66: PHASE 8, STAGE 5 — COVERAGE AND ANNUALIZATION METHODOLOGY RECONCILIATION
+Timestamp: 2026-11-11 13:45:00 UTC [19:15:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform a narrow, documentation-only scientific and mathematical reconciliation of reports/phase8/phase8_stage5_annualization_lifetime_methodology_report.md. Reconcile cohort-union vs site-level coverage, separate internal missingness from boundary truncation, define site-month annualization requirements, separate non-contiguous seasonal observations, clarify approval status of the 90% threshold, formalize Decision D-5 status, and clarify lifetime energy evidence inheritance.
+
+[AUDIT & RECONCILIATION PERFORMED]
+1. Cohort-Union vs Site-Level Coverage Formally Separated:
+   - Clarified that 345/358 (96.37%) represents cohort-union date coverage (dates with observations from >= 1 site), NOT individual site coverage.
+   - Audited individual site coverage: observed days range from 279 (Site 25, 77.93%) to 324 (Site 34, 90.50%), with a cohort mean of 293.45 observed days (81.97%).
+   - Published full 22-site by 12-month observation matrix.
+   - Uncovered December 2021 internal dropout phenomenon: individual sites generated energy on only 11 to 20 days out of 31, masked by the cohort union mask. Site-level annualization must never use cohort-union coverage as an individual site proxy.
+2. Boundary Truncation vs Internal Missingness Formally Separated:
+   - Boundary truncation: April 24–30, 2022 (7 calendar days) lying outside the available data window.
+   - Internal missingness: 13 calendar dates within the 358-day window lacking cohort telemetry, clustered into 7 discrete outage events.
+   - Clarified that relative to a 365-day year, total missing days equal 20 days (13 internal + 7 boundary). April 24–30 is explicitly not treated as random internal telemetry missingness.
+3. Site-Month Annualization Requirements & Decision D-5:
+   - Reassessed coverage-adjusted monthly annualization: formula requires site-specific valid observation counts and intra-month representativeness assessment.
+   - For April 2022, scaling represents boundary extrapolation.
+   - Decision D-5 remains NOT APPROVED. The method is retained strictly as a conditional future option, not an implemented or approved method.
+4. Non-Contiguous Seasonal Coverage Separated:
+   - Clarified that Autumn observations are non-contiguous in time: May 2021 (start of window) and March–April 1–23, 2022 (end of window).
+   - Replaced misleading combined Autumn statistics with separate reporting for May 2021, March 2022, and April 1–23, 2022.
+5. Annualization Terminology & Threshold Status:
+   - Established precise descriptive classifications: FULL_CALENDAR_MONTH_IN_WINDOW, PARTIAL_CALENDAR_MONTH_AT_BOUNDARY, MONTH_WITH_INTERNAL_MISSING_OBSERVATIONS.
+   - Documented that the proposed 90% monthly coverage threshold is a proposal requiring approval under Decision D-5, not an established standard.
+6. Lifetime Energy Evidence Inheritance:
+   - Constant-performance baseline (E_annual * L) strictly inherits the evidence status of the annual energy reference (e.g. PARTIAL_RESULT_UNVALIDATED or UNVALIDATED_REFERENCE_ONLY).
+   - Zero degradation, temperature, or financial discounting applied.
+
+[FILES MODIFIED]
+- `reports/phase8/phase8_stage5_annualization_lifetime_methodology_report.md`: Updated Sections 1, 3, 4, 5, 8, 9, 10, and added dedicated Section 12 (Reconciliation).
+- `log.txt`: Appended Session 66 (Session 65 preserved intact).
+- Runtime source code files modified: ZERO.
+- Test files modified: ZERO.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 180/180 PASSED in 3.60s (zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, catalogue, and closure records remain untouched.
+- Phase 8 Stage 1 foundation, Stage 2 inference/replay, and Stage 3 energy estimation remain completely unchanged.
+- ZERO annualization or lifetime calculations implemented in runtime engine.
+- ZERO Stage 6 (Degradation), Stage 7 (Financial), Stage 8, Stage 9, Stage 10, Phase 9, or Phase 10 work was initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_5_METHODOLOGY_AUDIT_COMPLETE
+- Reconciled methodology audit complete.
+- Execution stopped; awaiting user review before implementation.
+================================================================================
+
+
+SESSION 67: PHASE 8, STAGE 5 — FINAL STAGE 5 COVERAGE SEMANTICS VERIFICATION
+Timestamp: 2026-11-11 14:00:00 UTC [19:30:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform a final, narrowly scoped documentation reconciliation of reports/phase8/phase8_stage5_annualization_lifetime_methodology_report.md following Session 66. Verify that site-by-month coverage counts represent the authoritative Phase 3 valid-site-day definition (Option B) rather than raw telemetry presence (Option A), disambiguate cohort-union missingness from site-level missingness, clarify descriptive month classification semantics, and preserve all established methodology decisions without runtime code changes.
+
+[AUDIT & VERIFICATION PERFORMED]
+1. Exact Definition of the Site-by-Month Matrix Verified:
+   - Investigated the generation logic of the 22-site by 12-month matrix from `data/processed/unisolar/peer_cohort/features.csv`.
+   - Traced `src/prepare_phase3_data.py` (lines 98–101, 230–231, 352–365): rows in `features.csv` were filtered strictly with `is_valid_site_day == True`, requiring:
+     * 96 timestamp rows per site-day (15-minute resolution).
+     * At least 26 of 28 non-null intervals in the core daylight window (09:00–15:45).
+     * Positive documented system capacity (kWp > 0).
+   - Cross-verified against `data/processed/unisolar/target_dataset.csv`: rows where `is_valid_site_day == True` match the matrix cell-for-cell with exactly 0.0 difference (6,456 valid site-days total).
+   - Telemetry comparison: Raw telemetry records with >0 intervals total 7,810 site-days (1,354 raw days excluded by the Phase 3 quality filter).
+   - Confirmed: The matrix represents Option B: Authoritative Phase 3 Valid-Site-Day Matrix (N_valid,s,m). It does NOT represent raw telemetry-observation days (Option A).
+2. Cohort-Union vs Site-Level Missingness Formally Disambiguated:
+   - Reaffirmed that the 13 internal missing dates and 7 boundary-truncation dates (totaling 20 days) are strictly cohort-union statistics (dates where zero sites had valid data across the cohort).
+   - Audited site-level missingness across all 22 sites: total invalid or unobserved site-days equal 1,574 site-days (1,420 inside window + 154 at April boundary) out of 8,030 expected annual site-days (19.60% missingness fleet-wide).
+   - Documented that cohort-union statistics must never be cited or used as total site-level missingness.
+3. Descriptive Month Classification Semantics:
+   - Clarified that FULL_CALENDAR_MONTH_IN_WINDOW, PARTIAL_CALENDAR_MONTH_AT_BOUNDARY, and MONTH_WITH_INTERNAL_MISSING_OBSERVATIONS are descriptive attributes rather than mutually exclusive categories. A full calendar month in window can simultaneously contain internal missing observations (e.g. July 2021).
+4. Retained Methodology Decisions:
+   - No validated complete historical annual measurement is currently available.
+   - Simple daily x 365 scaling remains rejected.
+   - The proposed 90% monthly coverage threshold is not approved (proposal requiring approval under D-5).
+   - Decision D-5 remains NOT APPROVED.
+   - Coverage-adjusted monthly annualization remains conditional and unimplemented.
+   - Representative-year scenarios require complete, externally supplied, provenance-verified 29-feature profiles.
+   - Prospective roof prediction remains blocked under B-2.
+   - Lifetime energy remains a constant-performance reference and inherits the evidence status of its annual input.
+   - No degradation or financial discounting is introduced in Stage 5.
+
+[FILES MODIFIED]
+- `reports/phase8/phase8_stage5_annualization_lifetime_methodology_report.md`: Updated Sections 1, 3, 4, 9, 13 (added Section 13 detailing final semantics verification).
+- `log.txt`: Appended Session 67 (Sessions 65 and 66 preserved intact).
+- Runtime source code files modified: ZERO.
+- Test files modified: ZERO.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 180/180 PASSED in 3.57s (zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, catalogue, and closure records remain untouched.
+- Phase 8 Stage 1 foundation, Stage 2 inference/replay, and Stage 3 energy estimation remain completely unchanged.
+- ZERO annualization or lifetime calculations implemented in runtime engine.
+- ZERO Stage 6 (Degradation), Stage 7 (Financial), Stage 8, Stage 9, Stage 10, Phase 9, or Phase 10 work was initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_5_METHODOLOGY_AUDIT_COMPLETE
+- Coverage semantics verified and reconciled.
+- Execution stopped; awaiting user review before implementation.
+================================================================================
+
+
+SESSION 68: PHASE 8, STAGE 5 — STAGE 5 IMPLEMENTATION PLANNING AND CONTRACT READINESS
+Timestamp: 2026-11-11 14:15:00 UTC [19:45:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Prepare a detailed, repository-grounded implementation plan for Phase 8 Stage 5: Annualization and Lifetime Energy (`reports/phase8/phase8_stage5_implementation_plan.md`).
+Planning and contract-readiness task ONLY. Strictly NO runtime source code modifications, test changes, or Phase 1–7 modifications. Preserve all findings from Sessions 65, 66, and 67 (UNISOLAR 358-day window ineligibility for complete year, rejection of daily scaling x 365, Decision D-5 remaining NOT APPROVED, lifetime constant-performance baseline inheriting evidence status, and Blocking Issue B-2 prospective roof prediction blocking). Status to report: STAGE_5_IMPLEMENTATION_PLAN_READY_FOR_REVIEW. Pause and await explicit user approval before writing Stage 5 runtime code.
+
+[AUDIT & PLANNING DELIVERABLES]
+1. Detailed Implementation Plan Created:
+   - Authored `reports/phase8/phase8_stage5_implementation_plan.md` (10 sections):
+     1. Executive Summary: Core directives, non-negotiable boundaries, zero-runtime commitment.
+     2. Current Implementation Inventory & Readiness Audit: Status of Stage 1, Stage 2, Stage 3, and mathematical spec alignment.
+     3. Approved Stage 5 Scope: Historical annual aggregation & completeness check, representative-year interface, lifetime baseline calculation (unadjusted mathematical product E_lifetime = E_annual x L), contract & typing extensions.
+     4. Explicitly Excluded Scope: Decision D-5 monthly coverage adjustment (NOT APPROVED), daily scaling (x 365), prospective roof prediction (B-2), physical degradation (deferred to Stage 6), financial metrics (deferred to Stage 7), temperature adjustments (Method B disabled in Stage 4).
+     5. Input/Output and Status Contract Reconciliation: Bridge/alias between Mathematical Spec `NOT_A_VALIDATED_COMPLETE_YEAR` and Stage 3 `PARTIAL_PERIOD_NOT_A_FULL_YEAR`. Dataclass contracts for `AnnualEnergyResult` and `LifetimeEnergyBaseline`.
+     6. Proposed Implementation Architecture: Dedicated `Phase8AnnualizationEngine` in `src/energy_economics/annualization.py`, preserving functional modularity.
+     7. Comprehensive Test Plan: 16 test cases (TC-01 through TC-16) covering observed aggregation, rejection of unvalidated scaling, representative-year processing, lifetime baseline computation, negative energy isolation, and prospective roof blocking.
+     8. Dependencies and Unresolved Decisions: Tracking D-5, B-1, B-2, D-2, Stage 6, Stage 7.
+     9. Implementation Sequence: 5 sequential steps to be executed upon user authorization.
+     10. Acceptance Criteria: Pass rate, preservation checks, zero regression.
+2. Code & Test Preservation Confirmed:
+   - Strictly zero runtime code written or modified.
+   - `src/energy_economics/energy_engine.py` timestamp and contents completely untouched.
+   - Zero test files modified.
+   - `pytest -q tests/` executed: 180/180 passed in 3.63s.
+
+[FILES CREATED / MODIFIED]
+- Created: `reports/phase8/phase8_stage5_implementation_plan.md`
+- Modified: `log.txt` (appended Session 68 entry; prior sessions preserved intact)
+- Runtime source code files modified: ZERO.
+- Test files modified: ZERO.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -q tests/`: 180/180 PASSED in 3.63s (zero regressions).
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, catalogue, and closure records remain untouched.
+- Phase 8 Stage 1 foundation, Stage 2 inference/replay, and Stage 3 energy estimation remain completely unchanged.
+- ZERO annualization or lifetime calculations implemented in runtime engine.
+- ZERO Stage 6 (Degradation), Stage 7 (Financial), Stage 8, Stage 9, Stage 10, Phase 9, or Phase 10 work was initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_5_IMPLEMENTATION_PLAN_READY_FOR_REVIEW
+- Stage 5 implementation plan authored and ready for review.
+- Execution paused; awaiting explicit user instruction before writing runtime code.
+================================================================================
+
+
+SESSION 69: PHASE 8 — STAGE 5 (ANNUALIZATION & LIFETIME ENERGY) & STAGE 6 (DEGRADATION MODELLING) COMBINED IMPLEMENTATION
+Timestamp: 2026-11-11 14:35:00 UTC [20:05:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Implement Phase 8 Stages 5 and 6 together in a single session:
+1. Stage 5: Annualization & Lifetime Energy (observed-period aggregation, 12-consecutive-month completeness evaluation, rejection of 365-day scaling, enforcement of Decision D-5 prohibition, representative scenario ingestion, constant-performance lifetime baseline E_lifetime = E_annual * L with evidence inheritance, and B-2 prospective roof blocking).
+2. Stage 6: Degradation Modelling (explicit compounded vs linear degradation, physical positivity constraint 1 - d*(L-1) > 0, parameter validation bounds d in [0, 0.05], L in [1, 40], constant-performance baseline separation, catalogue datasheet warranty consistency checks, and separation of user assumptions from warranty thresholds).
+3. Contract Reconciliation: Reconcile HistoricalYearStatus enum compatibility with specification's NOT_A_VALIDATED_COMPLETE_YEAR while preserving PARTIAL_PERIOD_NOT_A_FULL_YEAR backwards compatibility.
+
+[IMPLEMENTATION DELIVERABLES]
+1. Types, Enums & Dataclasses Extended (`src/energy_economics/types.py`):
+   - Reconciled `HistoricalYearStatus` adding `NOT_A_VALIDATED_COMPLETE_YEAR = "NOT_A_VALIDATED_COMPLETE_YEAR"`, helper methods `is_incomplete()`, `is_complete()`, and `normalize_spec_status()`.
+   - Added `AnnualizationMethod` (none_observed_only, full_observed_year, monthly_coverage_adjusted, representative_year, future_year).
+   - Added `AnnualEvidenceStatus` (VALIDATED_COMPLETE_ANNUAL, NOT_A_VALIDATED_COMPLETE_YEAR, UNVALIDATED_REFERENCE_ONLY, PARTIAL_RESULT_UNVALIDATED, PREDICTION_BLOCKED, SCENARIO_BASED_UNVALIDATED).
+   - Added `AnnualEnergyResult` and `LifetimeEnergyBaseline` dataclasses with `.to_dict()`.
+   - Added `DegradationModel` (compounded, linear) and `DegradationSource` (catalogue, user, assumption) enums.
+   - Added `YearlyDegradationRecord` and `DegradationResult` dataclasses with `.to_dict()`.
+2. Exceptions Added (`src/energy_economics/exceptions.py`):
+   - Added `AnnualizationError(Phase8Error)`, `DegradationError(Phase8Error)`, and `InvalidDegradationInputError(DegradationError, ValueError)`.
+3. Stage 5 Annualization Engine Implemented (`src/energy_economics/annualization.py`):
+   - `Phase8AnnualizationEngine` evaluates observed-period energy, detects calendar boundary truncation, performs 12-consecutive-month completeness checks, rejects simple 365 scaling, enforces D-5 prohibition, blocks prospective roofs under B-2, and computes constant-performance baseline.
+4. Stage 6 Degradation Engine Implemented (`src/energy_economics/degradation.py`):
+   - `Phase8DegradationEngine` implements compounded E_t = E_1 * (1 - d)^(t-1) and linear E_t = E_1 * [1 - d*(t-1)] with exact analytical closed-form cumulative sums, strictly enforces linear positivity constraint 1 - d*(L-1) > 0, integrates with ReadOnlyPanelCatalogue for warranty checks, tags catalogue_unverified_model_type, emits DEGRADATION_MODEL_TYPE_NOT_ESTABLISHED_BY_CATALOGUE, and checks beyond-warranty extrapolation.
+5. Public Exports Updated (`src/energy_economics/__init__.py`):
+   - Exposed all new types, exceptions, and engines.
+6. Comprehensive Tests Added (`tests/test_phase8_stage5_and_stage6.py`):
+   - 20 dedicated unit and integration tests covering all requirements.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -v tests/test_phase8_stage5_and_stage6.py`: 20/20 PASSED in 1.81s.
+- `pytest -q tests/`: 200/200 PASSED in 3.70s (zero regressions across entire test suite).
+
+[FILES CREATED / MODIFIED]
+- Created: `src/energy_economics/annualization.py`
+- Created: `src/energy_economics/degradation.py`
+- Created: `tests/test_phase8_stage5_and_stage6.py`
+- Created: `reports/phase8/phase8_stage5_stage6_implementation_report.md`
+- Modified: `src/energy_economics/types.py`
+- Modified: `src/energy_economics/exceptions.py`
+- Modified: `src/energy_economics/__init__.py`
+- Modified: `log.txt` (appended Session 69)
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, catalogue, and closure records remain untouched.
+- Phase 8 Stage 1 foundation, Stage 2 inference/replay, and Stage 3 energy estimation remain completely unchanged.
+- ZERO Stage 7 (Financials/LCOE), Stage 8, Stage 9, or Phase 10 work initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_5_AND_STAGE_6_IMPLEMENTATION_COMPLETE
+- Both Stage 5 and Stage 6 fully implemented, integrated, verified, and tested.
+================================================================================
+
+
+SESSION 70: PHASE 8 — STAGE 5–6 CORRECTIONS & STAGE 7–8 COMPLETE IMPLEMENTATION
+Timestamp: 2026-11-11 15:00:00 UTC [20:30:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Complete two sequential objectives in Phase 8:
+1. Stage 5–6 Final Corrections: Rectify degradation-rate bound governance status (proposed bound requiring approval, configurable policy), controlled negative degradation handling (EXTRAPOLATED_BEYOND_WARRANTY warning), explicit compound (original Section 4.4 formula) vs linear (alternative modeling assumption) labeling, and configurable warranty validation tolerance (heuristic sanity threshold).
+2. Stage 7 Implementation: System Cost & Financial Evaluation (itemized CAPEX/OPEX, gross vs net CAPEX, upfront subsidies, NPV, simple/discounted payback with fractional-year linear interpolation, LCOE with explicit net/gross basis, prevention of double-counting, missing commercial price preservation).
+3. Stage 8 Implementation: Feasibility & Electrical Evaluation (electrical compatibility engine with 8 engineering checks, multi-gate hard feasibility filtering, strict NOT_EVALUATED semantics for real installations lacking inverter/string specs).
+
+[IMPLEMENTATION DELIVERABLES]
+1. Stage 5–6 Corrections Implemented (`src/energy_economics/degradation.py`):
+   - Added `DEFAULT_MAX_DEGRADATION_RATE = 0.05` and `degradation_bound_status` tracking.
+   - Negative degradation allowed with `EXTRAPOLATED_BEYOND_WARRANTY` warning and mandatory source note.
+   - Compounded model labeled `SPECIFIED_ORIGINAL_FORMULA`; linear model labeled `ALTERNATIVE_MODELLING_ASSUMPTION` with warning.
+   - Added `DEFAULT_WARRANTY_TOLERANCE = 0.01` with status `CONFIGURABLE_VALIDATION_TOLERANCE_NO_ESTABLISHED_STANDARD`.
+2. Stage 7 System Cost Engine (`src/energy_economics/system_cost.py`):
+   - Implemented `Phase8SystemCostEngine` for itemized CAPEX (panels, inverter, mounting, BOS, labour, permits, taxes, subsidies) and OPEX (maintenance, cleaning, insurance, monitoring, replacements, residual value).
+   - Enforces $S_{up} \le C_{gross}$, rejects currency mismatches, and preserves missing commercial catalogue prices without synthetic fabrication.
+3. Stage 7 Financial Evaluation Engine (`src/energy_economics/financial.py`):
+   - Implemented `Phase8FinancialEngine` computing cash flows, NPV, simple and discounted payback with fractional interpolation, and LCOE with explicit net/gross basis.
+   - Requires explicit discount rate and rate basis; prevents double counting of initial outlay and subsidies.
+4. Stage 8 Electrical Compatibility Engine (`src/energy_economics/electrical.py`):
+   - Implemented `Phase8ElectricalEngine` evaluating 8 engineering checks (panel count consistency, cold Voc, cold/hot Vmp MPPT window, input current, short-circuit current, series fuse rating, DC power and DC/AC ratio).
+   - Marks real candidates lacking inverter/string specifications strictly as `NOT_EVALUATED_INSUFFICIENT_SPECIFICATIONS`.
+5. Stage 8 Multi-Gate Feasibility Engine (`src/energy_economics/feasibility.py`):
+   - Enhanced `FeasibilityEvaluator` across geometric, catalogue, capacity, prediction, electrical, and economic gates.
+   - Enforces hard constraint filtering (failure in any gate -> RECOMMENDATION_INELIGIBLE) and strict NOT_EVALUATED handling before ranking.
+6. Public Exports & Types Updated:
+   - Added financial and electrical types/exceptions to `src/energy_economics/types.py`, `src/energy_economics/exceptions.py`, and `src/energy_economics/__init__.py`.
+7. Comprehensive Test Suites:
+   - Updated `tests/test_phase8_stage5_and_stage6.py` (23 tests).
+   - Created `tests/test_phase8_stage7_and_stage8.py` (13 tests).
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -v tests/test_phase8_stage5_and_stage6.py`: 23/23 PASSED in 1.87s.
+- `pytest -v tests/test_phase8_stage7_and_stage8.py`: 13/13 PASSED in 0.64s.
+- `pytest -q tests/`: 216/216 PASSED in 3.77s (zero regressions across entire test suite).
+
+[FILES CREATED / MODIFIED]
+- Created: `src/energy_economics/system_cost.py`
+- Created: `src/energy_economics/financial.py`
+- Created: `src/energy_economics/electrical.py`
+- Created: `tests/test_phase8_stage7_and_stage8.py`
+- Created: `reports/phase8/phase8_stage7_stage8_implementation_report.md`
+- Modified: `src/energy_economics/degradation.py`
+- Modified: `src/energy_economics/feasibility.py`
+- Modified: `src/energy_economics/types.py`
+- Modified: `src/energy_economics/exceptions.py`
+- Modified: `src/energy_economics/__init__.py`
+- Modified: `tests/test_phase8_stage5_and_stage6.py`
+- Modified: `log.txt` (appended Session 70)
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen datasets, code, models, catalogue, and closure records remain untouched.
+- ZERO Stage 9 (Pareto ranking), Stage 10 (Recommendation), Phase 9, or Phase 10 work initiated.
+- energy_basis remains strictly UNVERIFIED (B-1).
+- Prospective roofs remain strictly blocked under B-2 (PREDICTION_PENDING_LAG_POLICY).
+
+[FINAL STATUS]
+STAGE_5_STAGE_6_CORRECTIONS_AND_STAGE_7_STAGE_8_IMPLEMENTATION_COMPLETE
+- Corrections to Stage 5–6 finalized; Stages 7 and 8 fully implemented, integrated, and verified.
+================================================================================
+
+SESSION 71: PHASE 8 — STAGE 9 (PARETO & WEIGHTED RANKING) & STAGE 10 (RECOMMENDATION & EXPLANATION ENGINE) COMPLETE IMPLEMENTATION
+Timestamp: 2026-11-11 15:45:00 UTC [20:15:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Implement and verify the final functional components of Phase 8:
+1. Stage 9A — Pareto Ranking: Scale-free multi-objective non-dominated sorting (E_1 maximisation vs LCOE/NPV_cost/CAPEX minimisation), deterministic frontier peeling, missing-objective handling (NOT_COMPARABLE_MISSING_OBJECTIVE without synthetic zero fabrication), capacity-support safeguards, and out-of-range exploratory quarantine annex.
+2. Stage 9B — Weighted Ranking: Min-max normalised multi-criteria scoring, explicit weight validation (sum = 1.0, w_k >= 0, no implicit defaults), zero-discrimination handling for identical bounds, strict exclusion of candidates lacking required criteria without unprincipled per-candidate weight re-normalisation, and reproducible bound provenance.
+3. Stage 10 — Recommendation & Explanation Engine: Synthesises Pareto frontiers and weighted rankings into actionable recommendations, determines consensus vs divergent trade-off narrative, generates automated operational caveats (B-1 metering, B-2 lag yield, unpopulated catalogue pricing, electrical checks), and enforces strict NONE_ELIGIBLE / RECOMMENDATION_NOT_EVALUATED handling when mandatory evidence is absent.
+4. Top-Level Orchestration: Unified EnergyEconomicsEngine integrating all 10 stages into a coherent execution pipeline producing contract-compliant Section 6 Output Schema dictionaries.
+5. Verification of Stage 7–8 Review Points: Configurable negative degradation policy bound, unstated generic safety factors eliminated from physical electrical checks, and DC/AC ratio reported as advisory metric rather than false hard compliance.
+
+[IMPLEMENTATION DELIVERABLES]
+1. Domain Types & Exceptions:
+   - Added `RankingError` and `RecommendationError` in `src/energy_economics/exceptions.py`.
+   - Added `ParetoStatus`, `WeightedRankingStatus`, `RecommendationBasis`, and dataclasses `ParetoCandidateResult`, `ParetoRankingResult`, `WeightedCandidateResult`, `WeightedRankingResult`, `RecommendationExplanation`, `RecommendationResult` in `src/energy_economics/types.py`.
+2. Stage 9A Pareto Engine (`src/energy_economics/pareto.py`):
+   - Implemented `Phase8ParetoEngine` supporting 2-objective non-dominated sorting across energy and financial costs.
+   - Preserves non-dominated peeling layers (Frontiers 1, 2, 3), provides energy-only fallback mode, isolates missing objectives, and isolates unsupported capacity into an exploratory annex.
+3. Stage 9B Weighted Ranking Engine (`src/energy_economics/weighted_ranking.py`):
+   - Implemented `Phase8WeightedRankingEngine` with min-max scoring across maximisation and minimisation criteria.
+   - Enforces strict weight validation without defaults, handles equal bounds with neutral scores, and retains bound provenance for reproducibility.
+4. Stage 10 Recommendation Engine (`src/energy_economics/recommendation.py`):
+   - Implemented `Phase8RecommendationEngine` supporting pareto, weighted, energy_only, and none recommendation bases.
+   - Formulates clear narrative explaining consensus vs trade-off divergences and attaches required Decision B-1, Decision B-2, pricing, and electrical caveats.
+5. End-to-End Orchestrator (`src/energy_economics/engine.py`):
+   - Implemented `EnergyEconomicsEngine` orchestrating Stages 1 through 10 and emitting compliant Section 6 Output Schema dictionaries.
+6. Public Exports Updated:
+   - Exported all new Phase 8 engines, types, and exceptions in `src/energy_economics/__init__.py`.
+7. Comprehensive Test Suite (`tests/test_phase8_stage9_and_stage10.py`):
+   - Authored 14 detailed tests covering Pareto dominance, ties, missing objectives, quarantine, weighted normalisation, equal bounds, missing criteria exclusion, recommendation bases, consensus/divergence explanations, 10-stage orchestration, and real prospective candidate governance.
+
+[TESTS EXECUTED AND RESULTS]
+- `pytest -v tests/test_phase8_stage9_and_stage10.py`: 14/14 PASSED in 1.82s.
+- Full Repository Regression Suite (`pytest -q`): 230/230 PASSED in 3.84s (zero failures across all phases).
+
+[FILES CREATED / MODIFIED]
+- Created: `src/energy_economics/pareto.py`
+- Created: `src/energy_economics/weighted_ranking.py`
+- Created: `src/energy_economics/recommendation.py`
+- Created: `src/energy_economics/engine.py`
+- Created: `tests/test_phase8_stage9_and_stage10.py`
+- Created: `reports/phase8/phase8_stage9_stage10_implementation_report.md`
+- Modified: `src/energy_economics/types.py`
+- Modified: `src/energy_economics/exceptions.py`
+- Modified: `src/energy_economics/degradation.py`
+- Modified: `src/energy_economics/electrical.py`
+- Modified: `src/energy_economics/__init__.py`
+- Modified: `log.txt` (appended Session 71)
+
+[PRESERVATION CONFIRMATION]
+- Phase 1–7 frozen models, datasets, catalogue records, and geometry remain 100% untouched.
+- ZERO Phase 9 (MLOps/Deployment) or Phase 10 (Monitoring/Retraining) work initiated.
+- Real prospective SolarSelect candidates evaluate strictly to RECOMMENDATION_NOT_EVALUATED due to unverified B-1 metering, unresolved B-2 lag yield, unpopulated commercial catalogue pricing, and unpopulated inverter catalogue models. No gates were relaxed or synthetic data fabricated.
+
+[FINAL STATUS]
+STAGE_9_AND_STAGE_10_IMPLEMENTATION_COMPLETE
+================================================================================
+
+SESSION 72: PHASE 8 — FINAL INTEGRATION VERIFICATION, COMPREHENSIVE REGRESSION TESTING, DOCUMENTATION RECONCILIATION AND FORMAL CLOSURE
+Timestamp: 2026-11-11 16:15:00 UTC [20:45:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Execute the final integration verification, mathematical consistency audit, regression testing across all phases, documentation reconciliation, and formal engineering closure of Phase 8 (Energy, Economics and Recommendation Engine).
+
+[VERIFICATION & ACCEPTANCE ACTIONS]
+1. Complete Ten-Stage Integration Verification:
+   - Verified that `EnergyEconomicsEngine` in `src/energy_economics/engine.py` orchestrates Stages 1 through 10 in strict logical order:
+     * Stage 1: Foundation ingestion and capacity support assessment (`Phase7Adapter`, `CapacitySupportEvaluator`, `ReadOnlyPanelCatalogue`).
+     * Stage 2: Frozen Phase 5 model inference and historical replay (`Phase5PeerCohortPredictor`, `UNISOLARHistoricalReplayEngine`).
+     * Stage 3: Daily energy estimation with Decision D-4 raw negative prediction preservation (`Phase8EnergyEstimationEngine`).
+     * Stage 4: Temperature evaluation audit (Method A model baseline; Method B disabled unless cell temp available).
+     * Stage 5: Historical annualization and constant lifetime baseline (`Phase8AnnualizationEngine`).
+     * Stage 6: Compounded and linear degradation modeling with configurable policy bound (`Phase8DegradationEngine`).
+     * Stage 7: System cost accounting (gross/net CAPEX) and lifecycle financials (NPV, payback, LCOE) (`Phase8SystemCostEngine`, `Phase8FinancialEngine`).
+     * Stage 8: Physical electrical compatibility checks and 7-gate sequential feasibility filtering (`Phase8ElectricalEngine`, `FeasibilityEvaluator`).
+     * Stage 9: Scale-free Pareto dominance sorting and multi-criteria min-max weighted ranking (`Phase8ParetoEngine`, `Phase8WeightedRankingEngine`).
+     * Stage 10: Recommendation synthesis with consensus vs divergent trade-off narrative and transparent caveats (`Phase8RecommendationEngine`).
+2. Mathematical & Scientific Integrity Audit:
+   - Specific yield multiplied by installed capacity exactly once ($E = y \times P_{DC}$).
+   - Decision D-4: Non-physical negative predictions remain unclipped in storage but are excluded from accepted positive energy totals.
+   - Partial UNISOLAR observation window (358 calendar dates, 11.7 months) is not scaled to 365 days; Decision D-5 monthly coverage annualization remains NOT APPROVED.
+   - Compounded degradation labeled normative specification formula; linear labeled alternative modeling assumption with positivity constraint.
+   - Negative degradation permitted under explicit user empirical assumption with mandatory `EXTRAPOLATED_BEYOND_WARRANTY` warning and configurable policy lower bound ($d \ge -0.05$).
+   - Gross vs net CAPEX strictly separated; upfront subsidies cannot exceed gross outlay ($S_{up} \le C_{gross}$); CAPEX enters cash flow exactly once at $t=0$.
+   - Simple and discounted payback calculated via exact integer recovery year detection with linear fractional-year interpolation.
+   - LCOE requires explicit basis selection (`net` or `gross`); revenues and feed-in tariffs are strictly excluded.
+   - Electrical checks modeled directly on temperature coefficients ($\beta_{Voc}, \alpha_{Isc}, \gamma_{Vmp}$) without unstated generic safety multipliers; DC/AC ratio reported as advisory metric.
+3. Feasibility and Recommendation Governance:
+   - Real prospective SolarSelect candidate configurations evaluate strictly to `RECOMMENDATION_NOT_EVALUATED` due to unresolved B-1 (metering point), B-2 (prospective lag policy), unpopulated commercial panel prices, and unpopulated inverter catalogue models. No gates were relaxed or synthetic data fabricated.
+4. Regression Testing Execution:
+   - Phase 8 Test Suites (`pytest -v tests/test_phase8_*.py`): 105 passed, 0 failed in 3.65s (6 test files).
+   - Phase 7 Regression Suites (`pytest -v tests/test_roof_fit_*.py tests/test_placement_engine.py`): 126 passed, 0 failed in 0.84s.
+   - Full Repository Suite (`pytest -q tests/`): 231 passed, 0 failed, 0 skipped in 3.56s (100% pass rate).
+   - Catalogue Integrity (`python3 src/validate_panel_catalogue.py`): 0 critical errors, 0 warnings (`PASS_AUTOMATED_WITH_CANDIDATE_CAMPUS_MAPPINGS`).
+5. Documentation & Status Reconciliation:
+   - Created Final Validation & Closure Report: `reports/phase8/phase8_final_validation_and_closure.md` (all 10 required sections).
+   - Updated `reports/phase8/phase8_mathematical_specification_and_io_contract.md`: Status updated to `IMPLEMENTED_WITH_DOCUMENTED_LIMITATIONS` and Section 13 revised with implementation evidence.
+   - Updated Project Status Documents: `docs/project/phase_completion_status.md` and `docs/project/project_roadmap.md` updated to reflect Phase 7 COMPLETED and Phase 8 COMPLETE_WITH_DOCUMENTED_LIMITATIONS.
+   - Reconciled root `log.txt` with Session 72.
+
+[PROTECTED ASSET PRESERVATION CONFIRMATION]
+- Phase 1–5 datasets, preprocessing pipelines, and trained model artifacts: 0 modifications.
+- Phase 6 catalogue CSV, JSON schema, compiled reference PDFs, and validation scripts: 0 modifications.
+- Phase 7 geometry, placement algorithms, and test suites: 0 modifications.
+- Phase 9 (REST API / Streamlit) and Phase 10 (Evidently / CI/CD retraining) remain untouched.
+
+[FORMAL CLOSURE DECISION]
+- Software Implementation Closure: COMPLETE
+- Real-World Prospective Recommendation Readiness: RESTRICTED WITH DOCUMENTED LIMITATIONS
+- Formal Project Status: PHASE 8 — COMPLETE_WITH_DOCUMENTED_LIMITATIONS
+================================================================================
+
+SESSION 73: PHASE 8 — INDEPENDENT CLOSURE AUDIT, TEST-EVIDENCE RECONCILIATION & FINAL SIGN-OFF
+Timestamp: 2026-11-11 16:30:00 UTC [21:00:00 IST]
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Perform the final independent verification audit of Phase 8: reconcile test count discrepancy (102 vs 105), verify ten-stage implementation and feasibility governance, audit protected asset preservation, reconcile documentation, and establish final formal sign-off.
+
+[AUDIT FINDINGS & RECONCILIATION]
+1. Test-Count Discrepancy Reconciliation:
+   - Investigated the 3-test discrepancy in Session 72 report table ($19 + 19 + 13 + 23 + 13 + 15 = 102$ vs 105 claimed).
+   - Pytest collection (`pytest --collect-only -q tests/`) and physical file inspection confirmed:
+     * `tests/test_phase8_stage2_inference_and_replay.py`: exactly 21 test functions (not 19; unchanged from Stage 2 report).
+     * `tests/test_phase8_stage3_energy_estimation.py`: exactly 14 test functions (not 13; as documented in Stage 3 report §8).
+     * Discrepancy resolved: Session 72 report table contained typographical recording errors in the Stage 2 (-2) and Stage 3 (-1) rows.
+     * True physical Phase 8 count: $19 + 21 + 14 + 23 + 13 + 15 = 105$ tests.
+     * True physical Phase 7 count: $70 + 32 + 24 = 126$ tests.
+     * Grand total repository tests: $105 + 126 = 231$ tests (100% pass rate).
+2. Ten-Stage Implementation & Governance Verification:
+   - Audited source code for Stages 1–10 in `src/energy_economics/`.
+   - Verified that `EnergyEconomicsEngine` unifies the pipeline via `evaluate_configuration(...)` and `run(...)`.
+   - Verified fail-fast logging, hard constraint disqualification (`RECOMMENDATION_INELIGIBLE`), and unevaluated gate propagation (`RECOMMENDATION_NOT_EVALUATED`).
+   - Verified synthetic end-to-end integration scenario passes as `RECOMMENDATION_ELIGIBLE`.
+   - Verified real prospective candidates evaluate strictly to `RECOMMENDATION_NOT_EVALUATED` under B-1, B-2, and unpopulated commercial pricing/inverters.
+3. Protected Asset Preservation:
+   - Verified zero modifications to Phase 1–5 datasets, pipelines, and models.
+   - Verified zero modifications to Phase 6 catalogue CSV, schema, and datasheets.
+   - Verified zero modifications to Phase 7 geometry and placement engine.
+   - Confirmed Phase 9 and Phase 10 remain completely unstarted.
+4. Documentation Reconciliation:
+   - Corrected test counts in `reports/phase8/phase8_final_validation_and_closure.md` (Stage 2 to 21, Stage 3 to 14).
+   - Corrected non-portable `file:///` URLs in `reports/phase8/phase8_stage3_energy_estimation_report.md` to relative links.
+   - Authored master audit report: `reports/phase8/phase8_final_closure_audit.md`.
+
+[FINAL SIGN-OFF VERDICT]
+- Software Implementation: PHASE_8_SOFTWARE_IMPLEMENTATION_CLOSED
+- Real-World Recommendation Readiness: PHASE_8_REAL_WORLD_RECOMMENDATION_READINESS_RESTRICTED
+- Final Status Retained: COMPLETE_WITH_DOCUMENTED_LIMITATIONS
+================================================================================
+
+
+
+
+
+SESSION 74: PHASE 9, PROMPT 1 — APPLICATION ARCHITECTURE, DASHBOARD DESIGN SYSTEM & UI/UX FOUNDATION
+Timestamp: 2026-11-11 21:23:00 IST
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Establish the Phase 9 application architecture, light-theme minimal SaaS design system, reusable UI component library, decoupled backend service boundary, and interactive multi-page Streamlit dashboard UI foundation without modifying prior Phase 1-8 artifacts.
+
+[WORK COMPLETED]
+1. Design System & Theme Configuration:
+   - Configured `.streamlit/config.toml` with light theme (`#FFFFFF` / `#F8FAFC` backgrounds, `#0F172A` typography, `#15803D` solar green accent) and disabled redundant sidebar auto-navigation.
+   - Created `app/frontend/styles/theme.py` and `app/frontend/styles/custom.css` defining minimal SaaS cards, status badges, banners, section headers, and workflow step boxes.
+2. Reusable UI Component Library (`app/frontend/components/ui.py`):
+   - Implemented `render_page_header`, `render_metric_card`, `render_status_badge`, `render_banner`, `render_section_header`, `render_empty_state`, and `render_step_card`.
+3. Decoupled Backend Service Boundary (`app/backend/`):
+   - Defined Pydantic V2 boundary models in `app/backend/schemas.py` (`RoofConfigurationRequestSchema`, `ObstacleInputSchema`, `SystemStatusSchema`).
+   - Built `SolarSelectPlatformService` in `app/backend/services.py` integrating Phase 6 `ReadOnlyPanelCatalogue` and Phase 7 `RoofFitEngine` status checks while exposing documented Phase 8 boundaries (B-1, B-2, null pricing/inverters).
+4. Six-Page Streamlit Dashboard (`app/frontend/main.py` & `app/frontend/pages/`):
+   - `overview.py`: Engineering overview, 4-stage workflow, 12-panel commercial catalogue table, and scientific governance notices.
+   - `roof_config.py`: Roof dimension, setback, walkway, obstacle, and catalogue selector controls with quantized net envelope preview.
+   - `energy_analysis.py`: B-1/B-2 scientific notices, empty state for unbuilt roofs, and explicit `DEMONSTRATION DATA ONLY` toggle for 25-year degradation visualization.
+   - `financial_analysis.py`: Missing commercial pricing banners, explicit user input prerequisites table, and demonstration-only discounted cash flow chart.
+   - `recommendations.py`: Feasibility gate hierarchy, `RECOMMENDATION_NOT_EVALUATED` governance state, and demonstration-only Pareto frontier visualization.
+   - `mlops_centre.py`: ExtraTrees test benchmark (MAE 0.9050, R^2 +0.2580), chronological dataset partitions, 29-feature schema breakdown, and MLflow/DVC tracking overview.
+5. Testing & Visual Verification:
+   - Authored `tests/test_phase9_app_foundation.py` (7 tests covering service boundary, schemas, design tokens, HTML badge generation, and `streamlit.testing.v1.AppTest` navigation across all 6 pages).
+   - Verified `pytest -v tests/test_phase9_app_foundation.py` -> 7 passed in 1.10s.
+   - Verified full repository regression suite `pytest -q tests/` -> 238 passed in 4.25s (126 Phase 7 + 105 Phase 8 + 7 Phase 9; 0 failures).
+   - Captured and visually inspected `reports/phase9/screenshots/dashboard_overview.png` via headless Chrome CDP.
+6. Documentation & Report Reconciliation:
+   - Authored comprehensive implementation report: `reports/phase9/phase9_prompt1_application_architecture_and_ui_foundation.md`.
+   - Updated `docs/project/phase_completion_status.md` and `docs/project/project_roadmap.md` to Phase 9 `IN PROGRESS`.
+
+[PROTECTED ASSET PRESERVATION CONFIRMATION]
+- Phase 1-5 datasets, preprocessing scripts, and trained ML models: 0 modifications.
+- Phase 6 panel catalogue CSV, schema, and datasheets: 0 modifications.
+- Phase 7 geometry engine and 126 tests: 0 modifications.
+- Phase 8 energy/economics/recommendation engine and 105 tests: 0 modifications.
+
+[PHASE 9 STATUS]
+- Prompt 1 (Application Architecture & UI Foundation): COMPLETE
+- Next Step: Prompt 2 — FastAPI REST endpoints and live Phase 7/8 interactive engine execution wiring.
+================================================================================
+SESSION 75: SINGLE PYTHON VERSION UNIFICATION & ENVIRONMENT RECORD RECONCILIATION
+Timestamp: 2026-11-11 22:41:00 IST
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Eliminate dual-Python runtime drift (Python 3.11.17 in stale `solarselect` conda env vs Python 3.13.9 in Anaconda `base`) and maintain authoritative repository records pinning one single Python version.
+
+[ACTIONS EXECUTED]
+1. Canonical Runtime Standardization (`Python 3.13.9`):
+   - Verified Phase 5 `.joblib` models were serialized under `scikit-learn==1.7.2` and load with zero warnings in `/opt/anaconda3/bin/python` (`Python 3.13.9`).
+   - Installed missing MLOps/API tools (`mlflow==3.18.0`, `dvc==3.67.1`, `xgboost==3.4.1`, `fastapi==0.162.4`, `uvicorn==0.54.0`) into `/opt/anaconda3/bin/python` and aligned `protobuf==6.33.6` (`<7`) so `pip check` passes with zero broken requirements.
+   - Re-pointed Jupyter kernel `solarselect` (`/Users/apple/Library/Jupyter/kernels/solarselect/kernel.json`) from the old 3.11 environment to `/opt/anaconda3/bin/python`.
+   - Removed the redundant Python 3.11 conda environment (`conda env remove -n solarselect -y`).
+2. Authoritative Repository Records Created/Updated:
+   - Created `.python-version` pinned to `3.13.9`.
+   - Updated `requirements.txt` with exact pinned versions matching the unified `Python 3.13.9` environment.
+   - Updated `docs/engineering/environment_setup.md` and `README.md` to specify single Python `3.13.9`.
+   - Updated `RSK-009` in `docs/decisions/risk_register.md` to reflect `Python 3.13.9` unification and `.python-version` pinning.
+3. Verification:
+   - `python --version` and `python3 --version` both report `3.13.9` (`/opt/anaconda3/bin/python`).
+   - `python -m pip check`: `No broken requirements found.`
+   - Phase 5 `final_extra_trees.joblib` loads with zero warnings.
+   - Full regression suite `pytest -q tests/`: 238 passed in 4.12s.
+================================================================================
+SESSION 76: MLFLOW EXPERIMENT TRACKING & ACADEMIC EVALUATION VISUALIZATION LOGGING
+Timestamp: 2026-11-12 00:41:00 IST
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Implement academic-quality model evaluation visualizations in MLflow Experiment `SolarSelect-Phase5-Evaluation` (Experiment ID: 2) and attach publication-grade figures directly to the primary production runs without retraining, without modifying frozen model binaries, and without duplicate runs.
+
+[PREFLIGHT AND IMMUTABILITY AUDIT]
+1. Verified Python 3.13.9 runtime with MLflow 3.18.0, scikit-learn 1.7.2, matplotlib 3.10.6, seaborn 0.13.2.
+2. Verified all 8 Phase 5 model binaries matched authoritative frozen hashes:
+   - `models/phase5/final/peer_cohort/final_extra_trees.joblib`: MD5 `420ea113a69405396faab910e25a04a5`, SHA-256 `39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9`
+   - `models/phase5/final/peer_cohort/final_elastic_net.joblib`: MD5 `1e80dd099e13b5dcd6dfcfc648d1282c`, SHA-256 `422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb`
+   - `models/phase5/final/full_cohort/final_elastic_net.joblib`: MD5 `2ea38e4cca315095f76e07d63c4c2064`, SHA-256 `93cb7b3b0a486c7e0e1f1fc974dfa9926236cb1b461d1c7321d7e315b9b4f49e`
+   - `models/phase5/final/full_cohort/final_extra_trees.joblib`: MD5 `8a723304a552c673e65485a0b2206189`, SHA-256 `b0a3615a77991bc313203ae76927ad357be4faa1de38a8f2854b82d62a8dbf76`
+   - `models/phase5/peer_cohort/tuned_extra_trees.joblib`: MD5 `46943896231df6fefcb0bd26580944a9`, SHA-256 `a3e258a869d4e920123f28f0db32fdf58e2e588d5ca2ad759188433a1ad9e1de`
+   - `models/phase5/peer_cohort/tuned_elastic_net.joblib`: MD5 `5d9fd3f8f7875d5da4340670eef358a2`, SHA-256 `1a125ca75aaa6019cef0e0ad044504cb35081d2cf5985404f08b1293557897e0`
+   - `models/phase5/full_cohort/tuned_elastic_net.joblib`: MD5 `0ba04d6bb4516c908d5d764628c9d71f`, SHA-256 `48ecb19d711b06a67e85dd83c5d21d96f8a5732b19a2b1c657a8cb22319ebc65`
+   - `models/phase5/full_cohort/tuned_extra_trees.joblib`: MD5 `55136a3e3d8ac72241ace2756c5cc89d`, SHA-256 `772ec9475f611295c1b102c933ae7756bc43cacff7d102c88b4279b258c70664`
+3. Verified baseline MLflow state: Experiment 1 has 8 runs; Experiment 2 has 10 runs. Primary run IDs:
+   - Peer Cohort Primary ExtraTrees: `4b451f68e1c04de49875b095a4defd40` (Registered: `SolarSelect-Yield-PeerCohort@champion`)
+   - Full Cohort Primary ElasticNet: `9aad1c6a87414b9ca4277d777d9ea8f1` (Registered: `SolarSelect-Yield-FullCohort@campus-tracking-conditional`)
+
+[ACTIONS EXECUTED]
+1. Implemented `src/mlops/log_phase5_visualizations.py`:
+   - Built modular, publication-grade visualization suite at 300 DPI.
+   - Peer Cohort Artifacts (Run `4b451f68e1c04de49875b095a4defd40`):
+     * `visualizations/actual_vs_predicted.png`: Calibration scatter ($N=1,128$) with $y=x$ line, metrics text box (MAE=0.9050, RMSE=1.0700, R²=+0.2580, Bias=-0.1036).
+     * `visualizations/residual_diagnostics.png`: Dual-panel diagnostics with residual density distribution ($e = \text{Actual} - \text{Predicted}$) and residual vs. predicted scatter.
+     * `visualizations/feature_importance.png`: Top 15 MDI importances from ExtraTrees cross-referenced with Phase 4 permutation drop.
+     * `visualizations/site_wise_performance.png`: Two-panel bar chart showing MAE and tracking bias across all 22 peer sites.
+     * `visualizations/cohort_model_comparison.png`: 3-panel benchmark (MAE, RMSE, R²) across all 10 Phase 5 model formulations.
+   - Full Cohort Artifacts (Run `9aad1c6a87414b9ca4277d777d9ea8f1`):
+     * `visualizations/actual_vs_predicted.png`: Calibration scatter ($N=1,232$) with prominent highlighting of Site 19 and 24 metering anomalies, test metrics box, and yellow-bordered operational limitation warning box.
+     * `visualizations/residual_diagnostics.png`: Dual-panel diagnostics distinguishing normal sites from Site 19/24 residual distributions.
+     * `visualizations/feature_coefficients.png`: Top 15 standardized coefficients (|β|) with explicit non-causal interpretation warning note.
+     * `visualizations/site_wise_performance.png`: Two-panel bar chart across all 24 sites prominently highlighting Site 19 (MAE=6.32) and Site 24 (MAE=1.86).
+     * `visualizations/cohort_model_comparison.png`: Cross-cohort 10-model benchmark attached to full cohort run as well.
+   - Incorporated pre- and post-execution bit-for-bit SHA-256 and MD5 model immutability assertions.
+   - Added `--dry-run` and `--output-dir` support for local offline preview and testing.
+2. Verified Dry Run:
+   - Executed `python src/mlops/log_phase5_visualizations.py --dry-run --output-dir scratch/test_plots`.
+   - Confirmed zero MLflow database writes and verified high-resolution 300 DPI outputs.
+3. Executed Live MLflow Artifact Logging:
+   - Executed `python src/mlops/log_phase5_visualizations.py`.
+   - All 5 figures per run successfully logged to `visualizations/` within runs `4b451f68e1c04de49875b095a4defd40` and `9aad1c6a87414b9ca4277d777d9ea8f1`.
+4. Automated Test Suite Integration:
+   - Expanded `tests/test_phase9_mlflow_registry.py` with `test_logged_visualization_artifacts` and `test_model_artifact_immutability`.
+   - Verified 6/6 tests passing in `tests/test_phase9_mlflow_registry.py`.
+   - Verified full repository test suite: 244/244 passing tests (zero regressions).
+5. Post-Execution Integrity Verification:
+   - Experiment 1 count: 8 runs (unchanged).
+   - Experiment 2 count: 10 runs (0 duplicate runs created).
+   - Model Registry aliases: `champion` and `campus-tracking-conditional` intact.
+   - All 8 model binaries passed 100% bit-for-bit SHA-256 and MD5 hash matches.
+   - DVC status and DVC remote sync verified (`Cache and remote 'origin' are in sync.`).
+================================================================================
+SESSION 77: FULL COHORT MLFLOW VISUALIZATION POLISH & SCIENTIFIC CORRECTION
+Timestamp: 2026-11-12 00:54:00 IST
+--------------------------------------------------------------------------------
+[OBJECTIVE]
+Address presentation issues and improve readability and numerical correctness of Full Cohort visualization artifacts in MLflow primary run `9aad1c6a87414b9ca4277d777d9ea8f1` without model retraining, binary mutation, or touching Peer Cohort artifacts.
+
+[ACTIONS EXECUTED]
+1. Full Cohort ElasticNet Coefficient Chart (`visualizations/feature_coefficients.png`):
+   - Verified all coefficients are sourced directly from frozen estimator `final_elastic_net.joblib` (`model.coef_`).
+   - Implemented a symmetric X-axis around zero (`[-1.10, +1.10]`) with vertical center line at zero.
+   - Preserved exact coefficient signs: positive coefficients extend right of zero (green bars `#15803d`), negative coefficients extend left of zero (crimson bars `#b91c1c`).
+   - Replaced fragile offset calculation with directional alignment: positive bars use `ha='left'` positioned to the right of the bar tip; negative bars use `ha='right'` positioned to the left of the bar tip.
+   - Displayed signed numeric values (`+0.848`, `+0.124`, `-0.046`, `-0.008`, `-0.0006`, `-6.59e-05`, etc.) preventing any overlapping or clipping.
+   - Expanded figure dimensions to 12.0 x 7.5 inches at 300 DPI with 28% left margin for feature labels.
+   - Maintained prominent methodological notice regarding conditional linear associations vs causal effects.
+2. Full Cohort Actual vs. Predicted Plot (`visualizations/actual_vs_predicted.png`):
+   - Relocated legend from `center right` to the empty lower-right quadrant (`loc='lower right', bbox_to_anchor=(0.96, 0.20)`), eliminating all data point overlap.
+   - Repositioned operational limitation warning box to the bottom-right corner (`x=0.96, y=0.04`), completely clear of the normal peer site cluster in the lower left.
+   - Kept Site 19 (crimson diamonds) and Site 24 (orange triangles) prominently distinguishable.
+3. Full Cohort Residual Diagnostics (`visualizations/residual_diagnostics.png`):
+   - In right scatter panel, adjusted Y-axis limits (`[-20.0, 9.5]`) and moved legend to `loc='lower left'`, placing it in the empty pocket ($Y < -8$) with zero data overlap.
+   - Renamed ambiguous "Normal Sites" label to "Peer Sites (22 Sites, N=1,128)", eliminating any unintended claim of statistical normality.
+   - Preserved strict residual definition: `e = actual - predicted`.
+4. Scoped Execution & Artifact Replacement:
+   - Added `--cohort` CLI parameter (`choices=['all', 'full', 'peer']`, default `'all'`) to `src/mlops/log_phase5_visualizations.py`.
+   - Executed dry-run validation: `python src/mlops/log_phase5_visualizations.py --dry-run --cohort full`.
+   - Executed live artifact replacement targeting exclusively the Full Cohort primary run (`9aad1c6a87414b9ca4277d777d9ea8f1`).
+   - Verified Peer Cohort artifacts (`4b451f68e1c04de49875b095a4defd40`) remained 100% untouched.
+
+[VERIFICATION EVIDENCE]
+- MLflow run counts: Exp 1 = 8 runs, Exp 2 = 10 runs (0 duplicate runs created).
+- Full Cohort Run `9aad1c6a87414b9ca4277d777d9ea8f1` artifacts replaced:
+  * `actual_vs_predicted.png`: 549,014 bytes
+  * `feature_coefficients.png`: 403,498 bytes
+  * `residual_diagnostics.png`: 518,537 bytes
+- Peer Cohort Run `4b451f68e1c04de49875b095a4defd40` artifacts: Unchanged.
+- Bit-for-bit SHA-256 and MD5 hash match confirmed across all 8 model binaries.
+- DVC local and remote status verified (`Cache and remote 'origin' are in sync.`).
+- Automated tests: `pytest -v tests/test_phase9_mlflow_registry.py` -> 6/6 passed; full test suite `pytest -q tests/` -> 244/244 passed.
+================================================================================

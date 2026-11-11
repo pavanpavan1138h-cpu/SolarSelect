@@ -1,0 +1,92 @@
+schema: '2.0'
+stages:
+  prepare_phase3_data:
+    cmd: python src/prepare_phase3_data.py
+    deps:
+    - path: data/raw/archive
+      hash: md5
+      md5: 0d587d78d2ddaa04c1660519dd132000.dir
+      size: 11233523
+      nfiles: 4
+    - path: data/raw/unisolar
+      hash: md5
+      md5: 69d5505ecf6616e349fc43d20803d995.dir
+      size: 106413609
+      nfiles: 4
+    - path: src/prepare_phase3_data.py
+      hash: md5
+      md5: 743a95a3a73b89b8b50c3f89e01d3f0b
+      size: 52650
+    outs:
+    - path: data/processed/kaggle_benchmark/plant1_prepared.csv
+      hash: md5
+      md5: 2fee440444bfe826e4fb298bc3174c0e
+      size: 12776314
+    - path: data/processed/kaggle_benchmark/plant2_prepared.csv
+      hash: md5
+      md5: d9f6e5db82ab69297f898c5f42acb179
+      size: 13053645
+    - path: data/processed/kaggle_benchmark/test.csv
+      hash: md5
+      md5: fe8b7e5acb099044eb8c2777d7b11b32
+      size: 3926087
+    - path: data/processed/kaggle_benchmark/train.csv
+      hash: md5
+      md5: 438b51bd87a29a8397924eeeb2eaa081
+      size: 17846447
+    - path: data/processed/kaggle_benchmark/validation.csv
+      hash: md5
+      md5: 9f635b05f8d0eb3084ea50ca2592e154
+      size: 4057614
+    - path: data/processed/unisolar/diagnostic_metadata.csv
+      hash: md5
+      md5: df292cb544de473dd572de6a6488f705
+      size: 761777
+    - path: data/processed/unisolar/excluded_site_days.csv
+      hash: md5
+      md5: c5830d4c52a7e2e156760cb85756e754
+      size: 330564
+    - path: data/processed/unisolar/feature_dictionary.csv
+      hash: md5
+      md5: 8ee89c8f1cc53159abc16df94b598b3e
+      size: 8185
+    - path: data/processed/unisolar/features.csv
+      hash: md5
+      md5: be0567243623e4685813fdb8716b7fd5
+      size: 3058175
+    - path: data/processed/unisolar/peer_cohort/diagnostic_metadata.csv
+      hash: md5
+      md5: 2ea51ece6ecb7e98dba28dc15167a5d0
+      size: 699385
+    - path: data/processed/unisolar/peer_cohort/features.csv
+      hash: md5
+      md5: 8869a1969ca3b4f163aaf57093ddbd60
+      size: 2801904
+    - path: data/processed/unisolar/peer_cohort/test.csv
+      hash: md5
+      md5: 96df6ebf1d3301a245da0364e369b61c
+      size: 480669
+    - path: data/processed/unisolar/peer_cohort/train.csv
+      hash: md5
+      md5: af1154dc6150dea39bef9d2d219bb54f
+      size: 1908284
+    - path: data/processed/unisolar/peer_cohort/validation.csv
+      hash: md5
+      md5: b6cdd801b8b6ade4525039002bb3f1cb
+      size: 413887
+    - path: data/processed/unisolar/target_dataset.csv
+      hash: md5
+      md5: ca31b68714a57c2f6d69474908c9e60b
+      size: 1582980
+    - path: data/processed/unisolar/test.csv
+      hash: md5
+      md5: 3311ab09fd8a6a15ed5654489c2d8881
+      size: 525134
+    - path: data/processed/unisolar/train.csv
+      hash: md5
+      md5: 1b8a4285a03d7f100fcb210e1f51f312
+      size: 2078718
+    - path: data/processed/unisolar/validation.csv
+      hash: md5
+      md5: 1704367bfc6f1961546bbf03f4d7b0b5
+      size: 455259

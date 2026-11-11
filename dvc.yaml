@@ -1,0 +1,32 @@
+stages:
+  prepare_phase3_data:
+    cmd: python src/prepare_phase3_data.py
+    deps:
+      - src/prepare_phase3_data.py
+      - data/raw/archive
+      - data/raw/unisolar
+    outs:
+      # Full UNISOLAR cohort (8 CSVs)
+      - data/processed/unisolar/target_dataset.csv
+      - data/processed/unisolar/excluded_site_days.csv
+      - data/processed/unisolar/features.csv
+      - data/processed/unisolar/diagnostic_metadata.csv
+      - data/processed/unisolar/train.csv
+      - data/processed/unisolar/validation.csv
+      - data/processed/unisolar/test.csv
+      - data/processed/unisolar/feature_dictionary.csv
+
+      # Peer cohort (5 CSVs)
+      - data/processed/unisolar/peer_cohort/features.csv
+      - data/processed/unisolar/peer_cohort/diagnostic_metadata.csv
+      - data/processed/unisolar/peer_cohort/train.csv
+      - data/processed/unisolar/peer_cohort/validation.csv
+      - data/processed/unisolar/peer_cohort/test.csv
+
+      # Kaggle benchmark (5 CSVs)
+      - data/processed/kaggle_benchmark/plant1_prepared.csv
+      - data/processed/kaggle_benchmark/plant2_prepared.csv
+      - data/processed/kaggle_benchmark/train.csv
+      - data/processed/kaggle_benchmark/validation.csv
+      - data/processed/kaggle_benchmark/test.csv
+

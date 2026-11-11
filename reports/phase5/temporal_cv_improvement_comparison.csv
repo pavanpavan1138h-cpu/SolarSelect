@@ -1,0 +1,5 @@
+Architecture,Peer_CV_RMSE,Peer_CV_MAE,Full_CV_RMSE,Full_CV_MAE
+P4 ET Baseline,1.319,1.088,2.2048,1.411
+P4 ENet Baseline,1.3097,1.0481,2.1299,1.3683
+Clearness Ratio Lags,1.3133,1.0771,2.185,1.392
+Blend 50/50 (ET+ENet),1.2715,1.0585,2.12,1.3525

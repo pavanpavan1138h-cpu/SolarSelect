@@ -1,0 +1,5 @@
+outs:
+- md5: 0ba04d6bb4516c908d5d764628c9d71f
+  size: 2744
+  hash: md5
+  path: tuned_elastic_net.joblib

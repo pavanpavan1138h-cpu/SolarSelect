@@ -1,0 +1,5 @@
+outs:
+- md5: 55136a3e3d8ac72241ace2756c5cc89d
+  size: 1929697
+  hash: md5
+  path: tuned_extra_trees.joblib

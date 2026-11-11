@@ -1,0 +1,2 @@
+"""SolarSelect Frontend Pages Package."""
+

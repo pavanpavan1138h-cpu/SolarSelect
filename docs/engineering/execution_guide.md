@@ -6,6 +6,7 @@ This document provides exact, verified CLI commands for reproducing the data pre
 
 ## 1. Running the Automated Data Preprocessing Pipeline
 
+### 1.1 Direct Python Execution
 To regenerate all Phase 3 processed datasets (`data/processed/unisolar/` and `data/processed/unisolar/peer_cohort/`) deterministically from raw telemetry:
 
 ```bash
@@ -13,10 +14,50 @@ To regenerate all Phase 3 processed datasets (`data/processed/unisolar/` and `da
 python3 src/prepare_phase3_data.py
 ```
 
+### 1.2 Reproducing via DVC Pipeline (`dvc repro`)
+For full MLOps pipeline reproducibility with dependency caching and hash verification:
+
+```bash
+# Inspect pipeline dependency DAG
+dvc dag
+
+# Reproduce pipeline stage (executes only if code or raw data inputs changed)
+dvc repro prepare_phase3_data
+
+# Verify pipeline and lock file status
+dvc status
+```
+
+### 1.3 New Developer DVC Onboarding Workflow
+When cloning the repository on a new machine:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/your-org/SolarSelect.git
+cd SolarSelect
+
+# 2. Activate Python 3.13.9 environment and install dependencies
+pip install -r requirements.txt
+
+# 3. Configure DVC remote credentials (if pulling from DagsHub remote storage)
+dvc remote modify origin --local access_key_id <YOUR_KEY>
+dvc remote modify origin --local secret_access_key <YOUR_SECRET>
+
+# 4. Pull all versioned data and Phase 5 models
+dvc pull
+
+# 5. Verify local cache matches remote
+dvc status -c
+
+# 6. Verify full test suite passes
+pytest -q tests/
+```
+
 ### Expected Output Summary:
 - Reconciles 8,760 expected annual site-days across 24 documented-$\text{kW}_p$ sites.
 - Generates Full Cohort ($N=7,039$) and Peer Cohort ($N=6,456$).
-- Produces `train.csv`, `validation.csv`, `test.csv`, `feature_dictionary.csv`, `preprocessing_metadata.json`, and `diagnostic_metadata.csv`.
+- Produces 18 processed CSV files across `data/processed/` and updates/verifies `dvc.lock`.
+- Preserves 3 Git-tracked `preprocessing_metadata.json` files without modification.
 - Execution runtime: $\approx 15–25\text{ seconds}$.
 
 ---
