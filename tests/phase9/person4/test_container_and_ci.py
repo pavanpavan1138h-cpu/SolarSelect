@@ -33,6 +33,8 @@ def test_every_copied_path_exists_in_the_repo():
     for line in (ROOT / "Dockerfile").read_text().splitlines():
         if line.startswith("COPY ") and not line.startswith("COPY --"):
             src = line.split()[1]
+            if src.startswith(("models/", "data/")):
+                continue                      # DVC-tracked: present after `dvc pull`, not in Git
             assert (ROOT / src).exists(), src
 
 def test_image_excludes_secrets_and_bulk():
