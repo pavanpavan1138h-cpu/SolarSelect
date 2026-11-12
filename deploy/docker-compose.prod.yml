@@ -1,0 +1,10 @@
+services:
+  api:
+    image: ${IMAGE:?set IMAGE=ghcr.io/<owner>/<repo>:<tag>}
+    ports: ["8000:8000"]
+    environment:
+      MODEL_SOURCE: local
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]

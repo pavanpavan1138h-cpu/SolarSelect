@@ -1,0 +1,16 @@
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      MODEL_SOURCE: local        # frozen, hash-verified Phase 5 artifacts
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes: ["./monitoring/configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+    depends_on: [api]
+  grafana:
+    image: grafana/grafana:11.3.0
+    ports: ["3000:3000"]
+    depends_on: [prometheus]

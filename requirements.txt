@@ -24,6 +24,7 @@ nbconvert==7.16.6
 streamlit==1.51.0
 pydantic==2.12.4
 fastapi==0.162.4
+starlette==1.10.0
 uvicorn==0.54.0
 pytest==8.4.2
 protobuf==6.33.6

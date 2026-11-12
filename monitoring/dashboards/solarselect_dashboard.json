@@ -1,0 +1,237 @@
+{
+ "title": "SolarSelect Monitoring",
+ "uid": "solarselect-mon",
+ "schemaVersion": 39,
+ "templating": {
+  "list": [
+   {
+    "name": "DS_PROMETHEUS",
+    "type": "datasource",
+    "query": "prometheus"
+   }
+  ]
+ },
+ "panels": [
+  {
+   "type": "timeseries",
+   "title": "Request rate by route",
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "sum by (route) (rate(solarselect_http_requests_total[5m]))",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "5xx ratio",
+   "gridPos": {
+    "x": 6,
+    "y": 0,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "sum(rate(solarselect_http_requests_total{status=\"5xx\"}[5m])) / sum(rate(solarselect_http_requests_total[5m]))",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "percentunit"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Predict p95 latency (ms)",
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.95, sum by (le) (rate(solarselect_http_request_duration_ms_bucket{route=\"/api/v1/predict\"}[5m])))",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "ms"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "API errors by code",
+   "gridPos": {
+    "x": 18,
+    "y": 0,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "sum by (code) (rate(solarselect_api_errors_total[5m]))",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Model loaded",
+   "gridPos": {
+    "x": 0,
+    "y": 7,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "solarselect_model_loaded",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Inferences / failures",
+   "gridPos": {
+    "x": 6,
+    "y": 7,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "sum(rate(solarselect_inferences_total[5m]))",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Non-finite + negative predictions",
+   "gridPos": {
+    "x": 12,
+    "y": 7,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "sum(solarselect_nonfinite_predictions_total) + sum(solarselect_negative_predictions_total)",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Prediction distribution p50",
+   "gridPos": {
+    "x": 18,
+    "y": 7,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "histogram_quantile(0.5, sum by (le) (rate(solarselect_prediction_value_bucket[1h])))",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Input rejections",
+   "gridPos": {
+    "x": 0,
+    "y": 14,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "sum by (code) (rate(solarselect_input_rejections_total[5m]))",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  },
+  {
+   "type": "timeseries",
+   "title": "Governance rejections (lag policy)",
+   "gridPos": {
+    "x": 6,
+    "y": 14,
+    "w": 6,
+    "h": 7
+   },
+   "datasource": "${DS_PROMETHEUS}",
+   "targets": [
+    {
+     "expr": "sum(solarselect_governance_rejections_total)",
+     "refId": "A"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "short"
+    }
+   }
+  }
+ ],
+ "_note": "Drift (PSI) and outcome performance are computed in Python (monitoring.drift / performance), not exposed as Prometheus series."
+}

@@ -1,0 +1,32 @@
+{
+  "_note": "Thresholds marked provisional are engineering defaults to be confirmed by the project owner; none was supplied in the handoff. 'basis' states where each number comes from.",
+  "rules": [
+    {"name": "ModelNotLoaded", "signal": "model_loaded", "op": "<", "threshold": 1, "severity": "critical",
+     "basis": "Binary health gauge: any value below 1 means the provider is not ready.",
+     "runbook": "Check GET /api/v1/health/ready and startup logs (event=startup_failed). Verify frozen artifact SHA-256 vs app/backend/model_loaders/frozen_manifest.json and, in registry mode, the MLflow DB/artifact paths. Do not swap models without Person 1 approval."},
+    {"name": "High5xxRate", "signal": "http_5xx_rate", "op": ">", "threshold": 0.01, "min_requests": 50, "severity": "critical",
+     "basis": "provisional: >1% server errors over >=50 requests.",
+     "runbook": "Inspect logs for event=request_failed and error_code INVALID_MODEL_OUTPUT / MODEL_UNAVAILABLE; re-run tests/test_api_*.py against the running build."},
+    {"name": "InferenceFailures", "signal": "inference_failure_rate", "op": ">", "threshold": 0.0, "severity": "critical",
+     "basis": "The frozen model is deterministic on validated input; any inference exception is abnormal.",
+     "runbook": "Capture exception_type from logs; reproduce with tests/phase9/person3; check scikit-learn/numpy versions against requirements.txt."},
+    {"name": "NonFinitePrediction", "signal": "nonfinite_predictions", "op": ">", "threshold": 0, "severity": "critical",
+     "basis": "API contract requires one finite prediction (INVALID_MODEL_OUTPUT otherwise).",
+     "runbook": "Stop serving the affected variant; compare against frozen artifact via tests/phase9/person3/test_reproducibility_and_parity.py."},
+    {"name": "PredictLatencyP95High", "signal": "http_p95_latency_ms", "op": ">", "threshold": 500, "min_requests": 50, "severity": "warning",
+     "basis": "provisional: ~18x the single-predict p95 (28 ms) measured on the reference laptop; batch-100 (~2.5 s p50) is not covered by this rule (see reports/phase9/monitoring/API_METRICS_REPORT.md).",
+     "runbook": "Check CPU saturation and n_jobs contention (ExtraTrees uses n_jobs=-1); check batch sizes (max 100)."},
+    {"name": "InputRejectionSpike", "signal": "input_rejection_rate", "op": ">", "threshold": 0.2, "min_requests": 50, "severity": "warning",
+     "basis": "provisional: >20% of requests rejected by validation suggests a client/schema mismatch.",
+     "runbook": "Inspect /metrics solarselect_api_errors_total{code}; compare client payload to GET /api/v1/model/schema. Do not loosen validation to silence it."},
+    {"name": "GovernanceRejections", "signal": "governance_rejections", "op": ">", "threshold": 0, "severity": "info",
+     "basis": "Counts prospective-roof requests blocked by the pending lag policy (HTTP 409).",
+     "runbook": "Expected until the lag policy is decided. Rising counts = demand for the blocked feature; escalate to the policy owner. Never bypass the guard."},
+    {"name": "FeatureDriftAlert", "signal": "feature_drift_max_psi", "op": ">=", "threshold": 0.25, "severity": "warning",
+     "basis": "Conventional PSI action level 0.25 (0.10-0.25 = warn). Industry convention, not project-derived.",
+     "runbook": "Identify features in drift report; check for seasonal shift (training covered 2021-05..2021-12 only), site mix change or upstream bug. Feature drift is not proof of degraded accuracy - confirm with labels. No automatic retraining."},
+    {"name": "PerformanceDegradation", "signal": "mae_ratio_to_reference", "op": ">", "threshold": 1.25, "severity": "critical",
+     "basis": "provisional: live MAE >25% above Person 1's held-out MAE (0.905). Requires actual-yield labels.",
+     "runbook": "Review residuals by site/season; escalate to Person 1 for governed retraining decision. Never auto-promote."}
+  ]
+}

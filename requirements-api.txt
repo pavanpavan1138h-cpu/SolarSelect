@@ -1,0 +1,10 @@
+# Minimal runtime for the FastAPI service (versions match requirements.txt). Frontend/MLOps tooling are not needed here.
+numpy==2.3.5
+pandas==2.3.3
+scipy==1.16.3
+scikit-learn==1.7.2
+joblib==1.5.2
+pydantic==2.12.4
+fastapi==0.162.4
+starlette==1.10.0
+uvicorn==0.54.0

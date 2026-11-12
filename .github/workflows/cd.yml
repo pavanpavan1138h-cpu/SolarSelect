@@ -1,0 +1,53 @@
+name: CD
+# Runs after CI succeeds on main, or manually. Publishing needs no extra secrets (GITHUB_TOKEN).
+# The SSH deploy step is skipped unless the repository variable DEPLOY_ENABLED is 'true'.
+on:
+  workflow_run: {workflows: [CI], types: [completed], branches: [main]}
+  workflow_dispatch:
+permissions: {contents: read, packages: write}
+
+jobs:
+  publish:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    outputs: {image: "${{ steps.meta.outputs.image }}"}
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.event.workflow_run.head_sha || github.sha }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.13"}
+      - run: pip install dvc==3.67.1 dvc-s3==3.3.0
+      - env: {DAGSHUB_TOKEN: "${{ secrets.DAGSHUB_TOKEN }}"}
+        run: |
+          dvc remote modify --local origin access_key_id "$DAGSHUB_TOKEN"
+          dvc remote modify --local origin secret_access_key "$DAGSHUB_TOKEN"
+          dvc pull
+      - id: meta
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}:${GITHUB_SHA::12}" >> "$GITHUB_OUTPUT"
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - run: |
+          docker build -t "${{ steps.meta.outputs.image }}" .
+          docker push "${{ steps.meta.outputs.image }}"
+
+  deploy:
+    needs: publish
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    environment: production          # configure required reviewers on this environment
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy over SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          IMAGE: ${{ needs.publish.outputs.image }}
+          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+          GHCR_USER: ${{ secrets.GHCR_PULL_USER }}
+        run: |
+          install -m 600 /dev/null key && printf '%s\n' "$SSH_KEY" > key
+          mkdir -p ~/.ssh && ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+          scp -i key deploy/docker-compose.prod.yml "$DEPLOY_USER@$HOST:~/solarselect/docker-compose.yml"
+          ssh -i key "$DEPLOY_USER@$HOST" "cd ~/solarselect && echo '$GHCR_TOKEN' | docker login ghcr.io -u '$GHCR_USER' --password-stdin && IMAGE='$IMAGE' docker compose pull && IMAGE='$IMAGE' docker compose up -d --remove-orphans"
+      - name: Verify deployed endpoint
+        run: python scripts/verify_deployed_endpoint.py "${{ vars.DEPLOY_URL }}"

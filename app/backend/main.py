@@ -13,6 +13,7 @@ from app.backend.core.errors import APIError
 from app.backend.model_loaders import create_provider
 from app.backend.roof_service import RoofService
 from app.backend.routes import router
+from monitoring.instrumentation import install_http_monitoring, monitored_factory
 from src.energy_economics.exceptions import FeatureValidationError, Phase5InferenceError, PanelNotFoundError, Phase8Error
 from src.roof_fit.exceptions import (InvalidRoofSpecificationError, PanelNotFoundError as RoofPanelNotFound,
                                      QuantizationError, RoofFitError)
@@ -24,7 +25,7 @@ if not logger.handlers:
 
 def create_app(settings=None, provider_factory=None, roof_factory=None):
     settings = settings or Settings()
-    provider_factory = provider_factory or create_provider
+    provider_factory = monitored_factory(provider_factory or create_provider)   # Person 4: observe only
     roof_factory = roof_factory or RoofService
 
     @asynccontextmanager
@@ -121,6 +122,7 @@ def create_app(settings=None, provider_factory=None, roof_factory=None):
     app.add_exception_handler(RoofFitError, service_error)
     app.add_exception_handler(Phase8Error, service_error)
     app.include_router(router)
+    install_http_monitoring(app)
     return app
 
 app = create_app()

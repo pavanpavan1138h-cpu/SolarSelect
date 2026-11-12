@@ -1,0 +1,73 @@
+name: CI
+on:
+  push: {branches: [main, "feature/**"]}
+  pull_request:
+permissions: {contents: read}
+concurrency: {group: "ci-${{ github.ref }}", cancel-in-progress: true}
+
+jobs:
+  static:                     # needs no secrets or model files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.13", cache: pip, cache-dependency-path: requirements-ci.txt}
+      - run: pip install -r requirements-ci.txt
+      - name: Static container/CI/dependency checks and pure-logic monitoring tests
+        run: |
+          python -m pytest -q tests/phase9/person4 -k "not live_app and not docker_image"
+          python -m pytest -q tests/phase9/monitoring/test_drift_and_performance.py -k "psi or insufficient or prediction_drift or labels or reference"
+
+  test:
+    if: ${{ vars.HAS_DVC_REMOTE == 'true' }}   # set once DAGSHUB_TOKEN is configured
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.13", cache: pip, cache-dependency-path: requirements-ci.txt}
+      - run: pip install -r requirements-ci.txt
+      - name: Pull model artifacts and data (DVC, DagsHub remote)
+        env:
+          DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          dvc remote modify --local origin access_key_id "$DAGSHUB_TOKEN"
+          dvc remote modify --local origin secret_access_key "$DAGSHUB_TOKEN"
+          dvc pull
+      - name: Tests
+        # These two read Person 1's local-only mlflow.db (git-ignored); they are verified locally, not in CI.
+        run: >
+          python -m pytest -q --junitxml=pytest.xml
+          --deselect tests/test_phase9_mlflow_registry.py::test_historical_runs_preservation
+          --deselect tests/test_phase9_mlflow_registry.py::test_logged_visualization_artifacts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: pytest-results, path: pytest.xml}
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.13"}
+      - run: pip install dvc==3.67.1 dvc-s3==3.3.0
+      - name: Pull artifacts needed in the image
+        env: {DAGSHUB_TOKEN: "${{ secrets.DAGSHUB_TOKEN }}"}
+        run: |
+          dvc remote modify --local origin access_key_id "$DAGSHUB_TOKEN"
+          dvc remote modify --local origin secret_access_key "$DAGSHUB_TOKEN"
+          dvc pull
+      - name: Build image
+        run: docker build -t solarselect-api:ci .
+      - name: Run container and wait for health
+        run: |
+          docker run -d --name api -p 8000:8000 solarselect-api:ci
+          for i in $(seq 1 40); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' api)" = healthy ] && break; sleep 3
+          done
+          docker inspect -f '{{.State.Health.Status}}' api | grep -x healthy
+      - name: Smoke-test the running container
+        run: python scripts/verify_deployed_endpoint.py http://127.0.0.1:8000
+      - if: failure()
+        run: docker logs api

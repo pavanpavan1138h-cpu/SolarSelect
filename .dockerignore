@@ -1,0 +1,13 @@
+.venv
+.git
+.pytest_cache
+**/__pycache__
+mlruns
+mlflow.db
+.person2-local
+notebooks
+phase1.0
+data/raw
+reports
+tests
+log.txt

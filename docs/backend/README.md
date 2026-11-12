@@ -165,3 +165,10 @@ python scripts/verify_registered_backend.py
 The new live verifier launches/stops only its own loopback processes and writes evidence without updating the API schema or examples. The older verify_backend_http.py remains local-mode-specific. Tests use the available Python 3.12.14 environment; the declared Python 3.13.9/dependency set still requires deployment-owner verification. MLflow dependency/Python mismatch warnings are retained in the local logs. See [the authoritative final submission](../../reports/phase9/person2/FINAL_PERSON2_SUBMISSION.md).
 
 Final completion: the current authoritative status and committed file list are in [FINAL_PERSON2_SUBMISSION.md](../../reports/phase9/person2/FINAL_PERSON2_SUBMISSION.md). The API has no built-in authentication; Person 3 must supply authenticated TLS/network controls before public exposure. Use loopback during local verification. Raw XML/local audit pointers are ignored; the source, tests, scripts and safe handoff JSON belong in the feature-branch commit.
+
+## Container, CI/CD, monitoring and QA (Persons 3-4)
+- **Run in Docker:** `docker compose up -d --build api` → http://localhost:8000/docs . Verify: `python3 scripts/verify_deployed_endpoint.py http://localhost:8000`. Stop: `docker compose down`. The image serves the frozen, hash-verified model (`MODEL_SOURCE=local`); model files must exist locally (`dvc pull`) before building.
+- **CI/CD:** `.github/workflows/ci.yml` (static checks always; tests + image build once `HAS_DVC_REMOTE=true` and `DAGSHUB_TOKEN` are set) and `cd.yml` (GHCR publish, gated SSH deploy). Secrets/variables and rollback: `deploy/README.md`.
+- **Monitoring:** `GET /metrics` (Prometheus), `monitoring/` (drift, alerts, dashboard, `RUNBOOK.md`); `docker compose up -d` also starts Prometheus (:9090) and Grafana (:3000).
+- **QA evidence:** `reports/phase9/person3/`, `reports/phase9/monitoring/`, `reports/phase9/person4/`; tests in `tests/phase9/`.
+- `/predict/batch` now makes one model call per variant (was one per row); outputs equal single-row results within 1e-8 (tested).

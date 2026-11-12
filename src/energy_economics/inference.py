@@ -157,7 +157,9 @@ class Phase5PeerCohortPredictor:
     ) -> pd.DataFrame:
         """
         Validates input feature rows against the exact 29-feature schema.
-        Ensures exact column presence, finite numerics, target exclusion, and correct ordering.
+        Ensures exact column presence, finite numerics, and correct ordering. Target/leakage columns
+        (EXCLUDED_TARGET_COLUMNS) and any other extra columns are dropped before scoring so they can never
+        influence a prediction; the HTTP layer rejects such fields outright (extra="forbid").
 
         Args:
             features: pandas DataFrame or dictionary representing feature rows.
@@ -167,7 +169,7 @@ class Phase5PeerCohortPredictor:
 
         Raises:
             FeatureValidationError: If required features are missing, non-numeric, NaN, infinite,
-            or if target columns are passed as features.
+            or kWp is not strictly positive.
         """
         if features is None:
             raise FeatureValidationError("Input features cannot be None.")

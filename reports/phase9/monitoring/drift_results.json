@@ -1,0 +1,149 @@
+{
+ "train": {
+  "rows": 1000,
+  "status": "OK",
+  "max_psi": 0.012936326922349093,
+  "top": [
+   [
+    "lag1_daily_yield",
+    0.013,
+    0.0
+   ],
+   [
+    "rolling_mean_14d_yield",
+    0.011,
+    0.0
+   ],
+   [
+    "lag2_daily_yield",
+    0.01,
+    0.0
+   ],
+   [
+    "rolling_mean_30d_yield",
+    0.01,
+    0.0
+   ],
+   [
+    "sin_doy",
+    0.008,
+    0.0
+   ],
+   [
+    "cos_doy",
+    0.008,
+    0.0
+   ],
+   [
+    "day_of_week",
+    0.007,
+    0.0
+   ],
+   [
+    "lag7_daily_yield",
+    0.007,
+    0.0
+   ]
+  ],
+  "n_alert": 0,
+  "n_warn": 0
+ },
+ "validation": {
+  "rows": 945,
+  "status": "ALERT",
+  "max_psi": 8.302588244802767,
+  "top": [
+   [
+    "day_of_year",
+    8.303,
+    1.0
+   ],
+   [
+    "month",
+    7.968,
+    1.0
+   ],
+   [
+    "lag1_temp_mean",
+    7.032,
+    0.311
+   ],
+   [
+    "cos_doy",
+    6.721,
+    0.0
+   ],
+   [
+    "lag1_temp_max",
+    6.296,
+    0.122
+   ],
+   [
+    "lag1_temp_min",
+    6.138,
+    0.301
+   ],
+   [
+    "sin_month",
+    6.066,
+    0.523
+   ],
+   [
+    "cos_month",
+    5.879,
+    0.0
+   ]
+  ],
+  "n_alert": 23,
+  "n_warn": 0
+ },
+ "test": {
+  "rows": 1128,
+  "status": "ALERT",
+  "max_psi": 8.302588244802767,
+  "top": [
+   [
+    "day_of_year",
+    8.303,
+    1.0
+   ],
+   [
+    "sin_doy",
+    8.116,
+    0.961
+   ],
+   [
+    "month",
+    7.968,
+    1.0
+   ],
+   [
+    "cos_month",
+    6.202,
+    0.0
+   ],
+   [
+    "sin_month",
+    6.066,
+    1.0
+   ],
+   [
+    "solar_declination_deg",
+    5.723,
+    0.0
+   ],
+   [
+    "solar_noon_elevation_deg",
+    5.723,
+    0.0
+   ],
+   [
+    "solar_noon_zenith_deg",
+    5.723,
+    0.0
+   ]
+  ],
+  "n_alert": 22,
+  "n_warn": 1
+ }
+}

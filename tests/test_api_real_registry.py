@@ -141,8 +141,10 @@ def test_registry_pending_prospective_and_explicit_variant_policy(registered_cli
 
 
 def test_registry_openapi_unchanged(registered_client):
+    # HTTP 422's reason phrase differs by Python/starlette release ("Entity" vs "Content"); compare modulo that wording.
+    norm = lambda doc: json.loads(json.dumps(doc).replace("Unprocessable Entity", "Unprocessable Content"))
     expected = json.loads((REPOSITORY_ROOT / "docs/backend/openapi.json").read_text())
-    assert registered_client.get("/openapi.json").json() == expected
+    assert norm(registered_client.get("/openapi.json").json()) == norm(expected)
     assert registered_client.get("/docs").status_code == 200
 
 

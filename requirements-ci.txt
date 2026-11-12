@@ -1,0 +1,13 @@
+# CI / test environment: API runtime + test and registry tooling (pins match requirements.txt)
+-r requirements-api.txt
+pytest==8.4.2
+httpx>=0.27,<1
+mlflow==3.18.0
+skops==0.16.0
+streamlit==1.51.0
+matplotlib==3.10.6
+plotly==6.3.0
+seaborn==0.13.2
+dvc==3.67.1
+dvc-s3==3.3.0
+pyyaml

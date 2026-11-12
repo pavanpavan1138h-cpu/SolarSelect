@@ -99,14 +99,14 @@
         "elastic_net": 0.5
       },
       "test_metrics": {
-        "mae": 0.8898,
-        "rmse": 1.0615,
-        "r2": 0.2698,
-        "bias": -0.1204,
-        "mae_pct_mean": 30.33
+        "mae": 0.8767,
+        "rmse": 1.0444,
+        "r2": 0.293,
+        "bias": -0.0885,
+        "mae_pct_mean": 29.89
       },
       "acceptance_verdict": "ACCEPTED (Authorized Fallback)",
-      "verdict_rationale": "Slightly superior MAE and RMSE over primary tree model through linear smoothing; approved as secondary fallback candidate."
+      "verdict_rationale": "Slightly superior MAE and RMSE over primary tree model through linear smoothing; approved as secondary fallback candidate. Metrics re-derived from the frozen artifacts during Phase 9 QA (see qa_corrections)."
     },
     "reference_baseline": {
       "name": "Persistence Baseline (Lag 1)",
@@ -114,7 +114,7 @@
         "mae": 1.0875,
         "rmse": 1.3713,
         "r2": -0.2187,
-        "bias": 0.0528
+        "bias": 0.0236
       }
     }
   },
@@ -173,5 +173,29 @@
   "quarantine_confirmation": {
     "status": "COMPLIANT",
     "description": "Test partition (2022-03-01 to 2022-04-23) remained strictly quarantined during Phases 1-4 and Phase 5 Prompts 1-2. It was loaded and evaluated exactly once in Phase 5 Prompt 3 on frozen candidate models trained exclusively on pre-test data (Train + Val). No post-test iterative tuning was performed."
+  },
+  "qa_corrections": {
+    "date": "2026-11-12",
+    "reason": "Phase 9 QA could not reproduce these values from the frozen artifacts and held-out test set (bias = actual - predicted).",
+    "peer_fallback_test_metrics": {
+      "previously_reported": {
+        "mae": 0.8898,
+        "rmse": 1.0615,
+        "r2": 0.2698,
+        "bias": -0.1204,
+        "mae_pct_mean": 30.33
+      },
+      "corrected": {
+        "mae": 0.8767,
+        "rmse": 1.0444,
+        "r2": 0.293,
+        "bias": -0.0885,
+        "mae_pct_mean": 29.89
+      }
+    },
+    "peer_persistence_baseline_bias": {
+      "previously_reported": 0.0528,
+      "corrected": 0.0236
+    }
   }
 }
