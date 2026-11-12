@@ -1,0 +1,271 @@
+{
+  "verified_at_utc": "2026-11-12T04:35:13.792648+00:00",
+  "primary_root": "C:\\Users\\nithe\\OneDrive\\Documents\\ChatGPT\\MLOPs SOLAR\\person2-fastapi-submission",
+  "branch": "feature/person2-fastapi-backend",
+  "head": "e8002036effdc95d1b2219a4d2faf0eed9876b60",
+  "remote": "https://github.com/pavanpavan1138h-cpu/SolarSelect.git",
+  "original_root": "C:\\Users\\nithe\\OneDrive\\Documents\\ChatGPT\\MLOPs SOLAR\\SolarSelect 3\\SolarSelect",
+  "original_branch": "phase2",
+  "original_head_unchanged": true,
+  "original_status_unchanged": true,
+  "original_working_files_changed": [],
+  "original_index_unchanged": true,
+  "original_working_diff_unchanged": true,
+  "protected_file_count": 102,
+  "protected_files_changed": [],
+  "primary_original_index_unchanged": true,
+  "primary_original_index_sha256": "40305c05ab0e3fda096897f69f19e28e34cecb0af0cc64b823828386fa21cdd5",
+  "existing_staged_file_count": 40,
+  "openapi_unchanged": true,
+  "frozen_manifest": {
+    "models/phase5/final/peer_cohort/final_extra_trees.joblib": {
+      "raw_sha256": "39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9",
+      "manifest_sha256": "39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9",
+      "verified_sha256": "39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9",
+      "pass": true,
+      "method": "exact bytes"
+    },
+    "models/phase5/final/peer_cohort/final_elastic_net.joblib": {
+      "raw_sha256": "422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb",
+      "manifest_sha256": "422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb",
+      "verified_sha256": "422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb",
+      "pass": true,
+      "method": "exact bytes"
+    },
+    "models/phase5/final_model_metadata.json": {
+      "raw_sha256": "9220b573eb400a57fcf299c8675b5d532a0ff0e0084cac052c23aab0c37749b6",
+      "manifest_sha256": "3b1399a2a0e5b5728d262f359c7efb79b3d9351ddab4e5af4b54ceb908ac3a37",
+      "verified_sha256": "3b1399a2a0e5b5728d262f359c7efb79b3d9351ddab4e5af4b54ceb908ac3a37",
+      "pass": true,
+      "method": "CRLF to LF only"
+    }
+  },
+  "database_bytes_unchanged": true,
+  "package_bytes_unchanged": true,
+  "source_archive_unchanged": true,
+  "local_assets_ignored": true,
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "runtime": {
+    "mlflow": "3.18.0",
+    "scikit-learn": "1.7.2",
+    "skops": "0.16.0",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pandas": "2.3.3",
+    "pytest": "9.2.0",
+    "fastapi": "0.162.4",
+    "pydantic": "2.14.3",
+    "uvicorn": "0.54.0",
+    "httpx": "0.28.1"
+  },
+  "test_counts": {
+    "baseline_api": {
+      "passed": 90,
+      "failed": 0,
+      "errored": 0,
+      "skipped": 0,
+      "duration_seconds": 14.797,
+      "timestamp": "2026-11-12T09:44:15.040131+05:30"
+    },
+    "baseline_full": {
+      "passed": 332,
+      "failed": 2,
+      "errored": 0,
+      "skipped": 0,
+      "duration_seconds": 56.321,
+      "timestamp": "2026-11-12T09:44:27.169474+05:30"
+    },
+    "api": {
+      "passed": 118,
+      "failed": 0,
+      "errored": 0,
+      "skipped": 0,
+      "duration_seconds": 20.929,
+      "timestamp": "2026-11-12T09:55:46.855973+05:30"
+    },
+    "full": {
+      "passed": 360,
+      "failed": 2,
+      "errored": 0,
+      "skipped": 0,
+      "duration_seconds": 56.673,
+      "timestamp": "2026-11-12T09:58:30.486814+05:30"
+    }
+  },
+  "committed": false,
+  "pushed": false,
+  "staging_note": "Earlier index-preservation evidence is historical. Final execution explicitly authorizes replacing that staged snapshot with the reviewed latest 58-file contents and a local commit; no push.",
+  "verified_registry_versions": [
+    {
+      "name": "SolarSelect-Yield-FullCohort",
+      "version": 1,
+      "status": "READY",
+      "source": "models:/m-e43cb55171ca47238eeb66f47dab0b2d",
+      "run_id": "9aad1c6a87414b9ca4277d777d9ea8f1",
+      "alias": "campus-tracking-conditional"
+    },
+    {
+      "name": "SolarSelect-Yield-PeerCohort",
+      "version": 1,
+      "status": "READY",
+      "source": "models:/m-0fd6281417054bf385101d2a68c3f6a5",
+      "run_id": "4b451f68e1c04de49875b095a4defd40",
+      "alias": "champion"
+    }
+  ],
+  "proposed_git_file_count": 58,
+  "credential_pattern_scan_findings": 0,
+  "git_diff_check_pass": true,
+  "local_document_links_resolve": true,
+  "postman_request_count": 37,
+  "postman_runtime_executed": false,
+  "final_completion_investigation": {
+    "sqlite_cleanup": "Fixed: final full suite passes the isolated registry/idempotency/prediction test and removes its temporary directory. Tracking/registry URI globals and environment are restored; only temporary URI pooled engines are disposed. No original assertions changed.",
+    "visualizations": {
+      "source_zip_sha256": "e5455af549f54d531c62c07b9b8ac7d5d29309d4bd262e2a9e19f4cd30243e51",
+      "authentic_charts_found": 10,
+      "charts": [
+        {
+          "cohort": "peer",
+          "source_run_id": "4b451f68e1c04de49875b095a4defd40",
+          "path": "SolarSelect/mlruns/4b451f68e1c04de49875b095a4defd40/artifacts/visualizations/actual_vs_predicted.png",
+          "bytes": 629474,
+          "sha256": "aa042a4f8e53df939e9230bdb29aeac04ce03381786eab160659a538e9518253",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "peer",
+          "source_run_id": "4b451f68e1c04de49875b095a4defd40",
+          "path": "SolarSelect/mlruns/4b451f68e1c04de49875b095a4defd40/artifacts/visualizations/cohort_model_comparison.png",
+          "bytes": 409339,
+          "sha256": "a7b82aea0020353c827964785bc97e2c37898cd9a6f8d9adb50fdd40c42b55c4",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "peer",
+          "source_run_id": "4b451f68e1c04de49875b095a4defd40",
+          "path": "SolarSelect/mlruns/4b451f68e1c04de49875b095a4defd40/artifacts/visualizations/feature_importance.png",
+          "bytes": 468122,
+          "sha256": "ae809df36e74852d261ba00d6ab7e3461ab0bfdb13579b2e34e3b1a88d72977f",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "peer",
+          "source_run_id": "4b451f68e1c04de49875b095a4defd40",
+          "path": "SolarSelect/mlruns/4b451f68e1c04de49875b095a4defd40/artifacts/visualizations/residual_diagnostics.png",
+          "bytes": 789428,
+          "sha256": "a5ddf66aad1c906fc61debd0548d9e2b2f240140676ec6008a4e5865c0e561a9",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "peer",
+          "source_run_id": "4b451f68e1c04de49875b095a4defd40",
+          "path": "SolarSelect/mlruns/4b451f68e1c04de49875b095a4defd40/artifacts/visualizations/site_wise_performance.png",
+          "bytes": 325083,
+          "sha256": "f88e7ad0135ab7f9aaee223e6057f6ca5bfd06c8ae5f86be89e6e0e1615e4dc4",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "full",
+          "source_run_id": "9aad1c6a87414b9ca4277d777d9ea8f1",
+          "path": "SolarSelect/mlruns/9aad1c6a87414b9ca4277d777d9ea8f1/artifacts/visualizations/actual_vs_predicted.png",
+          "bytes": 549014,
+          "sha256": "24ff55cfc45144350172544c2a9f2202a6ec64fbd502d55b89009da7a4364c12",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "full",
+          "source_run_id": "9aad1c6a87414b9ca4277d777d9ea8f1",
+          "path": "SolarSelect/mlruns/9aad1c6a87414b9ca4277d777d9ea8f1/artifacts/visualizations/cohort_model_comparison.png",
+          "bytes": 409339,
+          "sha256": "a7b82aea0020353c827964785bc97e2c37898cd9a6f8d9adb50fdd40c42b55c4",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "full",
+          "source_run_id": "9aad1c6a87414b9ca4277d777d9ea8f1",
+          "path": "SolarSelect/mlruns/9aad1c6a87414b9ca4277d777d9ea8f1/artifacts/visualizations/feature_coefficients.png",
+          "bytes": 403498,
+          "sha256": "79ae2fdef6e5d01036080b5f65fd4eb405e46d18e9eeb78d42347f2dbf591fde",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "full",
+          "source_run_id": "9aad1c6a87414b9ca4277d777d9ea8f1",
+          "path": "SolarSelect/mlruns/9aad1c6a87414b9ca4277d777d9ea8f1/artifacts/visualizations/residual_diagnostics.png",
+          "bytes": 518537,
+          "sha256": "893615cecf4414f5a2a7068192636665b6c7b75a88d1f2004b6ecc9ce2100664",
+          "png_header_valid": true
+        },
+        {
+          "cohort": "full",
+          "source_run_id": "9aad1c6a87414b9ca4277d777d9ea8f1",
+          "path": "SolarSelect/mlruns/9aad1c6a87414b9ca4277d777d9ea8f1/artifacts/visualizations/site_wise_performance.png",
+          "bytes": 323810,
+          "sha256": "3a9f6405f616f90ea85d3d4a0b1abe9bf46f2202dd6f3fc18e91cfa8d9aa31c6",
+          "png_header_valid": true
+        }
+      ],
+      "extracted": false,
+      "registered_database_mutated": false,
+      "legacy_test_unresolved": "Hardcoded old root mlflow.db lacks evaluation experiment; authentic approved snapshot records macOS file artifact URIs. Owner Person 1: supply/configure portable evaluation store and path mapping for legacy experiment tests. No substitute experiment/registration created."
+    },
+    "canonical_python": "3.13.9 not found in PATH, py/uv launchers, standard install locations or Windows PythonCore registry; existing 3.12.14 used; pins unchanged.",
+    "security": {
+      "api_authentication": "No built-in authentication or API key enforcement; existing local API contract preserved. Bind loopback; Person 3 must add authenticated TLS gateway/access controls before public deployment.",
+      "cors": "No CORS origins configured",
+      "source_selection": "Server-side explicit Settings; no request-controlled registry URI/path/source",
+      "loading": "Reviewed SHA-256 and run/DVC lineage, exact mixed signature and fixed skops Tree allowlist; fail closed, no silent fallback",
+      "logs": "API logger uses safe codes/types and request IDs; does not log payloads or exception text",
+      "canonical_environment_tested": false,
+      "candidate_files_reviewed": 58,
+      "credential_scan_findings": [],
+      "known_credential_literals_checked": true,
+      "source_syntax_valid": true,
+      "json_valid": true,
+      "openapi_paths": 10,
+      "openapi_security_schemes_present": false
+    }
+  },
+  "final_completion_results": {
+    "counts": {
+      "final_api": {
+        "passed": 118,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "seconds": 22.864,
+        "timestamp": "2026-11-12T10:18:05.189595+05:30",
+        "failures": []
+      },
+      "final_full": {
+        "passed": 361,
+        "failed": 1,
+        "skipped": 0,
+        "errored": 0,
+        "seconds": 56.947,
+        "timestamp": "2026-11-12T10:21:34.481371+05:30",
+        "failures": [
+          {
+            "name": "tests.test_phase9_mlflow_registry.test_logged_visualization_artifacts",
+            "message": "assert None is not None"
+          }
+        ]
+      }
+    },
+    "actual_registry_cases_passed": 28,
+    "live_http_checks_passed": 74,
+    "prediction_max_absolute_error": 8.881784197001252e-16,
+    "atol": 1e-08,
+    "rtol": 0,
+    "fitted_trees_exact_match": 100,
+    "completed_at_utc": "2026-11-12T04:53:13.326049+00:00",
+    "commit_message": "feat(backend): complete SolarSelect FastAPI and verified MLflow integration",
+    "protected_files_rechecked": 102,
+    "original_checkout_preserved": true,
+    "registry_package_and_openapi_rechecked": true,
+    "existing_inherited_test_assertions_preserved": true,
+    "local_document_links_valid": true,
+    "postman_scripts_syntax_valid": 37
+  }
+}

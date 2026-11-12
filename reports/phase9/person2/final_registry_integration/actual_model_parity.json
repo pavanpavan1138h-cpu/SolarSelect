@@ -1,0 +1,142 @@
+{
+  "registry_ready": true,
+  "maximum_absolute_error": 8.881784197001252e-16,
+  "direct_frozen": [
+    3.4601096349288265,
+    3.1362662943773607,
+    3.331484369231342,
+    3.35005067287039,
+    3.7071767714352633,
+    3.7219621916544123,
+    3.4802032218622037,
+    3.7443059959304126
+  ],
+  "registered": [
+    3.4601096349288265,
+    3.1362662943773607,
+    3.3314843692313416,
+    3.350050672870391,
+    3.7071767714352633,
+    3.7219621916544123,
+    3.4802032218622028,
+    3.744305995930412
+  ],
+  "typed_dtypes": {
+    "kWp": "float64",
+    "lat": "float64",
+    "Lon": "float64",
+    "day_of_year": "int64",
+    "month": "int64",
+    "day_of_week": "int64",
+    "is_weekend": "int64",
+    "sin_doy": "float64",
+    "cos_doy": "float64",
+    "sin_month": "float64",
+    "cos_month": "float64",
+    "solar_declination_deg": "float64",
+    "solar_noon_elevation_deg": "float64",
+    "solar_noon_zenith_deg": "float64",
+    "daylight_hours": "float64",
+    "extraterrestrial_radiation_h0": "float64",
+    "has_valid_lag1": "int64",
+    "lag1_daily_yield": "float64",
+    "lag2_daily_yield": "float64",
+    "lag7_daily_yield": "float64",
+    "rolling_mean_7d_yield": "float64",
+    "rolling_std_7d_yield": "float64",
+    "rolling_mean_14d_yield": "float64",
+    "rolling_mean_30d_yield": "float64",
+    "lag1_temp_mean": "float64",
+    "lag1_temp_max": "float64",
+    "lag1_temp_min": "float64",
+    "lag1_temp_range": "float64",
+    "lag1_rh_mean": "float64"
+  },
+  "model_provenance": {
+    "model_name": "Tuned ExtraTreesRegressor",
+    "model_variant": "primary_extra_trees",
+    "cohort": "peer_cohort",
+    "evaluation_timestamp": "2026-11-10T08:45:00Z",
+    "feature_count": 29,
+    "source": "mlflow",
+    "prediction_target": "daily_specific_yield",
+    "units": "kWh/kWp/day",
+    "feature_schema_fingerprint": "904ad28862735584",
+    "primary_artifact_fingerprint": "39b4a11beb5423df",
+    "offline_test_metrics": {
+      "mae": 0.905,
+      "rmse": 1.07,
+      "r2": 0.258,
+      "bias": -0.1036,
+      "mae_pct_mean": 30.85
+    },
+    "evaluation_provenance": {
+      "calendar_range": "2022-03-01 to 2022-04-23",
+      "active_dates": 53,
+      "full_cohort_samples": 1232,
+      "peer_cohort_samples": 1128
+    },
+    "training_source": "UNISOLAR Campus 1, Melbourne, Australia",
+    "registered_version": "1",
+    "parity_checked_rows": 8,
+    "registered_name": "SolarSelect-Yield-PeerCohort",
+    "registered_alias": "champion",
+    "registered_run_id": "4b451f68e1c04de49875b095a4defd40",
+    "registered_model_id": "m-0fd6281417054bf385101d2a68c3f6a5",
+    "registered_artifact_fingerprint": "e190e9ba792cdb7b",
+    "registry_database_fingerprint": "ca6aef84795b5a26",
+    "signature_integer_features": [
+      "day_of_week",
+      "day_of_year",
+      "has_valid_lag1",
+      "is_weekend",
+      "month"
+    ],
+    "fitted_trees_equal_to_frozen": 100,
+    "registry_provenance_basis": {
+      "raw_run_cohort": "peer",
+      "normalized_cohort": "peer_cohort",
+      "role": "primary_candidate",
+      "dvc_model_md5": "420ea113a69405396faab910e25a04a5",
+      "units_evidence": "registered description + daily-yield target + frozen lineage and parity",
+      "model_variant_evidence": "primary_candidate run + verified ExtraTrees/frozen fitted trees",
+      "version_tags": {},
+      "artifact_path_resolution": "hash-verified local mapping; original records unchanged"
+    }
+  },
+  "reference_records": [
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-01"
+    },
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-02"
+    },
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-04"
+    },
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-05"
+    },
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-06"
+    },
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-07"
+    },
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-08"
+    },
+    {
+      "SiteKey": 15,
+      "Date": "2022-03-09"
+    }
+  ],
+  "elapsed_seconds": 12.729
+}

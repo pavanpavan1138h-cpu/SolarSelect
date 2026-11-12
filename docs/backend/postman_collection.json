@@ -1,0 +1,1083 @@
+{
+  "info": {
+    "name": "SolarSelect frozen and verified champion API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Set model_source=local or mlflow to match the explicitly configured running service. Registry mode only supports primary_extra_trees."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8004"
+    },
+    {
+      "key": "model_source",
+      "value": "local"
+    }
+  ],
+  "item": [
+    {
+      "name": "Liveness",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/health/live"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Readiness",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/health/ready"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Selected source ready', function () { const b=pm.response.json(); pm.expect(b.status).to.eql('READY'); pm.expect(b.model_source).to.eql(pm.collectionVariables.get('model_source') || 'local'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Model info",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/model/info"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Selected provider', function () { const b=pm.response.json(); const source=pm.collectionVariables.get('model_source') || 'local'; pm.expect(b.source).to.eql(source); pm.expect(b.units).to.eql('kWh/kWp/day'); if (source==='mlflow') { pm.expect(b.registered_name).to.eql('SolarSelect-Yield-PeerCohort'); pm.expect(b.registered_version).to.eql('1'); pm.expect(b.registered_alias).to.eql('champion'); } });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Feature schema",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/model/schema"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Limitations",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/limitations"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Panels",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/panels"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Panel detail",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/panels/PNL-TRINA-330W"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Swagger",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/docs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "ReDoc",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/redoc"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "OpenAPI",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/openapi.json"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prediction",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Explicit blend",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  },\n  \"model_variant\": \"fallback_blend_50_50\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const registry = pm.collectionVariables.get('model_source') === 'mlflow';",
+              "pm.test('Explicit variant policy', function () { pm.response.to.have.status(registry ? 409 : 200); if (registry) pm.expect(pm.response.json().error.code).to.eql('MODEL_VARIANT_NOT_ENABLED'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Batch prediction",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict/batch",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rows\": [\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 61,\n        \"month\": 3,\n        \"day_of_week\": 2,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8670985522812081,\n        \"cos_doy\": 0.4981366284784055,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.51481991905851,\n        \"solar_noon_elevation_deg\": 59.79653339905851,\n        \"solar_noon_zenith_deg\": 30.20346660094149,\n        \"daylight_hours\": 12.780758812510667,\n        \"extraterrestrial_radiation_h0\": 9.701896714221782,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 2.131360091256367,\n        \"lag2_daily_yield\": 3.001313136672326,\n        \"lag7_daily_yield\": 5.144113433786078,\n        \"rolling_mean_7d_yield\": 3.64054352110114,\n        \"rolling_std_7d_yield\": 1.1031363247927466,\n        \"rolling_mean_14d_yield\": 4.170345849502789,\n        \"rolling_mean_30d_yield\": 4.673632480899831,\n        \"lag1_temp_mean\": 21.78125,\n        \"lag1_temp_max\": 27.0,\n        \"lag1_temp_min\": 19.2,\n        \"lag1_temp_range\": 7.800000000000001,\n        \"lag1_rh_mean\": 89.97916666666667\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 63,\n        \"month\": 3,\n        \"day_of_week\": 4,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8837203473619977,\n        \"cos_doy\": 0.4680153284438345,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -6.749950421821911,\n        \"solar_noon_elevation_deg\": 59.03166390182191,\n        \"solar_noon_zenith_deg\": 30.96833609817809,\n        \"daylight_hours\": 12.700271275788236,\n        \"extraterrestrial_radiation_h0\": 9.562931715547908,\n        \"has_valid_lag1\": 0,\n        \"lag1_daily_yield\": 2.147785572087355,\n        \"lag2_daily_yield\": 3.6607000742784384,\n        \"lag7_daily_yield\": 3.857007374787776,\n        \"rolling_mean_7d_yield\": 3.5005648256225244,\n        \"rolling_std_7d_yield\": 0.9496770862502592,\n        \"rolling_mean_14d_yield\": 4.211934341125768,\n        \"rolling_mean_30d_yield\": 4.636891182088286,\n        \"lag1_temp_mean\": 23.652083333333334,\n        \"lag1_temp_max\": 31.9,\n        \"lag1_temp_min\": 16.0,\n        \"lag1_temp_range\": 15.9,\n        \"lag1_rh_mean\": 67.3125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 64,\n        \"month\": 3,\n        \"day_of_week\": 5,\n        \"is_weekend\": 1,\n        \"sin_doy\": 0.8916401947968874,\n        \"cos_doy\": 0.452744699607371,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -6.365151347589239,\n        \"solar_noon_elevation_deg\": 58.64686482758923,\n        \"solar_noon_zenith_deg\": 31.353135172410767,\n        \"daylight_hours\": 12.659906516695372,\n        \"extraterrestrial_radiation_h0\": 9.492780778725226,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.667663677843803,\n        \"lag2_daily_yield\": 2.13180807706558,\n        \"lag7_daily_yield\": 4.988592954159593,\n        \"rolling_mean_7d_yield\": 3.4690075427985287,\n        \"rolling_std_7d_yield\": 0.938544447930598,\n        \"rolling_mean_14d_yield\": 4.191898038559488,\n        \"rolling_mean_30d_yield\": 4.622738486842106,\n        \"lag1_temp_mean\": 23.93541666666667,\n        \"lag1_temp_max\": 32.7,\n        \"lag1_temp_min\": 15.7,\n        \"lag1_temp_range\": 17.000000000000004,\n        \"lag1_rh_mean\": 69.9375\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 65,\n        \"month\": 3,\n        \"day_of_week\": 6,\n        \"is_weekend\": 1,\n        \"sin_doy\": 0.8992961915530253,\n        \"cos_doy\": 0.4373400963303323,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -5.978924295723166,\n        \"solar_noon_elevation_deg\": 58.26063777572316,\n        \"solar_noon_zenith_deg\": 31.73936222427684,\n        \"daylight_hours\": 12.619471255534508,\n        \"extraterrestrial_radiation_h0\": 9.422213265371244,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 1.6707674554329373,\n        \"lag2_daily_yield\": 3.667663677843803,\n        \"lag7_daily_yield\": 3.364415322580645,\n        \"rolling_mean_7d_yield\": 2.916036626344086,\n        \"rolling_std_7d_yield\": 0.8359659067721821,\n        \"rolling_mean_14d_yield\": 3.853997465554395,\n        \"rolling_mean_30d_yield\": 4.509201139480215,\n        \"lag1_temp_mean\": 18.85625,\n        \"lag1_temp_max\": 21.7,\n        \"lag1_temp_min\": 16.5,\n        \"lag1_temp_range\": 5.199999999999999,\n        \"lag1_rh_mean\": 97.66666666666669\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 66,\n        \"month\": 3,\n        \"day_of_week\": 0,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.9066860720977984,\n        \"cos_doy\": 0.4218060770826634,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -5.591379497887238,\n        \"solar_noon_elevation_deg\": 57.87309297788724,\n        \"solar_noon_zenith_deg\": 32.12690702211276,\n        \"daylight_hours\": 12.5789728151821,\n        \"extraterrestrial_radiation_h0\": 9.35125113621634,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 2.2644975594227503,\n        \"lag2_daily_yield\": 1.6707674554329373,\n        \"lag7_daily_yield\": 3.001313136672326,\n        \"rolling_mean_7d_yield\": 2.732716999151104,\n        \"rolling_std_7d_yield\": 0.8385723788234456,\n        \"rolling_mean_14d_yield\": 3.6819479928496808,\n        \"rolling_mean_30d_yield\": 4.402559800264465,\n        \"lag1_temp_mean\": 17.910416666666666,\n        \"lag1_temp_max\": 22.2,\n        \"lag1_temp_min\": 15.4,\n        \"lag1_temp_range\": 6.799999999999999,\n        \"lag1_rh_mean\": 87.41666666666667\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 67,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.9138076496466616,\n        \"cos_doy\": 0.4061472386305789,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -5.202626416175912,\n        \"solar_noon_elevation_deg\": 57.48433989617591,\n        \"solar_noon_zenith_deg\": 32.51566010382409,\n        \"daylight_hours\": 12.538418294910464,\n        \"extraterrestrial_radiation_h0\": 9.279916480308534,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 4.829424872665535,\n        \"lag2_daily_yield\": 2.2644975594227503,\n        \"lag7_daily_yield\": 2.131360091256367,\n        \"rolling_mean_7d_yield\": 3.037402288483305,\n        \"rolling_std_7d_yield\": 1.206901772405814,\n        \"rolling_mean_14d_yield\": 3.652282531507118,\n        \"rolling_mean_30d_yield\": 4.4183696177608,\n        \"lag1_temp_mean\": 18.97083333333333,\n        \"lag1_temp_max\": 25.0,\n        \"lag1_temp_min\": 13.7,\n        \"lag1_temp_range\": 11.3,\n        \"lag1_rh_mean\": 78.10416666666667\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 68,\n        \"month\": 3,\n        \"day_of_week\": 2,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.9206588168102428,\n        \"cos_doy\": 0.3903682146763026,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -4.8127737371428205,\n        \"solar_noon_elevation_deg\": 57.09448721714281,\n        \"solar_noon_zenith_deg\": 32.90551278285719,\n        \"daylight_hours\": 12.497814581588251,\n        \"extraterrestrial_radiation_h0\": 9.208231505734965,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 2.161701506791172,\n        \"lag2_daily_yield\": 4.829424872665535,\n        \"lag7_daily_yield\": 3.6607000742784384,\n        \"rolling_mean_7d_yield\": 3.0424591910724392,\n        \"rolling_std_7d_yield\": 1.2024013808624052,\n        \"rolling_mean_14d_yield\": 3.364504599549432,\n        \"rolling_mean_30d_yield\": 4.282493377821795,\n        \"lag1_temp_mean\": 17.818749999999998,\n        \"lag1_temp_max\": 21.6,\n        \"lag1_temp_min\": 14.8,\n        \"lag1_temp_range\": 6.800000000000001,\n        \"lag1_rh_mean\": 75.47916666666667\n      }\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prospective pending",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"prospective_roof\",\n  \"roof_id\": \"NEW\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 409', function () { pm.response.to.have.status(409); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roof fit",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/roof-fit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"roof_id\": \"API-VERIFIED-ROOF\",\n  \"length\": 20.0,\n  \"width\": 15.0,\n  \"perimeter_setback\": 0.5,\n  \"panel_id\": \"PNL-TRINA-330W\",\n  \"orientation_override\": \"both\",\n  \"inter_panel_clearance\": 0.02,\n  \"inter_row_clearance\": 0.5,\n  \"obstacles\": [\n    {\n      \"obstacle_id\": \"VENT\",\n      \"x\": 4.0,\n      \"y\": 5.0,\n      \"width\": 0.4,\n      \"height\": 0.5,\n      \"buffer\": 0.2\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unknown panel",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/panels/UNKNOWN"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 404', function () { pm.response.to.have.status(404); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject target_daily_yield",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125,\n    \"target_daily_yield\": 2\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject kWp",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 0,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject lat",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": 91,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject lag1_daily_yield",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": \"missing\",\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject missing feature",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject consumed roof",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/roof-fit",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"roof_id\": \"API-VERIFIED-ROOF\",\n  \"length\": 20.0,\n  \"width\": 15.0,\n  \"perimeter_setback\": 10,\n  \"panel_id\": \"PNL-TRINA-330W\",\n  \"orientation_override\": \"both\",\n  \"inter_panel_clearance\": 0.02,\n  \"inter_row_clearance\": 0.5,\n  \"obstacles\": [\n    {\n      \"obstacle_id\": \"VENT\",\n      \"x\": 4.0,\n      \"y\": 5.0,\n      \"width\": 0.4,\n      \"height\": 0.5,\n      \"buffer\": 0.2\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported request SiteKey",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  },\n  \"SiteKey\": 999999\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported features SiteKey",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125,\n    \"SiteKey\": 999999\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported request site_id",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  },\n  \"site_id\": \"UNKNOWN\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported features site_id",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125,\n    \"site_id\": \"UNKNOWN\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported request Date",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  },\n  \"Date\": \"2022-02-30\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported features Date",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125,\n    \"Date\": \"2022-02-30\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported request timestamp",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  },\n  \"timestamp\": \"not-a-timestamp\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject unsupported features timestamp",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125,\n    \"timestamp\": \"not-a-timestamp\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject oversized batch (101)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict/batch",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rows\": [\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    },\n    {\n      \"scenario\": \"historical_site_day\",\n      \"features\": {\n        \"kWp\": 94.24,\n        \"lat\": -37.71828652,\n        \"Lon\": 145.0509752,\n        \"day_of_year\": 60,\n        \"month\": 3,\n        \"day_of_week\": 1,\n        \"is_weekend\": 0,\n        \"sin_doy\": 0.8584015232918917,\n        \"cos_doy\": 0.512978386299228,\n        \"sin_month\": 1.0,\n        \"cos_month\": 6.123233995736766e-17,\n        \"solar_declination_deg\": -7.894666125612833,\n        \"solar_noon_elevation_deg\": 60.17637960561283,\n        \"solar_noon_zenith_deg\": 29.82362039438717,\n        \"daylight_hours\": 12.820865728609602,\n        \"extraterrestrial_radiation_h0\": 9.770667580199504,\n        \"has_valid_lag1\": 1,\n        \"lag1_daily_yield\": 3.001313136672326,\n        \"lag2_daily_yield\": 3.364415322580645,\n        \"lag7_daily_yield\": 5.902814622241087,\n        \"rolling_mean_7d_yield\": 4.179322739813243,\n        \"rolling_std_7d_yield\": 1.1625914366180872,\n        \"rolling_mean_14d_yield\": 4.327190907829437,\n        \"rolling_mean_30d_yield\": 4.779560497134975,\n        \"lag1_temp_mean\": 20.98333333333333,\n        \"lag1_temp_max\": 25.3,\n        \"lag1_temp_min\": 17.8,\n        \"lag1_temp_range\": 7.5,\n        \"lag1_rh_mean\": 82.125\n      }\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject invalid has_valid_lag1",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 0.5,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject invalid day_of_year",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 367,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 0,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject invalid is_weekend",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"historical_site_day\",\n  \"features\": {\n    \"kWp\": 94.24,\n    \"lat\": -37.71828652,\n    \"Lon\": 145.0509752,\n    \"day_of_year\": 60,\n    \"month\": 3,\n    \"day_of_week\": 1,\n    \"is_weekend\": 1,\n    \"sin_doy\": 0.8584015232918917,\n    \"cos_doy\": 0.512978386299228,\n    \"sin_month\": 1.0,\n    \"cos_month\": 6.123233995736766e-17,\n    \"solar_declination_deg\": -7.894666125612833,\n    \"solar_noon_elevation_deg\": 60.17637960561283,\n    \"solar_noon_zenith_deg\": 29.82362039438717,\n    \"daylight_hours\": 12.820865728609602,\n    \"extraterrestrial_radiation_h0\": 9.770667580199504,\n    \"has_valid_lag1\": 1,\n    \"lag1_daily_yield\": 3.001313136672326,\n    \"lag2_daily_yield\": 3.364415322580645,\n    \"lag7_daily_yield\": 5.902814622241087,\n    \"rolling_mean_7d_yield\": 4.179322739813243,\n    \"rolling_std_7d_yield\": 1.1625914366180872,\n    \"rolling_mean_14d_yield\": 4.327190907829437,\n    \"rolling_mean_30d_yield\": 4.779560497134975,\n    \"lag1_temp_mean\": 20.98333333333333,\n    \"lag1_temp_max\": 25.3,\n    \"lag1_temp_min\": 17.8,\n    \"lag1_temp_range\": 7.5,\n    \"lag1_rh_mean\": 82.125\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Expected HTTP 422', function () { pm.response.to.have.status(422); });",
+              "pm.test('Structured error', function () { const b=pm.response.json(); pm.expect(b.error.code).to.be.a('string'); pm.expect(b.request_id).to.be.a('string'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Malformed JSON",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\":"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Rejected with 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "NaN input",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\": \"historical_site_day\", \"features\": {\"kWp\": 94.24, \"lat\": -37.71828652, \"Lon\": 145.0509752, \"day_of_year\": 60, \"month\": 3, \"day_of_week\": 1, \"is_weekend\": 0, \"sin_doy\": 0.8584015232918917, \"cos_doy\": 0.512978386299228, \"sin_month\": 1.0, \"cos_month\": 6.123233995736766e-17, \"solar_declination_deg\": -7.894666125612833, \"solar_noon_elevation_deg\": 60.17637960561283, \"solar_noon_zenith_deg\": 29.82362039438717, \"daylight_hours\": 12.820865728609602, \"extraterrestrial_radiation_h0\": 9.770667580199504, \"has_valid_lag1\": 1, \"lag1_daily_yield\": NaN, \"lag2_daily_yield\": 3.364415322580645, \"lag7_daily_yield\": 5.902814622241087, \"rolling_mean_7d_yield\": 4.179322739813243, \"rolling_std_7d_yield\": 1.1625914366180872, \"rolling_mean_14d_yield\": 4.327190907829437, \"rolling_mean_30d_yield\": 4.779560497134975, \"lag1_temp_mean\": 20.98333333333333, \"lag1_temp_max\": 25.3, \"lag1_temp_min\": 17.8, \"lag1_temp_range\": 7.5, \"lag1_rh_mean\": 82.125}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Rejected with 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Infinity input",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/v1/predict",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\": \"historical_site_day\", \"features\": {\"kWp\": 94.24, \"lat\": -37.71828652, \"Lon\": 145.0509752, \"day_of_year\": 60, \"month\": 3, \"day_of_week\": 1, \"is_weekend\": 0, \"sin_doy\": 0.8584015232918917, \"cos_doy\": 0.512978386299228, \"sin_month\": 1.0, \"cos_month\": 6.123233995736766e-17, \"solar_declination_deg\": -7.894666125612833, \"solar_noon_elevation_deg\": 60.17637960561283, \"solar_noon_zenith_deg\": 29.82362039438717, \"daylight_hours\": 12.820865728609602, \"extraterrestrial_radiation_h0\": 9.770667580199504, \"has_valid_lag1\": 1, \"lag1_daily_yield\": Infinity, \"lag2_daily_yield\": 3.364415322580645, \"lag7_daily_yield\": 5.902814622241087, \"rolling_mean_7d_yield\": 4.179322739813243, \"rolling_std_7d_yield\": 1.1625914366180872, \"rolling_mean_14d_yield\": 4.327190907829437, \"rolling_mean_30d_yield\": 4.779560497134975, \"lag1_temp_mean\": 20.98333333333333, \"lag1_temp_max\": 25.3, \"lag1_temp_min\": 17.8, \"lag1_temp_range\": 7.5, \"lag1_rh_mean\": 82.125}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Rejected with 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "handoff_format": "person1-sqlite-skops-v1",
+  "registered_name": "SolarSelect-Yield-PeerCohort",
+  "alias": "champion",
+  "version": "1",
+  "run_id": "4b451f68e1c04de49875b095a4defd40",
+  "model_id": "m-0fd6281417054bf385101d2a68c3f6a5",
+  "registry_source": "models:/m-0fd6281417054bf385101d2a68c3f6a5",
+  "original_storage_location": "file:///Users/apple/Documents/5th%20sem%20el/MLOps_EL/SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts",
+  "database_relative_path": ".person2-local/registry/mlflow.db",
+  "database_sha256": "ca6aef84795b5a262b4df1733e8149e390e18811aab2e80a430a66756a21d67d",
+  "artifact_relative_path": ".person2-local/registry/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts",
+  "package_sha256": {
+    "MLmodel": "a1c1a4727a89118b4688c3456883992870e65b82ef573c4d658ee49b2affd97c",
+    "conda.yaml": "69e5134342bbfe0535b9a34ebcc72604c89ed530830ae15649925b5cf6158862",
+    "input_example.json": "a153da75dafa70ea7eed1d5fdf3ba2b89298869ccdc7e138182559e84a256ce8",
+    "model.skops": "e190e9ba792cdb7b1ad6cac0d4ee516330366ad1fadcc7b52858c911c2e69907",
+    "python_env.yaml": "6ef2ecc53d21765ab56595e30fa594c095d9d930529ef23fb1ea5d17dd161f2c",
+    "requirements.txt": "4d59e6662e9edbb222c7d9c1777b7a7df72967aa26eb7997ca79bdc895e98f78",
+    "serving_input_example.json": "5981d8800ac36c280d435a326c841b817f826baa0bf38a4c71d1ff970993ff0b"
+  },
+  "trusted_types": [
+    "sklearn.tree._tree.Tree"
+  ],
+  "cohort": "peer_cohort",
+  "raw_run_cohort": "peer",
+  "units": "kWh/kWp/day",
+  "units_evidence": "Registered model description and daily-specific-yield run target; frozen lineage and startup parity are independently verified",
+  "model_variant": "primary_extra_trees",
+  "feature_names": [
+    "kWp",
+    "lat",
+    "Lon",
+    "day_of_year",
+    "month",
+    "day_of_week",
+    "is_weekend",
+    "sin_doy",
+    "cos_doy",
+    "sin_month",
+    "cos_month",
+    "solar_declination_deg",
+    "solar_noon_elevation_deg",
+    "solar_noon_zenith_deg",
+    "daylight_hours",
+    "extraterrestrial_radiation_h0",
+    "has_valid_lag1",
+    "lag1_daily_yield",
+    "lag2_daily_yield",
+    "lag7_daily_yield",
+    "rolling_mean_7d_yield",
+    "rolling_std_7d_yield",
+    "rolling_mean_14d_yield",
+    "rolling_mean_30d_yield",
+    "lag1_temp_mean",
+    "lag1_temp_max",
+    "lag1_temp_min",
+    "lag1_temp_range",
+    "lag1_rh_mean"
+  ],
+  "signature": {
+    "inputs": [
+      {
+        "type": "double",
+        "name": "kWp",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lat",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "Lon",
+        "required": true
+      },
+      {
+        "type": "long",
+        "name": "day_of_year",
+        "required": true
+      },
+      {
+        "type": "long",
+        "name": "month",
+        "required": true
+      },
+      {
+        "type": "long",
+        "name": "day_of_week",
+        "required": true
+      },
+      {
+        "type": "long",
+        "name": "is_weekend",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "sin_doy",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "cos_doy",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "sin_month",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "cos_month",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "solar_declination_deg",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "solar_noon_elevation_deg",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "solar_noon_zenith_deg",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "daylight_hours",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "extraterrestrial_radiation_h0",
+        "required": true
+      },
+      {
+        "type": "long",
+        "name": "has_valid_lag1",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag1_daily_yield",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag2_daily_yield",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag7_daily_yield",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "rolling_mean_7d_yield",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "rolling_std_7d_yield",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "rolling_mean_14d_yield",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "rolling_mean_30d_yield",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag1_temp_mean",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag1_temp_max",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag1_temp_min",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag1_temp_range",
+        "required": true
+      },
+      {
+        "type": "double",
+        "name": "lag1_rh_mean",
+        "required": true
+      }
+    ],
+    "outputs": [
+      {
+        "type": "double",
+        "name": "target_daily_yield",
+        "required": true
+      }
+    ]
+  },
+  "primary_artifact_md5": "420ea113a69405396faab910e25a04a5",
+  "primary_artifact_sha256": "39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9",
+  "reference_dataset_sha256": "64a404afcd3ad819cf6d3d69611c87ff3ab5880d2809a33900e00946f7b8b018",
+  "source_archive_sha256": "c48dd063db185b0dd4bd400db63847f790423b026424bdcbb02fb0fb4f452e1a",
+  "source_manifest_sha256": "063e245315815fe461c20c65eb834e9e016d3d72837f35bb7c4280d3d7fb4934",
+  "declared_runtime": {
+    "python": "3.13.9",
+    "mlflow": "3.18.0",
+    "scikit-learn": "1.7.2",
+    "skops": "0.16.0"
+  }
+}

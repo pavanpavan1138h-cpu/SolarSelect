@@ -139,3 +139,11 @@ data/NASA/
 .dvc/cache/
 .dvc/tmp/
 
+# Person 2 local registry imports and rollback snapshots (never commit)
+/.person2-local/
+
+# Person 2 raw test output and machine-local audit pointers
+/reports/phase9/person2/**/*.xml
+/reports/phase9/person2/**/*.local.json
+/reports/phase9/person2/**/*.local.txt
+

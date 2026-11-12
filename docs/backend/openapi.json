@@ -1,0 +1,1300 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SolarSelect Frozen Model API",
+    "description": "Historical UNISOLAR site-day inference and geometric proposals. Prospective rooftop forecasting remains pending lag policy.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/health/live": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Live",
+        "operationId": "live_api_v1_health_live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Ready",
+        "operationId": "ready_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/model/info": {
+      "get": {
+        "tags": [
+          "model"
+        ],
+        "summary": "Model Info",
+        "operationId": "model_info_api_v1_model_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/model/schema": {
+      "get": {
+        "tags": [
+          "model"
+        ],
+        "summary": "Model Schema",
+        "operationId": "model_schema_api_v1_model_schema_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/limitations": {
+      "get": {
+        "tags": [
+          "governance"
+        ],
+        "summary": "Limitations",
+        "operationId": "limitations_api_v1_limitations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/predict": {
+      "post": {
+        "tags": [
+          "prediction"
+        ],
+        "summary": "Predict",
+        "operationId": "predict_api_v1_predict_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/HistoricalRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ProspectiveRequest"
+                  }
+                ],
+                "title": "Body",
+                "discriminator": {
+                  "propertyName": "scenario",
+                  "mapping": {
+                    "historical_site_day": "#/components/schemas/HistoricalRequest",
+                    "prospective_roof": "#/components/schemas/ProspectiveRequest"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/predict/batch": {
+      "post": {
+        "tags": [
+          "prediction"
+        ],
+        "summary": "Predict Batch",
+        "operationId": "predict_batch_api_v1_predict_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/panels": {
+      "get": {
+        "tags": [
+          "catalogue"
+        ],
+        "summary": "Panels",
+        "operationId": "panels_api_v1_panels_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/panels/{panel_id}": {
+      "get": {
+        "tags": [
+          "catalogue"
+        ],
+        "summary": "Panel",
+        "operationId": "panel_api_v1_panels__panel_id__get",
+        "parameters": [
+          {
+            "name": "panel_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Panel Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/roof-fit": {
+      "post": {
+        "tags": [
+          "geometry"
+        ],
+        "summary": "Roof Fit",
+        "operationId": "roof_fit_api_v1_roof_fit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoofRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoofResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatchRequest": {
+        "properties": {
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/HistoricalRequest"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Rows",
+            "description": "All-or-nothing validation; errors locate rows by zero-based index."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rows"
+        ],
+        "title": "BatchRequest"
+      },
+      "BatchResult": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/PredictionResult"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "results",
+          "request_id"
+        ],
+        "title": "BatchResult"
+      },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "details": {
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorBody"
+      },
+      "ErrorEnvelope": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "error",
+          "request_id"
+        ],
+        "title": "ErrorEnvelope"
+      },
+      "HistoricalFeatures": {
+        "properties": {
+          "kWp": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Kwp"
+          },
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "Lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon"
+          },
+          "day_of_year": {
+            "type": "number",
+            "maximum": 366.0,
+            "minimum": 1.0,
+            "title": "Day Of Year"
+          },
+          "month": {
+            "type": "number",
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Month"
+          },
+          "day_of_week": {
+            "type": "number",
+            "maximum": 6.0,
+            "minimum": 0.0,
+            "title": "Day Of Week"
+          },
+          "is_weekend": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Is Weekend"
+          },
+          "sin_doy": {
+            "type": "number",
+            "title": "Sin Doy"
+          },
+          "cos_doy": {
+            "type": "number",
+            "title": "Cos Doy"
+          },
+          "sin_month": {
+            "type": "number",
+            "title": "Sin Month"
+          },
+          "cos_month": {
+            "type": "number",
+            "title": "Cos Month"
+          },
+          "solar_declination_deg": {
+            "type": "number",
+            "title": "Solar Declination Deg"
+          },
+          "solar_noon_elevation_deg": {
+            "type": "number",
+            "title": "Solar Noon Elevation Deg"
+          },
+          "solar_noon_zenith_deg": {
+            "type": "number",
+            "title": "Solar Noon Zenith Deg"
+          },
+          "daylight_hours": {
+            "type": "number",
+            "title": "Daylight Hours"
+          },
+          "extraterrestrial_radiation_h0": {
+            "type": "number",
+            "title": "Extraterrestrial Radiation H0"
+          },
+          "has_valid_lag1": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Has Valid Lag1"
+          },
+          "lag1_daily_yield": {
+            "type": "number",
+            "title": "Lag1 Daily Yield"
+          },
+          "lag2_daily_yield": {
+            "type": "number",
+            "title": "Lag2 Daily Yield"
+          },
+          "lag7_daily_yield": {
+            "type": "number",
+            "title": "Lag7 Daily Yield"
+          },
+          "rolling_mean_7d_yield": {
+            "type": "number",
+            "title": "Rolling Mean 7D Yield"
+          },
+          "rolling_std_7d_yield": {
+            "type": "number",
+            "title": "Rolling Std 7D Yield"
+          },
+          "rolling_mean_14d_yield": {
+            "type": "number",
+            "title": "Rolling Mean 14D Yield"
+          },
+          "rolling_mean_30d_yield": {
+            "type": "number",
+            "title": "Rolling Mean 30D Yield"
+          },
+          "lag1_temp_mean": {
+            "type": "number",
+            "title": "Lag1 Temp Mean"
+          },
+          "lag1_temp_max": {
+            "type": "number",
+            "title": "Lag1 Temp Max"
+          },
+          "lag1_temp_min": {
+            "type": "number",
+            "title": "Lag1 Temp Min"
+          },
+          "lag1_temp_range": {
+            "type": "number",
+            "title": "Lag1 Temp Range"
+          },
+          "lag1_rh_mean": {
+            "type": "number",
+            "title": "Lag1 Rh Mean"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kWp",
+          "lat",
+          "Lon",
+          "day_of_year",
+          "month",
+          "day_of_week",
+          "is_weekend",
+          "sin_doy",
+          "cos_doy",
+          "sin_month",
+          "cos_month",
+          "solar_declination_deg",
+          "solar_noon_elevation_deg",
+          "solar_noon_zenith_deg",
+          "daylight_hours",
+          "extraterrestrial_radiation_h0",
+          "has_valid_lag1",
+          "lag1_daily_yield",
+          "lag2_daily_yield",
+          "lag7_daily_yield",
+          "rolling_mean_7d_yield",
+          "rolling_std_7d_yield",
+          "rolling_mean_14d_yield",
+          "rolling_mean_30d_yield",
+          "lag1_temp_mean",
+          "lag1_temp_max",
+          "lag1_temp_min",
+          "lag1_temp_range",
+          "lag1_rh_mean"
+        ],
+        "title": "HistoricalFeatures"
+      },
+      "HistoricalRequest": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "const": "historical_site_day",
+            "title": "Scenario"
+          },
+          "features": {
+            "$ref": "#/components/schemas/HistoricalFeatures"
+          },
+          "model_variant": {
+            "$ref": "#/components/schemas/ModelVariant",
+            "default": "primary_extra_trees"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario",
+          "features"
+        ],
+        "title": "HistoricalRequest"
+      },
+      "ModelVariant": {
+        "type": "string",
+        "enum": [
+          "primary_extra_trees",
+          "fallback_blend_50_50"
+        ],
+        "title": "ModelVariant",
+        "description": "Authorized model variant for Phase 5 Peer Cohort inference."
+      },
+      "Obstacle": {
+        "properties": {
+          "obstacle_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Obstacle Id"
+          },
+          "x": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Y"
+          },
+          "width": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Width"
+          },
+          "height": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Height"
+          },
+          "buffer": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Buffer",
+            "default": 0
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 512,
+            "title": "Description",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "obstacle_id",
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "title": "Obstacle"
+      },
+      "PredictionResult": {
+        "properties": {
+          "predicted_specific_yield_kwh_per_kwp_day": {
+            "type": "number",
+            "title": "Predicted Specific Yield Kwh Per Kwp Day"
+          },
+          "prediction_status": {
+            "type": "string",
+            "enum": [
+              "PREDICTION_AVAILABLE",
+              "NEGATIVE_PREDICTION_WARNING"
+            ],
+            "title": "Prediction Status"
+          },
+          "energy_basis": {
+            "type": "string",
+            "const": "UNVERIFIED_ASSUMED_AC",
+            "title": "Energy Basis",
+            "default": "UNVERIFIED_ASSUMED_AC"
+          },
+          "model": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Model"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "limitations": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "predicted_specific_yield_kwh_per_kwp_day",
+          "prediction_status",
+          "model",
+          "request_id",
+          "limitations"
+        ],
+        "title": "PredictionResult"
+      },
+      "ProspectiveRequest": {
+        "properties": {
+          "scenario": {
+            "type": "string",
+            "const": "prospective_roof",
+            "title": "Scenario"
+          },
+          "roof_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Roof Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario",
+          "roof_id"
+        ],
+        "title": "ProspectiveRequest"
+      },
+      "RoofRequest": {
+        "properties": {
+          "roof_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Roof Id"
+          },
+          "length": {
+            "type": "number",
+            "maximum": 200.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Length",
+            "description": "Metres; HTTP workload limit 200 m per side"
+          },
+          "width": {
+            "type": "number",
+            "maximum": 200.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width"
+          },
+          "perimeter_setback": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Perimeter Setback",
+            "default": 0.5
+          },
+          "panel_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Panel Id"
+          },
+          "orientation_override": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "portrait",
+                  "landscape",
+                  "both"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orientation Override"
+          },
+          "inter_panel_clearance": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Inter Panel Clearance",
+            "default": 0.02
+          },
+          "inter_row_clearance": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Inter Row Clearance",
+            "default": 0.5
+          },
+          "azimuth_deg": {
+            "type": "number",
+            "maximum": 360.0,
+            "minimum": 0.0,
+            "title": "Azimuth Deg",
+            "default": 180
+          },
+          "tilt_deg": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": 0.0,
+            "title": "Tilt Deg",
+            "default": 0
+          },
+          "obstacles": {
+            "items": {
+              "$ref": "#/components/schemas/Obstacle"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "title": "Obstacles"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "roof_id",
+          "length",
+          "width",
+          "panel_id"
+        ],
+        "title": "RoofRequest"
+      },
+      "RoofResult": {
+        "properties": {
+          "layout": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Layout"
+          },
+          "approval_scope": {
+            "type": "string",
+            "title": "Approval Scope",
+            "default": "Geometric feasibility only; no structural or electrical approval."
+          },
+          "recommendation_status": {
+            "type": "string",
+            "title": "Recommendation Status",
+            "default": "RECOMMENDATION_NOT_EVALUATED"
+          },
+          "electrical_status": {
+            "type": "string",
+            "title": "Electrical Status",
+            "default": "NOT_EVALUATED_INSUFFICIENT_SPECIFICATIONS"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "layout",
+          "request_id"
+        ],
+        "title": "RoofResult"
+      }
+    }
+  }
+}

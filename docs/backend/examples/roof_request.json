@@ -1,0 +1,20 @@
+{
+  "roof_id": "API-VERIFIED-ROOF",
+  "length": 20.0,
+  "width": 15.0,
+  "perimeter_setback": 0.5,
+  "panel_id": "PNL-TRINA-330W",
+  "orientation_override": "both",
+  "inter_panel_clearance": 0.02,
+  "inter_row_clearance": 0.5,
+  "obstacles": [
+    {
+      "obstacle_id": "VENT",
+      "x": 4.0,
+      "y": 5.0,
+      "width": 0.4,
+      "height": 0.5,
+      "buffer": 0.2
+    }
+  ]
+}

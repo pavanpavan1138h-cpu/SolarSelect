@@ -1,0 +1,69 @@
+{
+  "predicted_specific_yield_kwh_per_kwp_day": 3.4601096349288265,
+  "prediction_status": "PREDICTION_AVAILABLE",
+  "energy_basis": "UNVERIFIED_ASSUMED_AC",
+  "model": {
+    "model_name": "Tuned ExtraTreesRegressor",
+    "model_variant": "primary_extra_trees",
+    "cohort": "peer_cohort",
+    "evaluation_timestamp": "2026-11-10T08:45:00Z",
+    "feature_count": 29,
+    "source": "local",
+    "prediction_target": "daily_specific_yield",
+    "units": "kWh/kWp/day",
+    "feature_schema_fingerprint": "904ad28862735584",
+    "primary_artifact_fingerprint": "39b4a11beb5423df",
+    "offline_test_metrics": {
+      "mae": 0.905,
+      "rmse": 1.07,
+      "r2": 0.258,
+      "bias": -0.1036,
+      "mae_pct_mean": 30.85
+    },
+    "evaluation_provenance": {
+      "calendar_range": "2022-03-01 to 2022-04-23",
+      "active_dates": 53,
+      "full_cohort_samples": 1232,
+      "peer_cohort_samples": 1128
+    },
+    "training_source": "UNISOLAR Campus 1, Melbourne, Australia"
+  },
+  "request_id": "5bc76bc4-f50b-4b00-b44c-a6b370eaad56",
+  "limitations": [
+    {
+      "id": "B-1",
+      "title": "Metering Basis Unverified",
+      "desc": "Training generation reflects unverified AC vs DC net metering semantics. System derates must not be applied on a verified basis."
+    },
+    {
+      "id": "B-2",
+      "title": "Prospective Roof Lag Policy",
+      "desc": "Phase 5 ML models require historical yield lag features. Prospective unbuilt roofs lack empirical yield and evaluate to PREDICTION_PENDING_LAG_POLICY."
+    },
+    {
+      "id": "Commercial Pricing",
+      "title": "Procurement Pricing Unpopulated",
+      "desc": "The Phase 6 panel catalogue contains verified physical and thermal specs, but commercial panel pricing is unpopulated. Financial evaluations require explicit user cost ledgers."
+    },
+    {
+      "id": "Inverter Records",
+      "title": "Inverter Specifications Unpopulated",
+      "desc": "The catalogue currently does not store matched inverter records. Electrical compatibility requires user-supplied inverter datasheets."
+    },
+    {
+      "id": "Capacity Distribution",
+      "title": "Commercial Training Support Range",
+      "desc": "86.4% of Phase 5 training arrays cluster between 21.39 and 100 kWp. Residential arrays (< 21.39 kWp) represent unsupported extrapolations and are quarantined in Pareto ranking."
+    },
+    {
+      "id": "Spatial Non-Transferability",
+      "title": "Known Melbourne campus sites only",
+      "desc": "Temporal evaluation on observed UNISOLAR Campus 1 sites; no validation for India, new regions or residential roofs."
+    },
+    {
+      "id": "Geometry",
+      "title": "Geometric feasibility only",
+      "desc": "No structural, regulatory or electrical installation approval."
+    }
+  ]
+}

@@ -11,8 +11,10 @@ Verifies:
 """
 
 from pathlib import Path
+from contextlib import contextmanager
 import sqlite3
 import tempfile
+import os
 import pytest
 import mlflow
 from mlflow.tracking import MlflowClient
@@ -89,11 +91,47 @@ def test_metric_fidelity(run_specs):
     assert full_en["tags"]["dvc_model_md5"] == "2ea38e4cca315095f76e07d63c4c2064"
 
 
+@contextmanager
+def isolated_mlflow_database():
+    """Release this test's pooled SQLite handles before Windows removes the DB.
+
+    MLflow 3.18 caches separate tracking and registry SQLAlchemy engines. Restore
+    fluent configuration and dispose only this temporary URI, even on failure.
+    """
+    from mlflow.store.tracking.sqlalchemy_store import SqlAlchemyStore as TrackingStore
+    from mlflow.store.model_registry.sqlalchemy_store import SqlAlchemyStore as RegistryStore
+    from mlflow.tracking._tracking_service import utils as tracking_state
+    from mlflow.tracking._model_registry import utils as registry_state
+
+    # Preserve unset values too: resolving a default then setting it explicitly
+    # would change how a later tracking URI selects its registry.
+    previous_tracking = tracking_state._tracking_uri
+    previous_registry = registry_state._registry_uri
+    previous_environment = {key: os.environ.get(key) for key in ("MLFLOW_TRACKING_URI", "MLFLOW_REGISTRY_URI")}
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tracking_uri = f"sqlite:///{(Path(tmpdir) / 'test_mlflow.db').as_posix()}"
+        try:
+            mlflow.set_registry_uri(tracking_uri)
+            yield tracking_uri
+        finally:
+            mlflow.set_tracking_uri(previous_tracking)
+            mlflow.set_registry_uri(previous_registry)
+            for key, value in previous_environment.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+            for store in (TrackingStore, RegistryStore):
+                with store._engine_map_lock:
+                    engine = store._engine_map.pop(tracking_uri, None)
+                if engine is not None:
+                    engine.dispose()
+    assert not Path(tmpdir).exists(), "Temporary MLflow directory was not removed"
+
+
 def test_isolated_execution_and_registry(run_specs, evaluation_evidence, project_root: Path):
     """Test full execution, model logging, registry and aliasing on isolated temporary DB."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        db_path = Path(tmpdir) / "test_mlflow.db"
-        tracking_uri = f"sqlite:///{db_path.as_posix()}"
+    with isolated_mlflow_database() as tracking_uri:
         client = MlflowClient(tracking_uri)
 
         # 1. First execution

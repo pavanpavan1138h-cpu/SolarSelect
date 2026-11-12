@@ -1,0 +1,284 @@
+{
+  "checked_at_utc": "2026-11-11T19:42:27.541813+00:00",
+  "database_path": "C:\\Users\\nithe\\OneDrive\\Documents\\ChatGPT\\MLOPs SOLAR\\SolarSelect 3\\SolarSelect\\mlflow.db",
+  "database_sha256": "bb37078d258f91c3def22c856f6fe019a2829f00df658c4b6a111e87cd11d8dc",
+  "sqlite_mode": "ro",
+  "confirmed_names": {
+    "SolarSelect-Yield-PeerCohort": {
+      "registered_model": [],
+      "versions": [],
+      "aliases": []
+    },
+    "SolarSelect-Yield-FullCohort": {
+      "registered_model": [],
+      "versions": [],
+      "aliases": []
+    }
+  },
+  "all_registered_names": [
+    {
+      "name": "mlflow-demo.prompts.code-reviewer"
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support"
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer"
+    }
+  ],
+  "all_versions": [
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "version": 1,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "version": 2,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "version": 3,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "version": 4,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "version": 1,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "version": 2,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "version": 3,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "version": 4,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "version": 1,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "version": 2,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "version": 3,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "version": 4,
+      "source": "dummy-source",
+      "run_id": null,
+      "status": "READY"
+    }
+  ],
+  "all_aliases": [
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "alias": "baseline",
+      "version": 1
+    },
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "alias": "production",
+      "version": 4
+    },
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "alias": "review-categories",
+      "version": 2
+    },
+    {
+      "name": "mlflow-demo.prompts.code-reviewer",
+      "alias": "severity-levels",
+      "version": 3
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "alias": "baseline",
+      "version": 1
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "alias": "production",
+      "version": 4
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "alias": "tone-guidance",
+      "version": 2
+    },
+    {
+      "name": "mlflow-demo.prompts.customer-support",
+      "alias": "with-context",
+      "version": 3
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "alias": "audience-targeting",
+      "version": 3
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "alias": "baseline",
+      "version": 1
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "alias": "length-constraint",
+      "version": 2
+    },
+    {
+      "name": "mlflow-demo.prompts.document-summarizer",
+      "alias": "production",
+      "version": 4
+    }
+  ],
+  "current_counts": {
+    "experiments": 3,
+    "runs": 16,
+    "registered_models": 3,
+    "model_versions": 12,
+    "registered_model_aliases": 12
+  },
+  "experiment_locations": [
+    {
+      "experiment_id": 0,
+      "name": "Default",
+      "artifact_location": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/0"
+    },
+    {
+      "experiment_id": 1,
+      "name": "SolarSelect-Forecasting",
+      "artifact_location": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1"
+    },
+    {
+      "experiment_id": 2,
+      "name": "MLflow Demo",
+      "artifact_location": "mlflow-artifacts:/2"
+    }
+  ],
+  "original_run_artifacts": [
+    {
+      "run_uuid": "08b6ea3e738b4e0eb3d21e87291117f0",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/08b6ea3e738b4e0eb3d21e87291117f0/artifacts"
+    },
+    {
+      "run_uuid": "19c4eb8e6266453da964d1756df0dcb6",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/19c4eb8e6266453da964d1756df0dcb6/artifacts"
+    },
+    {
+      "run_uuid": "451492e23d91468cbec6f06e3fe59ca1",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/451492e23d91468cbec6f06e3fe59ca1/artifacts"
+    },
+    {
+      "run_uuid": "4bad6a3e072a42f390b73ebdd956733e",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/4bad6a3e072a42f390b73ebdd956733e/artifacts"
+    },
+    {
+      "run_uuid": "6b6a439711cf4fd38aa6ef7a601adba8",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/6b6a439711cf4fd38aa6ef7a601adba8/artifacts"
+    },
+    {
+      "run_uuid": "8eeda5a789344e72b4ecd3a25e07ee7e",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/8eeda5a789344e72b4ecd3a25e07ee7e/artifacts"
+    },
+    {
+      "run_uuid": "b8a78ca5a3454c4f951fdfea940642a3",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/b8a78ca5a3454c4f951fdfea940642a3/artifacts"
+    },
+    {
+      "run_uuid": "e1f691c9f6bb476aaf3e0ae54ee3288a",
+      "experiment_id": 1,
+      "artifact_uri": "/Users/apple/Documents/MLOps_EL/SolarSelect/EDA/mlruns/1/e1f691c9f6bb476aaf3e0ae54ee3288a/artifacts"
+    }
+  ],
+  "archived_database_sha256": "8ac48078b7f00397035ccac8fb6b7774df4e0acf71f503dd48e505365eabd1d4",
+  "archived_counts": {
+    "experiments": 2,
+    "runs": 8,
+    "registered_models": 0,
+    "model_versions": 0,
+    "registered_model_aliases": 0
+  },
+  "original_eight_run_records_match_zip_snapshot": true,
+  "named_registry_http_checks": [
+    {
+      "method": "GET",
+      "path": "/api/2.0/mlflow/registered-models/get",
+      "model_name": "SolarSelect-Yield-PeerCohort",
+      "status": 404,
+      "error_code": "RESOURCE_DOES_NOT_EXIST"
+    },
+    {
+      "method": "GET",
+      "path": "/api/2.0/mlflow/registered-models/get",
+      "model_name": "SolarSelect-Yield-FullCohort",
+      "status": 404,
+      "error_code": "RESOURCE_DOES_NOT_EXIST"
+    }
+  ],
+  "filesystem_search_roots": [
+    "C:\\Users\\nithe\\OneDrive\\Documents\\ChatGPT",
+    "C:/Users/nithe/OneDrive/Documents",
+    "C:/Users/nithe/OneDrive/Desktop",
+    "C:/Users/nithe/Downloads",
+    "C:/Users/nithe/Documents",
+    "C:/Users/nithe/Desktop"
+  ],
+  "other_local_mlflow_database_found": false,
+  "process_inspection": "Windows CIM process command-line query returned Access denied",
+  "frozen_manifest_verified": true,
+  "registered_signature_inspection": "NOT_EXECUTED: approved registrations absent",
+  "registered_artifact_loading": "NOT_EXECUTED: approved registrations absent",
+  "registry_parity": "NOT_EXECUTED",
+  "registry_fastapi_integration": "BLOCKED_PENDING_PERSON1_DATABASE_AND_ARTIFACT_HANDOFF",
+  "automated_tests_this_turn": "NOT_EXECUTED: user stop rule applied after registry unavailability verified"
+}

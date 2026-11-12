@@ -1,0 +1,839 @@
+{
+  "submission_branch": "feature/person2-fastapi-backend",
+  "target_remote": "https://github.com/pavanpavan1138h-cpu/SolarSelect.git",
+  "base_commit": "e8002036effdc95d1b2219a4d2faf0eed9876b60",
+  "original_branch_preserved": "phase2",
+  "commit_status": "PENDING_USER_APPROVAL",
+  "push_status": "NOT_EXECUTED",
+  "allowlist_count": 40,
+  "secret_pattern_and_known_credential_scan": "PASS; no values recorded",
+  "forbidden_path_and_type_scan": "PASS",
+  "excluded_categories": [
+    "environment files/credentials",
+    "SQLite DBs and sidecars",
+    "virtual environments",
+    "caches/temp files",
+    "raw logs/JUnit",
+    "datasets",
+    "frozen binaries",
+    "other team members' uncommitted changes"
+  ],
+  "original_uncommitted_changes_reviewed": [
+    {
+      "path": "docs/project/phase_completion_status.md",
+      "git_state": " M",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "docs/project/project_roadmap.md",
+      "git_state": " M",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "log.txt",
+      "git_state": " M",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "requirements.txt",
+      "git_state": " M",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": ".streamlit/config.toml",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/__init__.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/backend/__init__.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/backend/contracts/__init__.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/core/__init__.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/core/config.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/core/errors.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/main.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/model_loaders/__init__.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/model_loaders/frozen_manifest.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/prediction_service.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/roof_service.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/routes/__init__.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "app/backend/schemas.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/backend/services.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/__init__.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/components/ui.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/main.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/pages/__init__.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/pages/energy_analysis.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/pages/financial_analysis.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/pages/mlops_centre.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/pages/overview.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/pages/recommendations.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/pages/roof_config.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/styles/custom.css",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "app/frontend/styles/theme.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "docs/backend/README.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/examples/batch_request.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/examples/historical_request.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/examples/historical_response.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/examples/roof_request.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/examples/roof_response.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/openapi.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/person1_registry_handoff.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/postman_collection.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "docs/backend/registry_handoff.template.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase8/phase8_final_closure_audit.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_final_validation_and_closure.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_mathematical_specification_and_io_contract.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage1_foundation_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage2_historical_replay_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage3_energy_estimation_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage4_temperature_evaluation_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage5_annualization_lifetime_methodology_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage5_implementation_plan.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage5_stage6_implementation_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage7_stage8_implementation_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase8/phase8_stage9_stage10_implementation_report.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase9/person2/FINAL_MLFLOW_INTEGRATION.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/MLFLOW_REGISTRY_INTEGRATION_REPORT.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/api_endpoint_test_report.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/backend_integration_report.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/final_artifact_checks.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/final_mlflow/database_discovery.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/01.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/02.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/03.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/04.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/05.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/06.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/07.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/08.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/09.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/10.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/11.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/12.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/13.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/14.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/15.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/16.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/17.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/18.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/19.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/20.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/21.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/22.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/23.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/24.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/25.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/26.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/27.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/28.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/29.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/30.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/31.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/32.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/33.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/34.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/35.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/36.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/37.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/38.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/39.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/40.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/41.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/42.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/http_cases/43.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/person2_final_completion_report.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/person2_live_http_evidence.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/prediction_parity_report.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/pytest_api.xml",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/pytest_full.xml",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/pytest_results.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/pytest_summary.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/registry_integration/final_checks.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/registry_integration/live_api_evidence.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/registry_integration/pytest_api.xml",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/registry_integration/pytest_full.xml",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/registry_integration/registry_inventory.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/registry_integration/test_summary.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/review_inventory.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/submission_verification/pytest_api.xml",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2/submission_verification/pytest_full.xml",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2_architecture_audit.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2_artifact_checks.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2_backend_implementation_report.md",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2_environment.txt",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/person2_live_http_evidence.json",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "reports/phase9/phase9_prompt1_application_architecture_and_ui_foundation.md",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "reports/phase9/screenshots/dashboard_overview.png",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "scripts/verify_backend_http.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "src/energy_economics/__init__.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/annualization.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/capacity_evaluator.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/catalogue.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/degradation.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/electrical.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/energy_engine.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/engine.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/exceptions.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/feasibility.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/financial.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/foundation.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/historical_replay.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/inference.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/pareto.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/phase7_adapter.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/recommendation.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/system_cost.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/types.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "src/energy_economics/weighted_ranking.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "tests/conftest.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_batch_prediction.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_consistency.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_errors.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_health.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_model_loading.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_prediction.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_registry_mode.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_roof_fit.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_api_validation.py",
+      "git_state": "??",
+      "classification": "Person2 (local history/evidence may be excluded from curated stage)"
+    },
+    {
+      "path": "tests/test_phase8_foundation.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "tests/test_phase8_stage2_inference_and_replay.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "tests/test_phase8_stage3_energy_estimation.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "tests/test_phase8_stage5_and_stage6.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "tests/test_phase8_stage7_and_stage8.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "tests/test_phase8_stage9_and_stage10.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    },
+    {
+      "path": "tests/test_phase9_app_foundation.py",
+      "git_state": "??",
+      "classification": "Pre-existing team work; excluded from Person2 stage"
+    }
+  ],
+  "scope_note": "Other-team foundations are committed in the remote base; none of their uncommitted copies was staged."
+}

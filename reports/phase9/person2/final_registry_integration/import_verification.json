@@ -1,0 +1,29 @@
+{
+  "archive_sha256": "c48dd063db185b0dd4bd400db63847f790423b026424bdcbb02fb0fb4f452e1a",
+  "verified_imports": [
+    "SolarSelect/mlflow.db",
+    "SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts/MLmodel",
+    "SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts/conda.yaml",
+    "SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts/input_example.json",
+    "SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts/model.skops",
+    "SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts/python_env.yaml",
+    "SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts/requirements.txt",
+    "SolarSelect/mlruns/models/m-0fd6281417054bf385101d2a68c3f6a5/artifacts/serving_input_example.json"
+  ],
+  "all_selected_hashes_verified": true,
+  "registered_aliases_observed": [
+    {
+      "name": "SolarSelect-Yield-FullCohort",
+      "alias": "campus-tracking-conditional",
+      "version": 1
+    },
+    {
+      "name": "SolarSelect-Yield-PeerCohort",
+      "alias": "champion",
+      "version": 1
+    }
+  ],
+  "database_unchanged": true,
+  "source_code_imported": false,
+  "paths_rewritten": false
+}

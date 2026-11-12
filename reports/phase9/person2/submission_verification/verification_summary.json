@@ -1,0 +1,77 @@
+{
+  "context": "Proposed feature worktree based on latest origin/phase2 e8002036effdc95d1b2219a4d2faf0eed9876b60",
+  "api_tests": {
+    "tests": 90,
+    "failures": 0,
+    "skipped": 0,
+    "errors": 0,
+    "passed": 90,
+    "failure_names": []
+  },
+  "full_tests": {
+    "tests": 334,
+    "failures": 2,
+    "skipped": 0,
+    "errors": 0,
+    "passed": 332,
+    "failure_names": [
+      "tests.test_phase9_mlflow_registry::test_isolated_execution_and_registry",
+      "tests.test_phase9_mlflow_registry::test_logged_visualization_artifacts"
+    ]
+  },
+  "original_checkout_fresh_results": {
+    "api_passed": 90,
+    "full_passed": 328,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "upstream_tests_without_person2_conftest": {
+    "tests": 6,
+    "failures": 2,
+    "skipped": 0,
+    "errors": 0
+  },
+  "live_expected_http_checks": 37,
+  "live_failed_checks": 0,
+  "parity_max_abs_errors": {
+    "primary_extra_trees": 1.3322676295501878e-15,
+    "fallback_blend_50_50": 4.440892098500626e-16
+  },
+  "parity_tolerance": {
+    "absolute": 1e-08,
+    "relative": 0
+  },
+  "frozen_fingerprints": {
+    "models/phase5/final/peer_cohort/final_extra_trees.joblib": {
+      "expected": "39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9",
+      "worktree_raw": "39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9",
+      "verification": "39b4a11beb5423dff926e43b4594b7938957183daaa16f16bdea7e5dc54ecfe9",
+      "binary_exact": true,
+      "original_bytes_unchanged": true
+    },
+    "models/phase5/final/peer_cohort/final_elastic_net.joblib": {
+      "expected": "422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb",
+      "worktree_raw": "422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb",
+      "verification": "422bda69e708e2129c0e1407bb6cd536971003b7f64dcc635ddc82da3acae7bb",
+      "binary_exact": true,
+      "original_bytes_unchanged": true
+    },
+    "models/phase5/final_model_metadata.json": {
+      "expected": "3b1399a2a0e5b5728d262f359c7efb79b3d9351ddab4e5af4b54ceb908ac3a37",
+      "worktree_raw": "9220b573eb400a57fcf299c8675b5d532a0ff0e0084cac052c23aab0c37749b6",
+      "verification": "3b1399a2a0e5b5728d262f359c7efb79b3d9351ddab4e5af4b54ceb908ac3a37",
+      "binary_exact": false,
+      "original_bytes_unchanged": true
+    }
+  },
+  "original_protected_files_compared_to_zip": 181,
+  "team_components_changed_against_new_base": [],
+  "python_runtime": "3.12.14 (available Windows verification environment)",
+  "canonical_team_python": "3.13.9 (not executed here)",
+  "registry_status": "BLOCKED_PENDING_PERSON1_DATABASE_AND_ARTIFACT_HANDOFF",
+  "notes": [
+    "Initial isolated tests failed because Git CRLF text checkout changed metadata raw hash; Person2 loader now normalizes only metadata CRLF to LF without rewriting files.",
+    "Latest-base full-suite failures are in unchanged upstream Phase9 registry tests: Windows temporary SQLite cleanup and missing Person1 visualization experiment."
+  ]
+}
