@@ -16,7 +16,7 @@ jobs:
       - name: Static container/CI/dependency checks and pure-logic monitoring tests
         run: |
           python -m pytest -q tests/phase9/person4 -k "not live_app and not docker_image"
-          python -m pytest -q tests/phase9/monitoring/test_drift_and_performance.py -k "psi or insufficient or prediction_drift or labels or reference"
+          python -m pytest -q tests/phase9/monitoring/test_drift_and_performance.py -k "psi or small_or_constant or prediction_drift or labels or reference"
 
   test:
     if: ${{ vars.HAS_DVC_REMOTE == 'true' }}   # set once DAGSHUB_TOKEN is configured
