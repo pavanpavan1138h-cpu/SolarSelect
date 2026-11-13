@@ -144,3 +144,53 @@ print('Phase 5 ExtraTrees loaded cleanly:', type(m).__name__)
 "
 pytest -q tests/
 ```
+
+---
+
+## 7. GitHub Actions CI/CD Configuration (Secrets & Variables)
+
+For automated CI/CD pipelines, container builds, and deployment workflows, repository administrators configure secrets and environment variables in GitHub under **Settings → Secrets and variables → Actions**:
+
+### 7.1 Encrypted Secrets (Secrets Tab)
+
+| Secret Name | Scope / Permissions | Purpose in CI/CD Pipeline |
+| :--- | :--- | :--- |
+| `DAGSHUB_TOKEN` | DagsHub Access Token | Authenticates `dvc pull` commands on CI runners to fetch DVC-tracked raw data and frozen Phase 5 model binaries from DagsHub S3 remote storage (`https://dagshub.com/pavanpavan1138h-cpu/SolarSelect.s3`). |
+| `GHCR_PULL_USER` | GitHub Username | Username used by the target deployment host/server to authenticate against GitHub Container Registry (`ghcr.io`). |
+| `GHCR_PULL_TOKEN` | Personal Access Token (`read:packages`) | Authentication token with read-only package access used by the deployment server to pull the application Docker image. |
+
+#### CI DVC Credential Injection Example:
+```bash
+# Configure DVC S3 credentials on ephemeral GitHub Actions runners
+dvc remote modify origin --local access_key_id "$DAGSHUB_TOKEN"
+dvc remote modify origin --local secret_access_key "$DAGSHUB_TOKEN"
+dvc pull models/phase5/final/peer_cohort/final_extra_trees.joblib.dvc
+```
+
+#### GHCR Docker Login Example:
+```bash
+echo "$GHCR_PULL_TOKEN" | docker login ghcr.io -u "$GHCR_PULL_USER" --password-stdin
+docker pull ghcr.io/<owner>/solarselect:latest
+```
+
+### 7.2 Configuration Variables (Variables Tab)
+
+| Variable Name | Default / Example Value | Purpose in CI/CD Pipeline |
+| :--- | :--- | :--- |
+| `DEPLOY_ENABLED` | `true` or `false` | Boolean toggle gating the CD deployment stage. Prevents deployment if disabled while allowing CI tests to pass. |
+| `DEPLOY_URL` | `http://host:8000` | The public base URL of the deployed application/API, used for post-deployment smoke tests and health checks. |
+
+#### Workflow Gating Example:
+```yaml
+deploy:
+  needs: [build-and-test]
+  if: vars.DEPLOY_ENABLED == 'true'
+  runs-on: ubuntu-latest
+  env:
+    DEPLOY_URL: ${{ vars.DEPLOY_URL }}
+  steps:
+    - name: Trigger Remote Deployment
+      run: |
+        echo "Deploying to ${DEPLOY_URL}..."
+        # deployment command / webhook / SSH execution
+```

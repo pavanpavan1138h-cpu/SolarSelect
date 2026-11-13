@@ -1,3 +1,32 @@
+"""
+SolarSelect — Phase 3: Data Preparation, Feature Engineering, and Dual-Cohort Pipeline.
+
+This script transforms raw UNISOLAR and Kaggle solar telemetry into clean, leakage-free,
+machine-learning-ready tabular datasets. It executes the following core operations:
+
+1. Astronomical Solar Geometry:
+   - Computes deterministic extraterrestrial solar irradiance (H0), solar declination,
+     solar elevation, and daylight hours from latitude, longitude, and day-of-year.
+2. Valid Site-Day Filtering:
+   - Enforces the a-priori valid site-day rule (requires 96 15-minute intervals per day
+     and >= 26 out of 28 core daytime intervals between 09:00 and 15:45).
+3. Target Definition:
+   - Computes Daily Specific Yield (Yf = total daily energy in kWh / documented kWp).
+4. Calendar-Aware Lag Engineering:
+   - Shifts autoregressive yields and regional weather on a continuous daily grid
+     (freq='D') to ensure a strict 24-hour day-ahead forecast horizon (tau >= 24h).
+5. Dual-Cohort Partitioning:
+   - Full Cohort (Dataset A, 24 sites): Preserves unclipped raw telemetry including
+     anomalous Sites 19 and 24 for facility monitoring.
+   - Peer Cohort (Dataset B, 22 sites): Quarantines Sites 19 and 24 to provide an
+     uncorrupted, physically bounded benchmark for commercial rooftop models.
+6. Zero-Leakage Chronological Splitting & Imputation:
+   - Divides observations into Train (May–Dec 2021), Validation (Jan–Feb 2022),
+     and Test (Mar–Apr 2022).
+   - Missing historical lags are imputed strictly using medians computed from the
+     training partition (Date <= 2021-12-31).
+"""
+
 import os
 import json
 import numpy as np
@@ -7,30 +36,57 @@ def calculate_solar_features(lat, lon, dt):
     """
     Computes deterministic astronomical solar features for given latitude, longitude, and date.
     Based on established NOAA / Spencer (1971) solar geometry algorithms.
+    
+    Parameters:
+    -----------
+    lat : float
+        Latitude in decimal degrees (negative for Southern Hemisphere, e.g. -37.72 for Victoria, AU).
+    lon : float
+        Longitude in decimal degrees (e.g. 145.13 for Clayton campus).
+    dt : pd.Timestamp
+        Calendar date of observation.
+        
+    Returns:
+    --------
+    dict containing:
+        - solar_declination_deg: Earth's axial tilt angle relative to the sun (-23.45° to +23.45°).
+        - solar_noon_elevation_deg: Maximum solar angle above the horizon at midday.
+        - solar_noon_zenith_deg: Angle between the sun and the vertical zenith at midday.
+        - daylight_hours: Astronomical daylight duration based on sunrise/sunset hour angles.
+        - extraterrestrial_radiation_h0: Daily top-of-atmosphere solar insolation (kWh/m2/day).
     """
+    # 1. Day of Year (1 to 365/366)
     doy = dt.dayofyear
+    
+    # 2. Fractional year angle (gamma) in radians
     gamma = 2 * np.pi / 365.25 * (doy - 1)
     
-    # Solar declination angle in radians
+    # 3. Solar declination angle (decl) in radians using Spencer (1971) Fourier expansion
     decl = (0.006918 - 0.399912 * np.cos(gamma) + 0.070257 * np.sin(gamma)
             - 0.006758 * np.cos(2 * gamma) + 0.000907 * np.sin(2 * gamma)
             - 0.002697 * np.cos(3 * gamma) + 0.00148 * np.sin(3 * gamma))
     
     lat_rad = np.radians(lat)
     
-    # Sunset hour angle (radians)
+    # 4. Sunset hour angle (omega_s) in radians
+    #    cos(omega_s) = -tan(latitude) * tan(declination)
+    #    Clipped to [-1.0, 1.0] to handle polar day/night safely
     cos_omega_s = -np.tan(lat_rad) * np.tan(decl)
     cos_omega_s = np.clip(cos_omega_s, -1.0, 1.0)
     omega_s = np.arccos(cos_omega_s)
     
-    # Daylight duration in hours
+    # 5. Astronomical daylight duration (hours)
+    #    Each 15 degrees of solar rotation corresponds to 1 hour of time
     daylight_hours = 2.0 * np.degrees(omega_s) / 15.0
     
-    # Solar noon zenith and elevation angles (degrees)
+    # 6. Midday solar zenith and elevation angles (degrees)
+    #    At solar noon, zenith angle = |latitude - declination|
     noon_zenith = np.degrees(np.abs(lat_rad - decl))
     noon_elevation = 90.0 - noon_zenith
     
-    # Daily extraterrestrial horizontal solar insolation (H0 in kWh/m2/day)
+    # 7. Extraterrestrial horizontal daily solar insolation (H0 in kWh/m2/day)
+    #    Gsc = Solar constant (1.367 kW/m2)
+    #    dr = Earth-Sun distance eccentricity correction factor
     Gsc = 1.367
     dr = 1.0 + 0.033 * np.cos(2 * np.pi * doy / 365.25)
     H0 = (24.0 / np.pi) * Gsc * dr * (
@@ -59,10 +115,24 @@ def main():
     # =========================================================================
     # PART 1: UNISOLAR DATASET & CALENDAR GRID
     # =========================================================================
+    # In Part 1, we:
+    # 1. Ingest site metadata for Monash University Campus 1 (Clayton campus).
+    # 2. Define the cohort of 24 documented installations (and 22 peer sites).
+    # 3. Ingest raw 15-minute generation telemetry, adding a 2-month warm-up
+    #    buffer (starting March 1, 2021) so 30-day rolling lags on May 1 are populated.
+    # 4. Enforce the A-Priori Valid Site-Day Rule:
+    #    - Exactly 96 15-minute intervals present per day.
+    #    - >= 26 non-null readings during the 28 core midday intervals (09:00-15:45).
+    #    - Documented peak capacity kWp > 0.
+    # 5. Compute target daily specific yield: Yf = daily_energy_kwh / kWp (kWh/kWp/day).
+    # =========================================================================
     print("\n--- Part 1: Loading UNISOLAR Metadata & Generation ---")
     
     site_details = pd.read_csv("data/raw/unisolar/Solar_Site_Details.csv")
+    
+    # 24 installations with documented kWp on Campus 1
     cohort_24 = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+    # Peer cohort of 22 sites quarantines anomalous Sites 19 & 24 (capacity metadata errors)
     peer_cohort_22 = [s for s in cohort_24 if s not in [19, 24]]
     c1_cohort = site_details[(site_details['CampusKey'] == 1) & (site_details['SiteKey'].isin(cohort_24))].copy()
     print(f"Loaded {len(c1_cohort)} cohort installations (24 total, 22 peer).")
@@ -71,36 +141,46 @@ def main():
     gen = pd.read_csv("data/raw/unisolar/Solar_Energy_Generation.csv")
     gen['Timestamp'] = pd.to_datetime(gen['Timestamp'])
     
+    # Filter for Campus 1 cohort sites within the buffer window (March 1, 2021 - April 30, 2022)
     mask_buffer = (gen['CampusKey'] == 1) & (gen['SiteKey'].isin(cohort_24)) & \
                   (gen['Timestamp'] >= '2021-03-01') & (gen['Timestamp'] < '2022-05-01')
     g_buf = gen[mask_buffer].copy()
     g_buf['Date'] = g_buf['Timestamp'].dt.normalize()
     g_buf['Time_str'] = g_buf['Timestamp'].dt.strftime('%H:%M')
     
+    # Define core daytime window: 09:00 to 15:45 (28 15-minute intervals)
+    # Peak solar insolation occurs during these hours; missingness here indicates genuine data loss.
     core_times = [f'{h:02d}:{m:02d}' for h in range(9, 16) for m in [0, 15, 30, 45]]
     g_buf['is_core'] = g_buf['Time_str'].isin(core_times)
     
-    # Aggregate intervals, core non-null counts, and daily energy
+    # Aggregate intervals, core non-null counts, and daily energy per (SiteKey, Date)
     g_core = g_buf[g_buf['is_core']]
     core_counts = g_core.groupby(['SiteKey', 'Date'])['SolarGeneration'].count().rename('core_nonnull_interval_count')
     total_counts = g_buf.groupby(['SiteKey', 'Date'])['SolarGeneration'].size().rename('total_intervals')
     daily_nonnull_counts = g_buf.groupby(['SiteKey', 'Date'])['SolarGeneration'].count().rename('daily_nonnull_interval_count')
     daily_energy = g_buf.groupby(['SiteKey', 'Date'])['SolarGeneration'].sum().rename('daily_energy_kwh')
     
+    # Combine aggregated site-day metrics
     sd_all = pd.concat([total_counts, daily_nonnull_counts, core_counts, daily_energy], axis=1).reset_index()
     sd_all['core_nonnull_interval_count'] = sd_all['core_nonnull_interval_count'].fillna(0).astype(int)
     sd_all['daily_nonnull_interval_count'] = sd_all['daily_nonnull_interval_count'].fillna(0).astype(int)
     sd_all['total_intervals'] = sd_all['total_intervals'].fillna(0).astype(int)
     
-    # Merge metadata
+    # Merge static physical metadata (kWp, coordinates, hardware)
     sd_all = sd_all.merge(c1_cohort[['SiteKey', 'kWp', 'lat', 'Lon', 'Number of panels', 'Panel', 'Inverter']], on='SiteKey', how='left')
     
-    # Valid site-day rule
+    # Valid site-day rule:
+    # 1. Exactly 96 intervals expected across 24h.
+    # 2. At least 26 of 28 core midday intervals observed.
+    # 3. Documented capacity must be positive.
     sd_all['is_valid_site_day'] = (sd_all['total_intervals'] == 96) & (sd_all['core_nonnull_interval_count'] >= 26) & (sd_all['kWp'] > 0)
+    
+    # Compute primary target: Specific Yield Yf (kWh/kWp/day)
     sd_all['target_daily_yield'] = sd_all['daily_energy_kwh'] / sd_all['kWp']
     sd_all['capacity_factor_24h'] = sd_all['target_daily_yield'] / 24.0
     
-    # Construct complete annual calendar grid (24 sites x 365 days = 8,760 site-days)
+    # Construct complete annual calendar grid (24 sites x 365 days = 8,760 expected site-days)
+    # Using an explicit grid guarantees that missing days are identified and not silently dropped.
     window_dates = pd.date_range('2021-05-01', '2022-04-30', freq='D')
     expected_grid = pd.MultiIndex.from_product([cohort_24, window_dates], names=['SiteKey', 'Date']).to_frame().reset_index(drop=True)
     
@@ -114,12 +194,12 @@ def main():
     sd_window['core_nonnull_interval_count'] = sd_window['core_nonnull_interval_count'].fillna(0).astype(int)
     sd_window['is_valid_site_day'] = sd_window['is_valid_site_day'].fillna(False).astype(bool)
     
-    # Quality indicators
+    # Compute data quality completeness ratios
     sd_window['noncore_nonnull_interval_count'] = sd_window['daily_nonnull_interval_count'] - sd_window['core_nonnull_interval_count']
     sd_window['missing_interval_count'] = 96 - sd_window['daily_nonnull_interval_count']
     sd_window['daily_interval_coverage'] = sd_window['daily_nonnull_interval_count'] / 96.0
     
-    # Document exclusion reasons
+    # Document explicit exclusion reason for each site-day
     def assign_exclusion_reason(r):
         if r['is_valid_site_day']:
             return 'valid'
@@ -136,7 +216,7 @@ def main():
         
     sd_window['exclusion_reason'] = sd_window.apply(assign_exclusion_reason, axis=1)
     
-    # Export target_dataset.csv (all 8,760 site-days) and excluded_site_days.csv (1,721 rows)
+    # Export full target dataset (8,760 rows) and audit log of excluded site-days (1,721 rows)
     target_dataset_path = os.path.join(out_unisolar, "target_dataset.csv")
     sd_window.to_csv(target_dataset_path, index=False)
     print(f"Saved {target_dataset_path} ({len(sd_window)} site-days total).")
@@ -149,6 +229,15 @@ def main():
     
     # =========================================================================
     # PART 2: WEATHER PREPARATION (HISTORICAL 1-DAY LAG, TAU >= 24H)
+    # =========================================================================
+    # In Part 2, we:
+    # 1. Aggregate regional weather (AirTemperature, RelativeHumidity) to daily metrics:
+    #    - Mean, Max, Min temperature, and diurnal range (max - min).
+    #    - Mean relative humidity.
+    # 2. Shift weather by 1 full calendar day (shift(1)) so that day D uses day D-1
+    #    observations strictly, enforcing tau >= 24h forecasting horizon.
+    # 3. Impute any missing weather values using medians computed ONLY from the
+    #    training split (Date <= 2021-12-31) to prevent lookahead data leakage.
     # =========================================================================
     print("\n--- Part 2: Processing Weather Data with 1-Day Lag ---")
     weather = pd.read_csv("data/raw/unisolar/Weather_Data_reordered_all.csv")
@@ -164,6 +253,7 @@ def main():
     ).reset_index()
     dw['temp_range'] = dw['temp_max'] - dw['temp_min']
     
+    # Align to continuous calendar grid from 2021-03-01 to 2022-04-30
     all_dates = pd.date_range('2021-03-01', '2022-04-30', freq='D')
     dw = dw.set_index('Date').reindex(all_dates).reset_index().rename(columns={'index': 'Date'})
     
@@ -175,6 +265,7 @@ def main():
     dw['lag1_rh_mean'] = dw['rh_mean'].shift(1)
     
     # Training set imputer values (strictly fit on Date <= 2021-12-31)
+    # Never leak validation or test weather statistics into the imputer!
     train_dw = dw[(dw['Date'] >= '2021-05-01') & (dw['Date'] <= '2021-12-31')]
     weather_imp_dict = {
         'lag1_temp_mean': float(train_dw['lag1_temp_mean'].median()),
@@ -191,26 +282,44 @@ def main():
     # =========================================================================
     # PART 3: FEATURE ENGINEERING ON CONTINUOUS CALENDAR GRID
     # =========================================================================
+    # In Part 3, we:
+    # 1. Loop through each cohort site and reindex its observations to a continuous
+    #    daily grid (all_dates from 2021-03-01 to 2022-04-30).
+    # 2. Construct calendar-aware historical generation lags:
+    #    - has_valid_lag1: binary flag indicating if day D-1 was an observed valid day.
+    #    - lag1_daily_yield, lag2_daily_yield, lag7_daily_yield.
+    #    - Rolling yield means and std dev (7-day, 14-day, 30-day).
+    # 3. Add continuous calendar features (day of year, month, weekday, weekend flag,
+    #    and cyclical sin/cos transformations so end-of-year connects seamlessly).
+    # 4. Compute deterministic astronomical solar geometry (H0, declination,
+    #    solar noon elevation, zenith, and daylight duration).
+    # 5. Assign chronological partitions:
+    #    - Train:      2021-05-01 to 2021-12-31 (8 months, Winter + Spring)
+    #    - Validation: 2022-01-01 to 2022-02-28 (2 months, Peak Summer)
+    #    - Test:       2022-03-01 to 2022-04-23 (2 months, Autumn Transition)
+    # =========================================================================
     print("\n--- Part 3: Engineering Calendar-Aware Lag and Astronomical Features ---")
     site_dfs = []
     for sk in cohort_24:
+        # Align site telemetry to continuous daily calendar
         sub = sd_all[sd_all['SiteKey'] == sk].copy().set_index('Date').reindex(all_dates).reset_index().rename(columns={'index': 'Date'})
         sub['SiteKey'] = sk
         
-        # Merge static metadata
+        # Merge static metadata (capacity and coordinates)
         site_meta = c1_cohort[c1_cohort['SiteKey'] == sk].iloc[0]
         sub['kWp'] = site_meta['kWp']
         sub['lat'] = site_meta['lat']
         sub['Lon'] = site_meta['Lon']
         
         # Valid yield series: use target_daily_yield if valid, else NaN (NOT zero!)
+        # CRITICAL: Missing telemetry days must be NaN so rolling calculations do not treat them as zero production!
         valid_y = sub['target_daily_yield'].where(sub['is_valid_site_day'], np.nan)
         
         # Exact calendar lags (shift(1) on daily grid = strictly calendar day D-1)
         sub['has_valid_lag1'] = sub['is_valid_site_day'].shift(1).fillna(False).astype(int)
         sub['lag1_daily_yield'] = valid_y.shift(1)
         sub['lag2_daily_yield'] = valid_y.shift(2)
-        sub['lag7_daily_yield'] = valid_y.shift(7)
+        sub['lag7_daily_yield'] = valid_y.shift(7)  # Same weekday of prior week
         
         # Rolling historical features over prior window [D-7, D-1], [D-14, D-1], [D-30, D-1]
         y_hist = valid_y.shift(1)
@@ -239,12 +348,13 @@ def main():
     valid_features['day_of_week'] = valid_features['Date'].dt.dayofweek
     valid_features['is_weekend'] = (valid_features['day_of_week'] >= 5).astype(int)
     
+    # Cyclical sine and cosine transformations for periodic calendar signals
     valid_features['sin_doy'] = np.sin(2 * np.pi * valid_features['day_of_year'] / 365.25)
     valid_features['cos_doy'] = np.cos(2 * np.pi * valid_features['day_of_year'] / 365.25)
     valid_features['sin_month'] = np.sin(2 * np.pi * valid_features['month'] / 12.0)
     valid_features['cos_month'] = np.cos(2 * np.pi * valid_features['month'] / 12.0)
     
-    # Astronomical Features
+    # Astronomical Features computed via NOAA/Spencer celestial mechanics algorithms
     print("Computing deterministic astronomical solar geometry features...")
     astro_records = []
     for _, row in valid_features.iterrows():
@@ -254,7 +364,7 @@ def main():
     for col in df_astro.columns:
         valid_features[col] = df_astro[col].values
         
-    # Chronological Split Assignment
+    # Chronological Split Assignment (Zero lookahead, strict temporal quarantine)
     def assign_split(d):
         if d <= pd.to_datetime('2021-12-31'):
             return 'train'
@@ -265,7 +375,7 @@ def main():
             
     valid_features['split'] = valid_features['Date'].apply(assign_split)
     
-    # Diagnostic & Quality Columns
+    # Diagnostic & Quality Columns (Kept separate from predictive model inputs)
     valid_features['is_site_19'] = (valid_features['SiteKey'] == 19).astype(int)
     valid_features['is_site_24'] = (valid_features['SiteKey'] == 24).astype(int)
     valid_features['is_provisional_site'] = (valid_features['SiteKey'].isin([19, 24])).astype(int)
@@ -280,6 +390,7 @@ def main():
     valid_features['daily_interval_coverage'] = valid_features['daily_nonnull_interval_count'] / 96.0
     
     # Define primary predictive continuous/cyclical features (29 features)
+    # These are the ONLY 29 features that model estimators are permitted to see.
     primary_predictive_features = [
         # Static Metadata (3)
         'kWp', 'lat', 'Lon',
@@ -298,6 +409,7 @@ def main():
     model_matrix_cols = ['SiteKey', 'Date', 'split', 'target_daily_yield'] + primary_predictive_features
     
     # Diagnostic Metadata columns (17 columns: Identifiers 3 + Target derivatives 2 + Target 1 + Diagnostic flags 6 + Quality indicators 5)
+    # Kept in diagnostic_metadata.csv for post-hoc error analysis only!
     diagnostic_cols = [
         'SiteKey', 'Date', 'split', 'target_daily_yield', 'capacity_factor_24h', 'daily_energy_kwh',
         'is_site_19', 'is_site_24', 'is_provisional_site', 'is_site_16', 'is_site_39', 'is_low_yield_site',
@@ -307,6 +419,9 @@ def main():
     
     # =========================================================================
     # PART 4: DATASET A — FULL COHORT (24 SITES, n=7,039)
+    # =========================================================================
+    # In Part 4, we generate the Full Cohort datasets (all 24 sites including 19 and 24).
+    # Missing lags are imputed using training-partition medians (Date <= 2021-12-31).
     # =========================================================================
     print("\n--- Part 4: Generating Dataset A (Full Cohort, 24 Sites) ---")
     full_df = valid_features.copy()
@@ -354,6 +469,9 @@ def main():
     # =========================================================================
     # PART 5: DATASET B — PEER COHORT (22 SITES, EXCL. 19 & 24, n=6,456)
     # =========================================================================
+    # In Part 5, we generate the clean Peer Cohort datasets (excluding Sites 19 and 24).
+    # Missing lags are imputed using peer training-partition medians.
+    # =========================================================================
     print("\n--- Part 5: Generating Dataset B (Peer Cohort, 22 Sites) ---")
     peer_df = valid_features[~valid_features['SiteKey'].isin([19, 24])].copy()
     
@@ -394,6 +512,13 @@ def main():
     
     # =========================================================================
     # PART 6: COMPREHENSIVE FEATURE DICTIONARY (46 ATTRIBUTES)
+    # =========================================================================
+    # In Part 6, we document all 46 columns across the project:
+    # - Identifiers (3): SiteKey, Date, split.
+    # - Target & Target Derivatives (3): target_daily_yield, capacity_factor_24h, daily_energy_kwh.
+    # - Primary Predictive Inputs (29): static metadata, calendar cycles, astronomical solar geometry,
+    #   autoregressive historical yield lags, and historical weather lags.
+    # - Diagnostic & Quality Indicators (11): outlier flags, interval counts, coverage ratios.
     # =========================================================================
     print("\n--- Part 6: Generating Comprehensive Feature Dictionary ---")
     dict_records = [
@@ -582,6 +707,17 @@ def main():
     
     # =========================================================================
     # PART 8: KAGGLE BENCHMARK PREPARATION (PRESERVED & VERIFIED)
+    # =========================================================================
+    # In Part 8, we prepare the isolated secondary benchmark:
+    # 1. Plants 1 & 2 15-minute generation and on-site pyranometer weather data.
+    # 2. Plant 1 timestamp format is day-first (%d-%m-%Y %H:%M); Plant 2 is ISO.
+    # 3. Target is instantaneous inverter active power (AC_POWER in kW).
+    # 4. Strictly exclude DAILY_YIELD and TOTAL_YIELD (target leakage cumulative counters).
+    # 5. Exclude DC_POWER due to unconfirmed 10x sensor scaling in Plant 1.
+    # 6. Chronological split:
+    #    - Train:      2020-05-15 to 2020-06-07 (24 days)
+    #    - Validation: 2020-06-08 to 2020-06-12 (5 days)
+    #    - Test:       2020-06-13 to 2020-06-17 (5 days)
     # =========================================================================
     print("\n--- Part 8: Processing Kaggle Benchmark Dataset ---")
     p1_g = pd.read_csv("data/raw/archive/Plant_1_Generation_Data.csv")

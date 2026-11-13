@@ -589,11 +589,22 @@ def execute_registration(
     tracking_uri: str,
     project_root: Path
 ) -> Dict[str, Any]:
-    """Execute controlled, idempotent database writes and model registrations."""
+    """
+    Execute controlled, idempotent database writes and model registrations.
+    
+    This function:
+    1. Connects to the local SQLite MLflow tracking backend (mlflow.db).
+    2. Retrieves or creates the dedicated experiment 'SolarSelect-Phase5-Evaluation' (Experiment ID: 2).
+    3. Checks for existing runs by name to ensure complete idempotency (will not create duplicate runs).
+    4. Logs parameters, evaluation metrics (MAE, RMSE, R2, bias), and tags for all 10 evaluation runs.
+    5. For primary models, verifies MD5 hash against DVC pointers, logs the serialized sklearn model
+       with its 29-feature signature, registers the model in the MLflow Model Registry,
+       and assigns the production alias (@champion or @campus-tracking-conditional).
+    """
     mlflow.set_tracking_uri(tracking_uri)
     client = MlflowClient(tracking_uri)
 
-    # 1. Create or get experiment
+    # 1. Create or get experiment 'SolarSelect-Phase5-Evaluation'
     exp = mlflow.get_experiment_by_name(EXPERIMENT_NAME)
     if exp is None:
         artifact_loc = (project_root / "mlruns").resolve().as_uri()
@@ -603,12 +614,13 @@ def execute_registration(
         exp_id = exp.experiment_id
         print(f"Using existing experiment '{EXPERIMENT_NAME}' (ID: {exp_id})")
 
-    # Fetch existing runs in this experiment for idempotency
+    # 2. Fetch existing runs in this experiment to guarantee idempotent re-runs
     existing_runs = mlflow.search_runs(experiment_ids=[exp_id])
     existing_run_names = set()
     if not existing_runs.empty and "tags.mlflow.runName" in existing_runs.columns:
         existing_run_names = set(existing_runs["tags.mlflow.runName"].dropna())
 
+    # 3. Infer standard input/output schema signature for the 29 predictive features
     X_example = evidence["input_example"]
     y_example = evidence["output_example"]
     signature = infer_signature(X_example, y_example)
@@ -616,8 +628,11 @@ def execute_registration(
     logged_runs = []
     registered_models = []
 
+    # 4. Iterate over each of the 10 Phase 5 run specifications
     for spec in specs:
         run_name = spec["run_name"]
+        
+        # Idempotency check: skip run if already registered
         if run_name in existing_run_names:
             print(f"Run '{run_name}' already exists in experiment {exp_id}. Skipping creation.")
             continue
@@ -626,23 +641,23 @@ def execute_registration(
             run_id = run.info.run_id
             print(f"Logging run '{run_name}' (ID: {run_id})...")
 
-            # Log params
+            # Log model hyperparameters and evaluation configuration
             mlflow.log_params(spec["params"])
 
-            # Log metrics
+            # Log test partition evaluation metrics (MAE, RMSE, R2, bias, sample counts)
             mlflow.log_metrics(spec["metrics"])
 
-            # Set tags
+            # Set audit provenance tags (source=historical_evaluation, cohort, DVC pointers)
             mlflow.set_tags(spec["tags"])
 
-            # Register model if requested
+            # 5. Register model in MLflow Model Registry if specified
             rm = spec["register_model"]
             if rm:
                 model_path = rm["model_path"]
                 if not model_path.exists():
                     raise FileNotFoundError(f"Model file not found: {model_path}")
 
-                # Verify hash against expected DVC pointer
+                # Integrity check: verify MD5 hash matches authoritative DVC pointer before loading
                 model_md5 = compute_md5(model_path)
                 expected_md5 = spec["tags"]["dvc_model_md5"]
                 if model_md5 != expected_md5:
@@ -650,10 +665,10 @@ def execute_registration(
                         f"MD5 mismatch for {model_path}! Expected: {expected_md5}, Actual: {model_md5}"
                     )
 
-                # Load existing frozen model (read-only)
+                # Load frozen model binary (read-only; no retraining)
                 model_obj = joblib.load(model_path)
 
-                # Log model package
+                # Log model package with exact 29-feature signature and input sample
                 log_kwargs = {
                     "sk_model": model_obj,
                     "name": "model",
@@ -666,18 +681,18 @@ def execute_registration(
 
                 mlflow.sklearn.log_model(**log_kwargs)
 
-                # Update registered model description & assign alias
+                # Update registered model description & assign production alias
                 reg_name = rm["registered_name"]
                 alias = rm["alias"]
                 desc = rm["description"]
 
                 client.update_registered_model(name=reg_name, description=desc)
 
-                # Retrieve latest version for this model
+                # Retrieve latest registered version number
                 versions = client.search_model_versions(f"name = '{reg_name}'")
                 latest_v = max(int(v.version) for v in versions)
 
-                # Assign approved alias
+                # Assign alias (@champion or @campus-tracking-conditional)
                 client.set_registered_model_alias(name=reg_name, alias=alias, version=latest_v)
                 print(f"  Registered '{reg_name}' v{latest_v} with alias @{alias}")
 
